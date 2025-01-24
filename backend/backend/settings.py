@@ -22,6 +22,8 @@ ALLOWED_HOSTS = list(
     map(str.strip, os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")),
 )
 
+AUTH_USER_MODEL = "users.User"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -33,6 +35,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "corsheaders",
+
+    "users.apps.UsersConfig",
+
 ]
 
 # настройка DRF  аутентификации с помощью JWT-токена
