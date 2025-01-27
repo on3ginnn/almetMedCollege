@@ -28,16 +28,17 @@ class Group(django.db.models.Model):
     
 
 class User(django.contrib.auth.models.AbstractUser):
-    # class Role(django.db.models.TextChoices):
-    #     STUDENT = 'student', 'Student'
-    #     TEACHER = 'teacher', 'Teacher'
-    #     ADMIN = 'admin', 'Administrator'
+    class Role(django.db.models.TextChoices):
+        STUDENT = 'student', 'Студент'
+        TEACHER = 'teacher', 'Преподаватель'
+        ADMIN = 'admin', 'Администратор'
 
-    # role = django.db.models.CharField(
-    #     max_length=10,
-    #     choices=Role.choices,
-    #     default=Role.STUDENT,
-    # )
+    role = django.db.models.CharField(
+        max_length=10,
+        choices=Role.choices,
+        default=Role.STUDENT,
+        blank=True, 
+    )
 
     group = django.db.models.ForeignKey(
         'Group',
@@ -46,3 +47,13 @@ class User(django.contrib.auth.models.AbstractUser):
         on_delete=django.db.models.SET_NULL,
         related_name='group_students',
     )  # Только для студентов
+
+    def save(self):
+        if self.role == 
+        elif self.role == self.Role.STUDENT:
+            print("студент")
+        print(self.role)
+        print(self.__dict__)
+        return super().save()
+
+    # TODO: дефолт пермишн задать надо
