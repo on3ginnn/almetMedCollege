@@ -48,12 +48,25 @@ class User(django.contrib.auth.models.AbstractUser):
         related_name='group_students',
     )  # Только для студентов
 
-    def save(self):
-        if self.role == 
-        elif self.role == self.Role.STUDENT:
-            print("студент")
+    
+
+    def save(self, *args, **kwargs):
+       
+        try:
+            target_group = django.contrib.auth.models.Group.objects.get(name=self.role)
+        except Group.DoesNotExist:
+            raise ValueError(f"Группа с именем '{self.role}' не существует")
+
+        super().save(*args, **kwargs)  # Сохраняем пользователя для получения ID
+
+        print(self.groups)
+        self.groups.clear()
+        print(target_group.__class__)
+        self.groups.add(target_group)
+        print(self.groups)
+
         print(self.role)
         print(self.__dict__)
-        return super().save()
+        super().save(*args, **kwargs)
 
     # TODO: дефолт пермишн задать надо

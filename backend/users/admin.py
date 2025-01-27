@@ -28,11 +28,10 @@ class CustomUserAdmin(UserAdmin):
     # print(get_fieldsets())
 
     fieldsets = (
-        ('Учетные данные', {'fields': ('username', "password")}), 
-        ('Персональные данные', {'fields': ('first_name', 'last_name', 'email', 'role', 'group')}), 
+        ('Учетные данные', {'fields': ('username', 'password')}), 
+        ('Персональные данные', {'fields': ('first_name', 'last_name', 'role', 'email', 'group')}), 
         ('Роль', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
-    # add_fieldsets += fieldsets
     print(fieldsets)
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
     list_display_links = ('id', user_full_name, )
@@ -41,9 +40,6 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('last_name', 'first_name', 'id')
 
     autocomplete_fields = ['groups']
-    search_fields = ['last_name', "first_name"]
-
-
 
     # # Убрать возможность регистрации самим пользователям
     # def has_add_permission(self, request):

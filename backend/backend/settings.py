@@ -75,6 +75,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+CMS_COLOR_SCHEME = "light"
+
 ROOT_URLCONF = "backend.urls"
 
 TEMPLATES = [
