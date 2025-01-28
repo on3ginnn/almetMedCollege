@@ -35,7 +35,6 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         ('Персональные данные', {'classes': ('wide',), 'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'role', 'group')}), 
     )
-    print(fieldsets)
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
     list_display_links = ('id', user_full_name, )
     list_filter = ('groups', 'is_staff', 'is_active', 'group')
@@ -44,6 +43,11 @@ class CustomUserAdmin(UserAdmin):
 
     autocomplete_fields = ['groups']
 
+    def save_related(self, request, form, formsets, change):
+        """
+        чтобы не сохранялись группы и пермишены через форму
+        """
+        pass
     # # Убрать возможность регистрации самим пользователям
     # def has_add_permission(self, request):
     #     return request.user.is_staff
