@@ -30,7 +30,10 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         ('Учетные данные', {'fields': ('username', 'password')}), 
         ('Персональные данные', {'fields': ('first_name', 'last_name', 'role', 'email', 'group')}), 
-        ('Роль', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Доступ', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+    )
+    add_fieldsets = (
+        ('Персональные данные', {'classes': ('wide',), 'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'role', 'group')}), 
     )
     print(fieldsets)
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
