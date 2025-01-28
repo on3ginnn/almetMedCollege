@@ -1,0 +1,76 @@
+[
+{
+    "model": "users.group",
+    "pk": 1,
+    "fields": {
+        "name": "СД23А",
+        "course": 2
+    }
+},
+{
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$FLNtg9psdkZ956HzBe3qNX$uVZpB7ZpJEALzi5tWPc0c7zOl9jErt0SP4kQEMkjFic=",
+        "last_login": "2025-01-28T06:24:03.073Z",
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "авав",
+        "last_name": "ваыа",
+        "email": "",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2025-01-27T13:26:34.653Z",
+        "role": "admin",
+        "group": null,
+        "groups": [
+            3
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$pFa5xBmR9zx5FxpvU6WirV$r5FQ9gRyv2hnwf7k9Gsindjl1PxPycivuI2bLVd2S+4=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "bob",
+        "first_name": "Айназ",
+        "last_name": "Сайфуллина",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-27T13:27:09.894Z",
+        "role": "teacher",
+        "group": 1,
+        "groups": [
+            2
+        ],
+        "user_permissions": []
+    }
+},
+{
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$VXPzANGFsrU5QDd4l9r9DS$kl68Ronh8g9WPgfDMQHFqHrEo6/RH2nEWgJSlP6L+F0=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "cooper",
+        "first_name": "Иван",
+        "last_name": "Иванов",
+        "email": "cooper@gmail.com",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2025-01-28T12:34:20.985Z",
+        "role": "admin",
+        "group": 1,
+        "groups": [
+            3
+        ],
+        "user_permissions": []
+    }
+}
+]

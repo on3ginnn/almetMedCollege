@@ -48,6 +48,8 @@ class User(django.contrib.auth.models.AbstractUser):
         related_name='group_students',
     )  # Только для студентов
 
+    def __str__(self):
+        return self.get_full_name()
     
 """
     def save(self, *args, **kwargs):

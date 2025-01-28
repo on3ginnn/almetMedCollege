@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "corsheaders",
 
     "users.apps.UsersConfig",
+    "news.apps.NewsConfig",
 
 ]
 
