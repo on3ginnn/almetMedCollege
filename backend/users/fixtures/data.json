@@ -1,26 +1,18 @@
 [
 {
-    "model": "users.group",
-    "pk": 1,
-    "fields": {
-        "name": "—ƒ23¿",
-        "course": 2
-    }
-},
-{
     "model": "users.user",
     "pk": 1,
     "fields": {
-        "password": "pbkdf2_sha256$600000$FLNtg9psdkZ956HzBe3qNX$uVZpB7ZpJEALzi5tWPc0c7zOl9jErt0SP4kQEMkjFic=",
-        "last_login": "2025-01-28T06:24:03.073Z",
+        "password": "pbkdf2_sha256$600000$RkmQjHoxfhjhlgcqtrMAuQ$8YmFp5oJ27vLhZLe1fXFykE2ucVjv60leLNlJs7AP8U=",
+        "last_login": "2025-01-29T11:21:57.902Z",
         "is_superuser": true,
         "username": "admin",
-        "first_name": "‡‚‡‚",
-        "last_name": "‚‡˚‡",
+        "first_name": "–ê–Ω–∞—Ç–æ–ª–∏–π",
+        "last_name": "–ê–¥–º–∏–Ω–æ–≤",
         "email": "",
         "is_staff": true,
         "is_active": true,
-        "date_joined": "2025-01-27T13:26:34.653Z",
+        "date_joined": "2025-01-29T11:21:34.628Z",
         "role": "admin",
         "group": null,
         "groups": [
@@ -33,20 +25,20 @@
     "model": "users.user",
     "pk": 2,
     "fields": {
-        "password": "pbkdf2_sha256$600000$pFa5xBmR9zx5FxpvU6WirV$r5FQ9gRyv2hnwf7k9Gsindjl1PxPycivuI2bLVd2S+4=",
+        "password": "pbkdf2_sha256$600000$DBL7URwO4FliVMWncM1ZlX$aIu5ZlyP2P18NuG7ATwO9AKOgxlcc5mLL2rbKfwRzcA=",
         "last_login": null,
         "is_superuser": false,
         "username": "bob",
-        "first_name": "¿ÈÌ‡Á",
-        "last_name": "—‡ÈÙÛÎÎËÌ‡",
-        "email": "",
+        "first_name": "–ê–π–Ω–∞–∑",
+        "last_name": "–°–∞–π—Ñ—É–ª–ª–∏–Ω–∞",
+        "email": "bob@gmail.com",
         "is_staff": false,
         "is_active": true,
-        "date_joined": "2025-01-27T13:27:09.894Z",
-        "role": "teacher",
+        "date_joined": "2025-01-29T11:23:17.020Z",
+        "role": "student",
         "group": 1,
         "groups": [
-            2
+            1
         ],
         "user_permissions": []
     }
@@ -55,20 +47,20 @@
     "model": "users.user",
     "pk": 3,
     "fields": {
-        "password": "pbkdf2_sha256$600000$VXPzANGFsrU5QDd4l9r9DS$kl68Ronh8g9WPgfDMQHFqHrEo6/RH2nEWgJSlP6L+F0=",
+        "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
         "last_login": null,
         "is_superuser": false,
         "username": "cooper",
-        "first_name": "»‚‡Ì",
-        "last_name": "»‚‡ÌÓ‚",
+        "first_name": "–ò–≤–∞–Ω",
+        "last_name": "–ò–≤–∞–Ω–æ–≤",
         "email": "cooper@gmail.com",
         "is_staff": false,
         "is_active": true,
-        "date_joined": "2025-01-28T12:34:20.985Z",
-        "role": "admin",
-        "group": 1,
+        "date_joined": "2025-01-29T11:37:20.391Z",
+        "role": "teacher",
+        "group": null,
         "groups": [
-            3
+            2
         ],
         "user_permissions": []
     }

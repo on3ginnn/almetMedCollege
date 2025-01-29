@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 
     "users.apps.UsersConfig",
     "news.apps.NewsConfig",
+    "group.apps.GroupConfig",
 
 ]
 

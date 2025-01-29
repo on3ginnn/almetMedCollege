@@ -3,19 +3,6 @@ from django.contrib.auth.admin import UserAdmin
 import users.models
 
 
-@admin.register(users.models.Group)
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'course')
-    list_display_links = ('name', )
-    list_filter = ('course',)
-    search_fields = ('name',)
-    ordering = ('course', 'name')
-    fields = ('name', 'course')
-
-    def has_add_permission(self, request):
-        return request.user.is_staff
-
-
 @admin.display(description="Полное имя")
 def user_full_name(obj):
     return f"{obj.first_name} {obj.last_name}".capitalize()
@@ -38,7 +25,7 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
     list_display_links = ('id', user_full_name, )
     list_filter = ('groups', 'is_staff', 'is_active', 'group')
-    search_fields = ('username', 'email')
+    search_fields = ('last_name', 'first_name')
     ordering = ('last_name', 'first_name', 'id')
 
     autocomplete_fields = ['groups']

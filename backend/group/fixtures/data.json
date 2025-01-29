@@ -1,0 +1,10 @@
+[
+{
+    "model": "group.group",
+    "pk": 1,
+    "fields": {
+        "name": "СД23А",
+        "course": 2
+    }
+}
+]

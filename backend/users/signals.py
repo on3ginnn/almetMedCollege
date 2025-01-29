@@ -1,19 +1,20 @@
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
-from django.contrib.auth.models import Group
+import django.contrib.auth.models
 from .models import User
 
 
-@receiver(pre_save, sender=User)
+@receiver(post_save, sender=User)
 def set_user_group_based_on_role(sender, instance, **kwargs):
     """
     Синхронизирует группу пользователя на основании его роли после сохранения.
     """
+    
     try:
         # Получаем группу, соответствующую роли пользователя
-        target_group = Group.objects.get(name=instance.role)
+        target_group, created = django.contrib.auth.models.Group.objects.get_or_create(name=instance.role)
         print(target_group)
-    except Group.DoesNotExist:
+    except django.contrib.auth.models.Group.DoesNotExist:
         raise ValueError(f"Группа с именем '{instance.role}' не существует")
 
     print([i.name for i in instance.groups.all()])
