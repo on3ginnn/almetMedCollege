@@ -31,7 +31,7 @@ class News(django.db.models.Model):
         return self.publisher.get_full_name().capitalize() if self.publisher else None
 
     def __str__(self):
-        return "%s: %s" % self.publisher.get_full_name(), self.title
+        return "%s: %s" % (self.publisher.get_full_name(), self.title)
     
     class Meta:
         verbose_name = "статья"

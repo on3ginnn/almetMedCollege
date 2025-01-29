@@ -50,32 +50,9 @@ class User(django.contrib.auth.models.AbstractUser):
 
     def __str__(self):
         return self.get_full_name()
-    
-"""
-    def save(self, *args, **kwargs):
-       
-        def log_get_queryset_items(self, qs):
-            return [i.name for i in qs.all()]
 
-        super().save(*args, **kwargs)  # Сохраняем пользователя для получения ID
-        print(self.role)
-        try:
-            target_group = django.contrib.auth.models.Group.objects.get(name=self.role)
-        except Group.DoesNotExist:
-            raise ValueError(f"Группа с именем '{self.role}' не существует")
+    class Meta:
+        verbose_name = "пользователь"
+        verbose_name_plural = "пользователи"
 
 
-        print(log_get_queryset_items(self.groups))
-        self.groups.clear()
-        print(target_group)
-        self.groups.add(target_group)
-        print(log_get_queryset_items(self.groups))
-
-        print(self.role)
-        print(self.__dict__)
-        super().save(*args, **kwargs)
-        print(log_get_queryset_items(self.groups))
-
-"""
-        
-    # TODO: дефолт пермишн задать надо
