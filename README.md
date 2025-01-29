@@ -1,8 +1,9 @@
-### Курсовая работа на тему
+**Курсовая работа на тему**
 # Разработка веб-приложения медицинскому колледжу
 
-> [Task Board](https://miro.com/app/board/uXjVLoqocHY=/)
+[Task Board](https://miro.com/app/board/uXjVLoqocHY=/)
 
+### Tips  
 > for fixture dumpdata use: 
 `python manage.py -Xutf8 dumpdata users --indent 4 > users/fixtures/data.json` 
 
