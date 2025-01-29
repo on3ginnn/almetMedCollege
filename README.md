@@ -6,6 +6,4 @@
 > for fixture dumpdata use: 
 `python manage.py -Xutf8 dumpdata users --indent 4 > users/fixtures/data.json` 
 
---- 
-
 *by.on3gin*
