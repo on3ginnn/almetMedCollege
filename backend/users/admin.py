@@ -11,8 +11,6 @@ def user_full_name(obj):
 @admin.register(users.models.User)
 class CustomUserAdmin(UserAdmin):
     site_header = "Панель администрирования"
-    # print(super().get_fieldsets(request))
-    # print(get_fieldsets())
 
     fieldsets = (
         ('Учетные данные', {'fields': ('username', 'password')}), 
@@ -25,16 +23,25 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
     list_display_links = ('id', user_full_name, )
     list_filter = ('groups', 'is_staff', 'is_active', 'group')
-    search_fields = ('last_name', 'first_name')
+    search_fields = ('last_name', 'first_name')  # используется для autocomplete_fields в связанных моделях
     ordering = ('last_name', 'first_name', 'id')
 
-    autocomplete_fields = ['groups']
+    autocomplete_fields = ['groups', 'group']
 
     def save_related(self, request, form, formsets, change):
         """
         чтобы не сохранялись группы и пермишены через форму
         """
         pass
-    # # Убрать возможность регистрации самим пользователям
-    # def has_add_permission(self, request):
-    #     return request.user.is_staff
+ 
+    def get_search_results(self, request, queryset, search_term):
+        """
+        Фильтруем пользователей в выпадающем списке, оставляя только преподавателей и администраторов.
+        """
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        
+        # Фильтруем только преподавателей и администраторов
+        if request.GET.get('field_name') == 'publisher':
+            queryset = queryset.filter(role__in=[users.models.User.Role.TEACHER, users.models.User.Role.ADMIN])
+
+        return queryset, use_distinct

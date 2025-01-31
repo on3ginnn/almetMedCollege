@@ -26,3 +26,16 @@ class Group(django.db.models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.get_course_display()})"
+    
+
+class SubGroup(django.db.models.Model):
+    group = django.db.models.ForeignKey(Group, on_delete=django.db.models.CASCADE, related_name="subgroups", verbose_name="группа")
+    name = django.db.models.CharField(max_length=50, verbose_name="название подгруппы")
+
+    class Meta:
+        verbose_name = "подгруппа"
+        verbose_name_plural = "подгруппы"
+        unique_together = ('group', 'name')  # В одной группе имена подгрупп должны быть уникальны
+
+    def __str__(self):
+        return f"{self.group.name} ({self.name})"
