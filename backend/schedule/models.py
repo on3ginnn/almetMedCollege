@@ -15,6 +15,8 @@ class Schedule(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="schedules", verbose_name="Группа")
 
     class Meta:
+        verbose_name = "расписание"
+        verbose_name_plural = "расписания"
         unique_together = ('date', 'group')  # В один день у группы может быть только одно расписание
         ordering = ["date"]
 
@@ -42,8 +44,8 @@ class GroupLesson(models.Model):
     )
 
     class Meta:
-        unique_together = ('schedule', 'order', 'subgroup')  # Теперь порядок внутри подгруппы разрешен
-        ordering = ["order"]
+        unique_together = ('schedule', 'number', 'subgroup')  # Теперь порядок внутри подгруппы разрешен
+        ordering = ["number"]
 
     def __str__(self):
-        return f"{self.order}. {self.exercise} ({self.teacher}) - {self.subgroup if self.subgroup else 'Вся группа'}"
+        return f"{self.number}. {self.exercise} ({self.teacher}) - {self.subgroup if self.subgroup else 'Вся группа'}"

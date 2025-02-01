@@ -10,7 +10,7 @@ dotenv.load_dotenv()
 
 def env_var_load(value, defoult):
     env_var_value = os.getenv(value, str(defoult)).lower()
-    return env_var_value in ("", "true", "yes", "1", "y")
+    return env_var_value in ("", "true", "yes", "1", "y", "t")
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "news.apps.NewsConfig",
     "group.apps.GroupConfig",
+    "schedule.apps.ScheduleConfig",
 
 ]
 

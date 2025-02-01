@@ -1,16 +1,16 @@
-from django.contrib import admin
-from .models import Schedule, GroupLesson, Exercise
+import django.contrib.admin
+import schedule.models
 
 
-class GroupLessonInline(admin.TabularInline):  # Можно сделать StackedInline
-    model = GroupLesson
+class GroupLessonInline(django.contrib.admin.TabularInline):  # Можно сделать StackedInline
+    model = schedule.models.GroupLesson
     extra = 1
-    ordering = ["order"]
-    autocomplete_fields = ["exercise", "teacher"]
+    ordering = ["number"]
+    # autocomplete_fields = ["exercise", "teacher"]
     
 
-@admin.register(Schedule)
-class ScheduleAdmin(admin.ModelAdmin):
+@django.contrib.admin.register(schedule.models.Schedule)
+class ScheduleAdmin(django.contrib.admin.ModelAdmin):
     list_display = ("date", "group")
     list_filter = ("date", "group")
     ordering = ("date",)
