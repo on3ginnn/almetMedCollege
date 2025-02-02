@@ -6,5 +6,21 @@
         "name": "СД23А",
         "course": 2
     }
+},
+{
+    "model": "group.subgroup",
+    "pk": 1,
+    "fields": {
+        "group": 1,
+        "name": "1 бригада"
+    }
+},
+{
+    "model": "group.subgroup",
+    "pk": 2,
+    "fields": {
+        "group": 1,
+        "name": "2 бригада"
+    }
 }
 ]

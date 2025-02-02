@@ -1,0 +1,46 @@
+[
+{
+    "model": "schedule.exercise",
+    "pk": 1,
+    "fields": {
+        "name": "Антология"
+    }
+},
+{
+    "model": "schedule.exercise",
+    "pk": 2,
+    "fields": {
+        "name": "МДК"
+    }
+},
+{
+    "model": "schedule.schedule",
+    "pk": 1,
+    "fields": {
+        "date": "2025-02-03",
+        "group": 1
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 1,
+    "fields": {
+        "schedule": 1,
+        "exercise": 1,
+        "teacher": 3,
+        "number": 1,
+        "subgroup": null
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 2,
+    "fields": {
+        "schedule": 1,
+        "exercise": 2,
+        "teacher": 3,
+        "number": 2,
+        "subgroup": null
+    }
+}
+]

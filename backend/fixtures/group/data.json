@@ -4,7 +4,11 @@
     "pk": 1,
     "fields": {
         "name": "student",
-        "permissions": []
+        "permissions": [
+            32,
+            48,
+            24
+        ]
     }
 },
 {
@@ -12,7 +16,12 @@
     "pk": 2,
     "fields": {
         "name": "teacher",
-        "permissions": []
+        "permissions": [
+            36,
+            32,
+            48,
+            24
+        ]
     }
 },
 {
@@ -20,7 +29,36 @@
     "pk": 3,
     "fields": {
         "name": "admin",
-        "permissions": []
+        "permissions": [
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            29,
+            30,
+            31,
+            32,
+            41,
+            42,
+            43,
+            44,
+            49,
+            50,
+            51,
+            52,
+            45,
+            46,
+            47,
+            48,
+            21,
+            22,
+            23,
+            24
+        ]
     }
 }
 ]
