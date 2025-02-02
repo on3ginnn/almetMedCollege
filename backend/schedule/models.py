@@ -6,6 +6,10 @@ from group.models import Group
 class Exercise(models.Model):
     name = models.CharField(max_length=255, unique=True, verbose_name="Название предмета")
 
+    class Meta:
+        verbose_name = "предмет"
+        verbose_name_plural = "предметы"
+
     def __str__(self):
         return self.name
 
@@ -44,6 +48,8 @@ class GroupLesson(models.Model):
     )
 
     class Meta:
+        verbose_name = "пара"
+        verbose_name = "пары"
         unique_together = ('schedule', 'number', 'subgroup')  # Теперь порядок внутри подгруппы разрешен
         ordering = ["number"]
 
