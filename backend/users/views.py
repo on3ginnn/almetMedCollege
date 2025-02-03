@@ -9,10 +9,12 @@ from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import get_user_model
 
 import users.serializer
+import users.permissions
 
 
-class UserRegisterAPIView(rest_framework.generics.CreateAPIView):
-    serializer_class = users.serializer.RegisterSerializer
+class UserCreateAPIView(rest_framework.generics.CreateAPIView):
+    permission_classes = [rest_framework.permissions.DjangoModelPermissions]
+    serializer_class = users.serializer.UserCreateSerializer
     queryset = get_user_model().objects.all()
 
 
@@ -29,13 +31,17 @@ class UserProfileAPIView(APIView):
     def get(self, request):
         user = request.user
 
-        print(user.groups)
+        print(user.groups.all())
         print(user.get_user_permissions)
 
         return Response({
             "id": user.id,
             "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
             "email": user.email,
+            "role": user.role,
+            "group": (user.group and user.group.name) or None,
             "perm": {
                 "view": user.has_perm("product.view_item"),
                 "add": user.has_perm("product.add_item"),
@@ -48,12 +54,13 @@ class UserProfileAPIView(APIView):
 class UserListAPIView(rest_framework.generics.ListAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = users.serializer.UserSerializer
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
 
 
 class UserDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [rest_framework.permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     queryset = get_user_model().objects.all()
-    serializer_class = users.serializer.RegisterSerializer
+    serializer_class = users.serializer.UserCreateSerializer
 
 
 class UserSearchAPIView(rest_framework.generics.RetrieveAPIView):

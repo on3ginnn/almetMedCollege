@@ -7,15 +7,15 @@ import django.contrib.auth
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = django.contrib.auth.get_user_model()
-        fields = ['id', 'username', 'email']
+        fields = ['id', 'username', "first_name", "last_name", "email", "role", "group"]
      
 
-class RegisterSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     
     class Meta:
         model = django.contrib.auth.get_user_model()
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'password', "first_name", "last_name", "email", "role", "group"]
 
     def validate_password(self, value):
         if len(value) < 8:
@@ -36,7 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         return django.contrib.auth.hashers.make_password(value)
 
 
-class LoginSerializer(serializers.Serializer):
+class UserUpdateSerializer(serializers.Serializer):
 
     class Meta:
         model = django.contrib.auth.get_user_model()

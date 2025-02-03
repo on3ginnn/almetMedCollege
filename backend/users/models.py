@@ -33,5 +33,6 @@ class User(django.contrib.auth.models.AbstractUser):
     class Meta:
         verbose_name = "пользователь"
         verbose_name_plural = "пользователи"
+        default_permissions = ('add', 'change', 'delete', 'view')
 
 
