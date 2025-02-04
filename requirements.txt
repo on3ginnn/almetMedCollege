@@ -4,3 +4,4 @@ djangorestframework-simplejwt==5.4.0
 django-cors-headers==4.6.0
 python-slugify==8.0.4
 python-dotenv==1.0.1
+wonderwords==2.2.0
