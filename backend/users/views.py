@@ -13,7 +13,7 @@ import users.permissions
 
 
 class UserCreateAPIView(rest_framework.generics.CreateAPIView):
-    permission_classes = [rest_framework.permissions.DjangoModelPermissions]
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     serializer_class = users.serializer.UserCreateSerializer
     queryset = get_user_model().objects.all()
 
@@ -31,8 +31,7 @@ class UserProfileAPIView(APIView):
     def get(self, request):
         user = request.user
 
-        print(user.groups.all())
-        print(user.get_user_permissions)
+        user_permissions = list(user.get_user_permissions())
 
         return Response({
             "id": user.id,
@@ -42,12 +41,7 @@ class UserProfileAPIView(APIView):
             "email": user.email,
             "role": user.role,
             "group": (user.group and user.group.name) or None,
-            "perm": {
-                "view": user.has_perm("product.view_item"),
-                "add": user.has_perm("product.add_item"),
-                "change": user.has_perm("product.change_item"),
-                "delete": user.has_perm("product.delete_item"),
-            }
+            "permissions": user_permissions
         }, status=status.HTTP_200_OK)
 
 
@@ -60,7 +54,7 @@ class UserListAPIView(rest_framework.generics.ListAPIView):
 class UserDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     queryset = get_user_model().objects.all()
-    serializer_class = users.serializer.UserCreateSerializer
+    serializer_class = users.serializer.UserUpdateSerializer
 
 
 class UserSearchAPIView(rest_framework.generics.RetrieveAPIView):

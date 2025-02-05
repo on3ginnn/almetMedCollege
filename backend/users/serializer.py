@@ -12,7 +12,7 @@ class UserSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL
         fields = ['id', 'username', 'password', "first_name", "last_name", "email", "role", "group"]
-     
+    
 
 class UserCreateSerializer(rest_framework.serializers.ModelSerializer):
     email = rest_framework.serializers.EmailField()
@@ -80,8 +80,8 @@ class UserCreateSerializer(rest_framework.serializers.ModelSerializer):
         return django.contrib.auth.hashers.make_password(value)
 
 
-class UserUpdateSerializer(rest_framework.serializers.Serializer):
+class UserUpdateSerializer(rest_framework.serializers.ModelSerializer):
 
     class Meta:
         model = USER_MODEL
-        fields = ['username', 'password']
+        fields = ['username', 'password', "first_name", "last_name", "email", "role", "group"]
