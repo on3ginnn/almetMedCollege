@@ -7,7 +7,6 @@ class ExerciseAdmin(django.contrib.admin.ModelAdmin):
     search_fields = ("name",)  # Нужно для работы autocomplete_fields
 
 
-
 class GroupLessonInline(django.contrib.admin.TabularInline):  # Можно сделать StackedInline
     model = schedule.models.GroupLesson
     extra = 1
