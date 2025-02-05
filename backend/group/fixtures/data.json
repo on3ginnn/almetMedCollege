@@ -1,26 +1,18 @@
 [
 {
     "model": "group.group",
-    "pk": 1,
+    "pk": 2,
     "fields": {
-        "name": "СД23А",
+        "name": "СД23Б",
         "course": 2
     }
 },
 {
-    "model": "group.subgroup",
-    "pk": 1,
+    "model": "group.group",
+    "pk": 3,
     "fields": {
-        "group": 1,
-        "name": "1 бригада"
-    }
-},
-{
-    "model": "group.subgroup",
-    "pk": 2,
-    "fields": {
-        "group": 1,
-        "name": "2 бригада"
+        "name": "СД23А",
+        "course": 2
     }
 }
 ]
