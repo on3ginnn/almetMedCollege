@@ -1,12 +1,5 @@
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-from rest_framework.views import APIView
 import rest_framework.generics
-from rest_framework import status
-from rest_framework.response import Response
 import rest_framework.permissions
-from rest_framework_simplejwt import views as jwt_views
-from django.contrib.auth import get_user_model
 
 import group.serializer
 import users.permissions
