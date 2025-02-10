@@ -46,6 +46,15 @@ class GroupLesson(django.db.models.Model):
         limit_choices_to={"role__in": [User.Role.TEACHER, User.Role.ADMIN]},
         verbose_name="Преподаватель",
     )
+    classroom = django.db.models.CharField(
+        "кабинет",
+        max_length=15,
+        choices=[("cr-211", "211"), ("cr-212", "212"), ("cr-108", "108")],
+        blank=True,
+        default="---",
+        null=False,
+    )
+
     number = django.db.models.PositiveIntegerField("Номер пары")  # Для порядка следования пар
     subgroup = django.db.models.CharField(
         "подгруппа",

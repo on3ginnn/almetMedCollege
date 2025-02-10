@@ -12,5 +12,49 @@
     "fields": {
         "name": "МДК"
     }
+},
+{
+    "model": "schedule.schedule",
+    "pk": 1,
+    "fields": {
+        "date": "2025-02-03",
+        "group": 1
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 1,
+    "fields": {
+        "schedule": 1,
+        "exercise": 1,
+        "teacher": 3,
+        "classroom": "cr-108",
+        "number": 1,
+        "subgroup": "all"
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 2,
+    "fields": {
+        "schedule": 1,
+        "exercise": 2,
+        "teacher": 3,
+        "classroom": "cr-212",
+        "number": 2,
+        "subgroup": "first_subgroup"
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 3,
+    "fields": {
+        "schedule": 1,
+        "exercise": 1,
+        "teacher": 3,
+        "classroom": "cr-211",
+        "number": 2,
+        "subgroup": "second_subgroup"
+    }
 }
 ]
