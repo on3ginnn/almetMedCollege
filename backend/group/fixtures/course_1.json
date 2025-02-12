@@ -1,0 +1,42 @@
+[
+    {
+        "model": "group.group",
+        "pk": 24,
+        "fields": {
+            "name": "СД24А",
+            "course": 1
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 25,
+        "fields": {
+            "name": "СД24Б",
+            "course": 1
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 26,
+        "fields": {
+            "name": "СД24В",
+            "course": 1
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 27,
+        "fields": {
+            "name": "СД24Г",
+            "course": 1
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 28,
+        "fields": {
+            "name": "Ф24А",
+            "course": 1
+        }
+    }
+]

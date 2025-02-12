@@ -1,0 +1,58 @@
+[
+    {
+        "model": "group.group",
+        "pk": 1,
+        "fields": {
+            "name": "СД21А",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 2,
+        "fields": {
+            "name": "СД21Б",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 3,
+        "fields": {
+            "name": "СД21В",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 4,
+        "fields": {
+            "name": "СД21Д",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 5,
+        "fields": {
+            "name": "Ф21А",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 6,
+        "fields": {
+            "name": "ЛД21А",
+            "course": 4
+        }
+    },
+    {
+        "model": "group.group",
+        "pk": 7,
+        "fields": {
+            "name": "ЛД21Б",
+            "course": 4
+        }
+    }
+]
