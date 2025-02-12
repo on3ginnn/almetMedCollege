@@ -49,7 +49,13 @@ class GroupLesson(django.db.models.Model):
     classroom = django.db.models.CharField(
         "кабинет",
         max_length=15,
-        choices=[("cr-211", "211"), ("cr-212", "212"), ("cr-108", "108")],
+        choices=[
+            ("cr-102", "102"), ("cr-103", "103"), ("cr-107", "107"), 
+            ("cr-201", "201"), ("cr-202", "202"), ("cr-203", "203"), 
+            ("cr-204", "204"), ("cr-205", "205"), ("cr-207", "207")
+            ("cr-204", "204"), ("cr-205", "205"), ("cr-207", "207")
+        
+        ],
         blank=True,
         default="---",
         null=False,
