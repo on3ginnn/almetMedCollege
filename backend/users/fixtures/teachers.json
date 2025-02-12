@@ -1,0 +1,945 @@
+[
+    {
+        "model": "users.user",
+        "pk": 5,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher1",
+            "last_name": "Апачаева",
+            "first_name": "Гуландам",
+            "father_name": "Флотовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 6,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher2",
+            "last_name": "Арсланова",
+            "first_name": "Айгуль",
+            "father_name": "Альбертовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 7,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher3",
+            "last_name": "Багаутдинов",
+            "first_name": "Айрат",
+            "father_name": "Каримович",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 8,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher4",
+            "last_name": "Бизенкова",
+            "first_name": "Инга",
+            "father_name": "Михайловна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher5",
+            "last_name": "Валиев",
+            "first_name": "Ильмир",
+            "father_name": "Рамилович",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 10,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher6",
+            "last_name": "Валиуллина",
+            "first_name": "Гульнара",
+            "father_name": "Башировна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 11,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher7",
+            "last_name": "Галиева",
+            "first_name": "Вероника",
+            "father_name": "Сергеевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 12,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher8",
+            "last_name": "Галлямова",
+            "first_name": "Лайсан",
+            "father_name": "Хамзовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 13,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher9",
+            "last_name": "Гатауллина",
+            "first_name": "Фаузия",
+            "father_name": "Фоатовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 14,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher10",
+            "last_name": "Горячева",
+            "first_name": "Светлана",
+            "father_name": "Викторовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 15,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher11",
+            "last_name": "Губайдуллина",
+            "first_name": "Алия",
+            "father_name": "Рафиковна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 15,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher11",
+            "last_name": "Губайдуллина",
+            "first_name": "Алия",
+            "father_name": "Рафиковна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 16,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher12",
+            "last_name": "Даутова",
+            "first_name": "Фарида",
+            "father_name": "Атласовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 17,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher13",
+            "last_name": "Дмитриева",
+            "first_name": "Людмила",
+            "father_name": "Ивановна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 18,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher14",
+            "last_name": "Зиакаева",
+            "first_name": "Рима",
+            "father_name": "Рафаиловна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 19,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher15",
+            "last_name": "Ихсанова",
+            "first_name": "Светлана",
+            "father_name": "Салаватовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 20,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher16",
+            "last_name": "Кноль",
+            "first_name": "Юлия",
+            "father_name": "Сергеевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 21,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher17",
+            "last_name": "Макарова",
+            "first_name": "Тамара",
+            "father_name": "Петровна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 22,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher18",
+            "last_name": "Марисова",
+            "first_name": "Людмила",
+            "father_name": "Викторовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 23,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher19",
+            "last_name": "Махиянов",
+            "first_name": "Айдар",
+            "father_name": "Ринатович",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 24,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher20",
+            "last_name": "Мельникова",
+            "first_name": "Ангелина",
+            "father_name": "Сергеевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 25,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher21",
+            "last_name": "Моренова",
+            "first_name": "Лейсан",
+            "father_name": "Асгатовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 26,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher22",
+            "last_name": "Мохова",
+            "first_name": "Ольга",
+            "father_name": "Михайловна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 27,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher23",
+            "last_name": "Мусина",
+            "first_name": "Альбина",
+            "father_name": "Минахтамовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 28,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher24",
+            "last_name": "Нестерова",
+            "first_name": "Екатерина",
+            "father_name": "Анатольевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 29,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher25",
+            "last_name": "Паймухина",
+            "first_name": "Юлия",
+            "father_name": "Валерьевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 30,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher26",
+            "last_name": "Сабитова",
+            "first_name": "Лилия",
+            "father_name": "Минахтамовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 31,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher27",
+            "last_name": "Салахутдинов",
+            "first_name": "Рамиль",
+            "father_name": "Абулгасович",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 32,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher28",
+            "last_name": "Севастьянова",
+            "first_name": "Эльвира",
+            "father_name": "Ильдаровна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 33,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher29",
+            "last_name": "Султангирова",
+            "first_name": "Айгуль",
+            "father_name": "Изаеловна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 34,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher30",
+            "last_name": "Тайдакова",
+            "first_name": "Надежда",
+            "father_name": "Николаевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 35,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher31",
+            "last_name": "Талипова",
+            "first_name": "Гузаль",
+            "father_name": "Кирамовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 36,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher32",
+            "last_name": "Талипова",
+            "first_name": "Эльвира",
+            "father_name": "Масхудовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 37,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher33",
+            "last_name": "Туманова",
+            "first_name": "Ивилина",
+            "father_name": "Ильдаровна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 38,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher34",
+            "last_name": "Хасанова",
+            "first_name": "Эльвира",
+            "father_name": "Марселевна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 39,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher35",
+            "last_name": "Хусаинова",
+            "first_name": "Лилия",
+            "father_name": "Мидхатовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 40,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher36",
+            "last_name": "Чукашова",
+            "first_name": "Татьяна",
+            "father_name": "Александровна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 41,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher37",
+            "last_name": "Шагвалеев",
+            "first_name": "Рустам",
+            "father_name": "Расихович",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 42,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher38",
+            "last_name": "Шаехова",
+            "first_name": "Гузалия",
+            "father_name": "Миннегаязовна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 43,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher39",
+            "last_name": "Шаймарданова",
+            "first_name": "Лилия",
+            "father_name": "Назиповна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 44,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$1ZljLoJ16PvTm1H5AnW7GT$6GsZxz44fodEJoAsAfWDF0pb2I1QcQnvJ4k5G7YYrTo=",
+            "last_login": null,
+            "is_superuser": false,
+            "username": "teacher40",
+            "last_name": "Шакирянова",
+            "first_name": "Лилия",
+            "father_name": "Ислаховна",
+            "phone_number": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:37:20.391Z",
+            "role": "teacher",
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    }
+]
