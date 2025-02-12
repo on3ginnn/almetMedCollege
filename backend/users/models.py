@@ -1,7 +1,10 @@
 import django.db.models
 import django.contrib.auth.models
 import django.core.exceptions
+import phonenumber_field.modelfields
+
 import group.models
+
 
 
 class User(django.contrib.auth.models.AbstractUser):
@@ -26,6 +29,18 @@ class User(django.contrib.auth.models.AbstractUser):
         related_name='group_students',
         verbose_name='группа',
     )  # Только для студентов
+
+    father_name = django.db.models.CharField(
+        "отчество",
+        max_length=50,
+        blank=True,
+        default=None,
+        null=True,
+    )
+
+    phone_number = phonenumber_field.modelfields.PhoneNumberField()
+
+    REQUIRED_FIELDS = ["first_name", "last_name", "phone_number", "role"]
 
     def __str__(self):
         return self.get_full_name()

@@ -11,15 +11,15 @@ USER_MODEL = django.contrib.auth.get_user_model()
 class UserSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL
-        fields = ['id', 'username', 'password', "first_name", "last_name", "email", "role", "group"]
+        fields = ['id', 'username', 'password', "first_name", "last_name", 'father_name', 'phone_number', "email", "role", "group"]
     
 
 class UserCreateSerializer(rest_framework.serializers.ModelSerializer):
-    email = rest_framework.serializers.EmailField()
+    # email = rest_framework.serializers.EmailField()
     
     class Meta:
         model = USER_MODEL
-        fields = ['first_name', 'last_name', 'email', 'role', 'group']
+        fields = ['first_name', 'last_name', 'father_name', 'phone_number', 'role', 'group']
 
     def generate_unique_username(self):
         r = wonderwords.RandomWord()
@@ -84,4 +84,4 @@ class UserUpdateSerializer(rest_framework.serializers.ModelSerializer):
 
     class Meta:
         model = USER_MODEL
-        fields = ['username', 'password', "first_name", "last_name", "email", "role", "group"]
+        fields = ['username', 'password', "first_name", "last_name", 'father_name', 'phone_number', "email", "role", "group"]
