@@ -1,0 +1,25 @@
+[
+    {
+        "model": "users.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$RkmQjHoxfhjhlgcqtrMAuQ$8YmFp5oJ27vLhZLe1fXFykE2ucVjv60leLNlJs7AP8U=",
+            "last_login": "2025-01-29T11:21:57.902Z",
+            "is_superuser": true,
+            "username": "superuser",
+            "first_name": "Суперпользователь",
+            "last_name": "",
+            "father_name": "",
+            "phone_number": "",
+            "email": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2025-01-29T11:21:34.628Z",
+            "role": "admin",
+            "groups": [
+                3
+            ],
+            "user_permissions": []
+        }
+    }
+]

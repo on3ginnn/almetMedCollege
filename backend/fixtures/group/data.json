@@ -17,6 +17,9 @@
         "name": "teacher",
         "permissions": [
             36,
+            29,
+            30,
+            31,
             32,
             48
         ]

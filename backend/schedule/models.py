@@ -1,10 +1,10 @@
-from django.db import models
 from users.models import User
 from group.models import Group
+import django.db
 
 
-class Exercise(models.Model):
-    name = models.CharField(max_length=255, unique=True, verbose_name="Название предмета")
+class Exercise(django.db.models.Model):
+    name = django.db.models.CharField(max_length=255, unique=True, verbose_name="Название предмета")
 
     class Meta:
         verbose_name = "предмет"
@@ -14,9 +14,9 @@ class Exercise(models.Model):
         return self.name
 
 
-class Schedule(models.Model):
-    date = models.DateField("Дата")
-    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="schedules", verbose_name="Группа")
+class Schedule(django.db.models.Model):
+    date = django.db.models.DateField("Дата")
+    group = django.db.models.ForeignKey(Group, on_delete=django.db.models.CASCADE, related_name="schedules", verbose_name="Группа")
 
     class Meta:
         verbose_name = "расписание"
@@ -28,23 +28,46 @@ class Schedule(models.Model):
         return f"Расписание для {self.group} на {self.date}"
 
 
-class GroupLesson(models.Model):
-    schedule = models.ForeignKey(Schedule, on_delete=models.CASCADE, related_name="lessons", verbose_name="Расписание")
-    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, verbose_name="Предмет")
-    teacher = models.ForeignKey(
+class GroupLesson(django.db.models.Model):
+    class SubGroups(django.db.models.TextChoices):
+        ALL = 'all', 'Общая'
+        FIRST_SUBGROUP = 'first_subgroup', '1п/г'
+        SECONT_SUBGROUP = 'second_subgroup', '2п/г'
+        ONE_BRIGADE = 'first_brigade', '1 бригада'
+        SECOND_BRIGADE = 'second_brigade', '2 бригада'
+        THIRD_BRIGADE = 'third_brigade', '3 бригада'
+
+    schedule = django.db.models.ForeignKey(Schedule, on_delete=django.db.models.CASCADE, related_name="lessons", verbose_name="Расписание")
+    exercise = django.db.models.ForeignKey(Exercise, on_delete=django.db.models.CASCADE, verbose_name="Предмет")
+    teacher = django.db.models.ForeignKey(
         User,
-        on_delete=models.SET_NULL,
+        on_delete=django.db.models.SET_NULL,
         null=True,
         limit_choices_to={"role__in": [User.Role.TEACHER, User.Role.ADMIN]},
         verbose_name="Преподаватель",
     )
-    number = models.PositiveIntegerField("Номер пары")  # Для порядка следования пар
-    subgroup = models.ForeignKey(
-        "group.SubGroup",
-        on_delete=models.SET_NULL,
-        null=True,  # Подгруппа может быть не выбрана (тогда расписание для всей группы)
+    classroom = django.db.models.CharField(
+        "кабинет",
+        max_length=15,
+        choices=[
+            ("cr-102", "102"), ("cr-103", "103"), ("cr-107", "107"), 
+            ("cr-201", "201"), ("cr-202", "202"), ("cr-203", "203"), 
+            ("cr-204", "204"), ("cr-205", "205"), ("cr-207", "207")
+            ("cr-204", "204"), ("cr-205", "205"), ("cr-207", "207")
+        
+        ],
         blank=True,
-        verbose_name="Подгруппа",
+        default="---",
+        null=False,
+    )
+
+    number = django.db.models.PositiveIntegerField("Номер пары")  # Для порядка следования пар
+    subgroup = django.db.models.CharField(
+        "подгруппа",
+        max_length=15,
+        choices=SubGroups.choices,
+        default=SubGroups.ALL,
+        blank=True, 
     )
 
     class Meta:
@@ -54,4 +77,4 @@ class GroupLesson(models.Model):
         ordering = ["number"]
 
     def __str__(self):
-        return f"{self.number}. {self.exercise} ({self.teacher}) - {self.subgroup if self.subgroup else 'Вся группа'}"
+        return f"{self.number}. {self.exercise} ({self.teacher}) - {self.get_subgroup_display()}"

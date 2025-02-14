@@ -14,11 +14,11 @@ class CustomUserAdmin(UserAdmin):
 
     fieldsets = (
         ('Учетные данные', {'fields': ('username', 'password')}), 
-        ('Персональные данные', {'fields': ('first_name', 'last_name', 'role', 'email', 'group')}), 
+        ('Персональные данные', {'fields': ('first_name', 'last_name', 'father_name', 'phone_number', 'role', 'email', 'group')}), 
         ('Доступ', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
     )
     add_fieldsets = (
-        ('Персональные данные', {'classes': ('wide',), 'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'email', 'role', 'group')}), 
+        ('Персональные данные', {'classes': ('wide',), 'fields': ('username', 'password1', 'password2', 'first_name', 'last_name', 'father_name', 'phone_number', 'role', 'group')}), 
     )
     list_display = ('id', user_full_name, 'group', 'is_staff', 'is_active')
     list_display_links = ('id', user_full_name, )

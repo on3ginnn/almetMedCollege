@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     "corsheaders",
+    "phonenumber_field",
 
     "users.apps.UsersConfig",
     "news.apps.NewsConfig",
@@ -42,6 +43,8 @@ INSTALLED_APPS = [
     "schedule.apps.ScheduleConfig",
 
 ]
+
+PHONENUMBER_DEFAULT_REGION = "RU"
 
 # настройка DRF  аутентификации с помощью JWT-токена
 REST_FRAMEWORK = {

@@ -28,8 +28,9 @@
         "schedule": 1,
         "exercise": 1,
         "teacher": 3,
+        "classroom": "cr-108",
         "number": 1,
-        "subgroup": null
+        "subgroup": "all"
     }
 },
 {
@@ -39,8 +40,21 @@
         "schedule": 1,
         "exercise": 2,
         "teacher": 3,
+        "classroom": "cr-212",
         "number": 2,
-        "subgroup": null
+        "subgroup": "first_subgroup"
+    }
+},
+{
+    "model": "schedule.grouplesson",
+    "pk": 3,
+    "fields": {
+        "schedule": 1,
+        "exercise": 1,
+        "teacher": 3,
+        "classroom": "cr-211",
+        "number": 2,
+        "subgroup": "second_subgroup"
     }
 }
 ]

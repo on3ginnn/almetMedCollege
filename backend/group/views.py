@@ -1,3 +1,24 @@
-from django.shortcuts import render
+import rest_framework.generics
+import rest_framework.permissions
 
-# Create your views here.
+import group.serializer
+import users.permissions
+import group.models
+
+
+class GroupCreateAPIView(rest_framework.generics.CreateAPIView):
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+    serializer_class = group.serializer.GroupCreateSerializer
+    queryset = group.models.Group.objects.all()
+
+
+class GroupListAPIView(rest_framework.generics.ListAPIView):
+    queryset = group.models.Group.objects.all()
+    serializer_class = group.serializer.GroupSerializer
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+
+
+class GroupDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+    queryset = group.models.Group.objects.all()
+    serializer_class = group.serializer.GroupUpdateSerializer

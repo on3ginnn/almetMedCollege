@@ -12,12 +12,12 @@ class GroupAdmin(django.contrib.admin.ModelAdmin):
     search_fields = ("name", )
     
 
-@django.contrib.admin.register(group.models.SubGroup)
-class SubGroupAdmin(django.contrib.admin.ModelAdmin):
-    list_display = ('id', 'name', 'group')
-    list_display_links = ('name', )
-    list_filter = ('group', )
-    ordering = ('group', 'name')
-    fields = ('name', 'group')
+# @django.contrib.admin.register(group.models.SubGroup)
+# class SubGroupAdmin(django.contrib.admin.ModelAdmin):
+#     list_display = ('id', 'name', 'group')
+#     list_display_links = ('name', )
+#     list_filter = ('group', )
+#     ordering = ('group', 'name')
+#     fields = ('name', 'group')
 
-    autocomplete_fields = ["group"]
+#     autocomplete_fields = ["group"]
