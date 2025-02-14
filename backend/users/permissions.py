@@ -1,14 +1,6 @@
 import rest_framework.permissions
 
 
-class IsAdminRole(rest_framework.permissions.IsAuthenticated):
-    """
-    Разрешает доступ только пользователям с ролью 'admin'.
-    """
-    def has_permission(self, request, view):
-        return bool(super().has_permission(request, view) and request.user.role == 'admin')
-
-
 class DjangoModelPermissionsWithGroups(rest_framework.permissions.DjangoModelPermissions):
     """Расширенный класс разрешений, проверяющий права из групп"""
     def __init__(self):
@@ -35,3 +27,11 @@ class DjangoModelPermissionsWithGroups(rest_framework.permissions.DjangoModelPer
 
         # Проверяем, есть ли у пользователя (или его групп) нужные права
         return any(perm in user_permissions for perm in perms)
+
+
+class IsAdminRole(DjangoModelPermissionsWithGroups):
+    """
+    Разрешает доступ только пользователям с ролью 'admin' и правами.
+    """
+    def has_permission(self, request, view):
+        return bool(super().has_permission(request, view) and request.user.role == 'admin')

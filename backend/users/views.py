@@ -53,8 +53,8 @@ class UserProfileAPIView(APIView):
 
 class UserListAPIView(rest_framework.generics.ListAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = users.serializer.UserSerializer
-    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+    serializer_class = users.serializer.UserListWithPasswordSerializer
+    permission_classes = [users.permissions.IsAdminRole]
 
 
 class UserDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
