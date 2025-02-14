@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "news.apps.NewsConfig",
     "group.apps.GroupConfig",
     "schedule.apps.ScheduleConfig",
+    "major.apps.MajorConfig",
 
 ]
 

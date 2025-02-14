@@ -4,5 +4,6 @@ djangorestframework-simplejwt==5.4.0
 django-cors-headers==4.6.0
 python-slugify==8.0.4
 python-dotenv==1.0.1
-django-phonenumber-field
+django-phonenumber-field==8.0.0
 wonderwords==2.2.0
+phonenumbers==8.13.54
