@@ -35,13 +35,16 @@ class User(django.contrib.auth.models.AbstractUser):
 
     REQUIRED_FIELDS = ["first_name", "last_name", "phone_number", "role"]
 
-    def __str__(self):
-        return self.get_full_name()
-
     class Meta:
         verbose_name = "пользователь"
         verbose_name_plural = "пользователи"
         default_permissions = ('add', 'change', 'delete', 'view')
+
+    def get_full_name(self):
+        return '%s %s %s' % (self.last_name, self.first_name, self.father_name)
+
+    def __str__(self):
+        return self.get_full_name()
 
 
 class TeacherInfo(django.db.models.Model):  # TODO: реализовать правильную архитектуру списковых полей

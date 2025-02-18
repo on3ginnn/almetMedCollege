@@ -22,6 +22,25 @@ ALLOWED_HOSTS = list(
     map(str.strip, os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")),
 )
 
+"""
+логирование sql запросов в консоль
+"""
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#         },
+#     },
+#     "loggers": {
+#         "django.db.backends": {
+#             "level": "DEBUG",
+#             "handlers": ["console"],
+#         },
+#     },
+# }
+
 AUTH_USER_MODEL = "users.User"
 
 INSTALLED_APPS = [
@@ -44,6 +63,9 @@ INSTALLED_APPS = [
     "major.apps.MajorConfig",
 
 ]
+
+if DEBUG:
+    INSTALLED_APPS.append("debug_toolbar")
 
 PHONENUMBER_DEFAULT_REGION = "RU"
 
@@ -81,6 +103,12 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if DEBUG:
+    INTERNAL_IPS = [
+        "127.0.0.1",
+    ]
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 CMS_COLOR_SCHEME = "light"
 

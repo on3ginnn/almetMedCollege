@@ -13,13 +13,18 @@ USER_MODEL = django.contrib.auth.get_user_model()
 class GroupSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = group.models.Group
-        fields = ['id', 'name', 'course', 'group_students']
-     
+        fields = ['id', 'name', 'group_students']
+
+
+class ScheduleGroupSerializer(GroupSerializer):
+    class Meta(GroupSerializer.Meta):
+        fields = ['name']
+
 
 class GroupCreateSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = group.models.Group
-        fields = ['name', 'course']
+        fields = ['name',]
 
 
 class GroupUpdateSerializer(rest_framework.serializers.ModelSerializer):
@@ -31,4 +36,4 @@ class GroupUpdateSerializer(rest_framework.serializers.ModelSerializer):
 
     class Meta:
         model = group.models.Group
-        fields = ['name', 'course', 'group_students']
+        fields = ['name', 'group_students']

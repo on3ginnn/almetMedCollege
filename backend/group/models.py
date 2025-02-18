@@ -3,29 +3,25 @@ import django.core.exceptions
 
 
 class Group(django.db.models.Model):
-    COURSE_CHOICES = [
-        (1, "1 курс"),
-        (2, "2 курс"),
-        (3, "3 курс"),
-        (4, "4 курс"),
-    ]
+    # COURSE_CHOICES = [
+    #     (1, "1 курс"),
+    #     (2, "2 курс"),
+    #     (3, "3 курс"),
+    #     (4, "4 курс"),
+    # ]
 
-    name = django.db.models.CharField(max_length=5, verbose_name="Название группы")
-    course = django.db.models.IntegerField(choices=COURSE_CHOICES, verbose_name="Номер курса")
+    name = django.db.models.CharField(max_length=5, verbose_name="Название группы", unique=True)
+    # course = django.db.models.IntegerField(choices=COURSE_CHOICES, verbose_name="Номер курса")
 
     class Meta:
         verbose_name = "группа"
         verbose_name_plural = "группы"
-        unique_together = ('name', 'course')  # Уникальность пары "название-курс"
 
-    def clean(self):
-        if self.course is None:
-            raise django.core.exceptions.ValidationError("Номер курса обязателен для заполнения.")
-        if self.course < 1 or self.course > 4:
-            raise django.core.exceptions.ValidationError("Курс должен быть от 1 до 4")
+    def get_course(self):
+        pass
 
     def __str__(self):
-        return f"{self.name} ({self.get_course_display()})"
+        return f"{self.name} ({self.get_course()})"
     
 
 # class SubGroup(django.db.models.Model):

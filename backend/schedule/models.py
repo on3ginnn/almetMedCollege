@@ -39,7 +39,7 @@ class GroupLesson(django.db.models.Model):
         SECOND_BRIGADE = 'second_brigade', '2 бригада'
         THIRD_BRIGADE = 'third_brigade', '3 бригада'
 
-    schedule = django.db.models.ForeignKey(Schedule, on_delete=django.db.models.CASCADE, related_name="lessons", verbose_name="расписание")
+    schedule = django.db.models.ForeignKey(Schedule, on_delete=django.db.models.CASCADE, related_name="lessons_set", verbose_name="расписание")
     major = django.db.models.ForeignKey(major.models.Major, on_delete=django.db.models.SET_NULL, verbose_name="предмет", null=True)
     teacher = django.db.models.ForeignKey(
         User,

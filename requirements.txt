@@ -7,3 +7,4 @@ python-dotenv==1.0.1
 django-phonenumber-field==8.0.0
 wonderwords==2.2.0
 phonenumbers==8.13.54
+django-debug-toolbar==4.3.0
