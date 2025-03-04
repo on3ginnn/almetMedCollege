@@ -25,22 +25,13 @@ class UserLoginAPIView(jwt_views.TokenObtainPairView):
 
 class UserProfileAPIView(APIView):
     permission_classes = [rest_framework.permissions.IsAuthenticated]
+    serializer_class = users.serializer.UserSerializer
 
     def get(self, request):
         user = request.user
-
-        user_permissions = list(user.get_user_permissions())
-
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email,
-            "role": user.role,
-            "group": (user.group and user.group.name) or None,
-            "permissions": user_permissions
-        }, status=status.HTTP_200_OK)
+        serializer = self.serializer_class(user)
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserListAPIView(rest_framework.generics.ListAPIView):

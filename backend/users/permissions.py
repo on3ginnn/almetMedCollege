@@ -29,6 +29,15 @@ class DjangoModelPermissionsWithGroups(rest_framework.permissions.DjangoModelPer
         return any(perm in user_permissions for perm in perms)
 
 
+class DjangoModelPermissionsWithGroupsOrReadOnly(DjangoModelPermissionsWithGroups):
+    def has_permission(self, request, view):
+        safe_methods = ['GET', 'HEAD', 'OPTIONS']
+        if request.method in safe_methods:
+            return True  # Для безопасных методов возвращаем True
+    
+        return super().has_permission(request, view)
+
+
 class IsAdminRole(DjangoModelPermissionsWithGroups):
     """
     Разрешает доступ только пользователям с ролью 'admin' и правами.
