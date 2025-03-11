@@ -10,6 +10,13 @@ import users.serializer
 import users.permissions
 
 
+class UserLogoutAPIView(APIView):
+   def get(self, request):
+        response = Response({'message': 'Logout successful'}, status=status.HTTP_200_OK)
+        response.delete_cookie('access_token')  # Удаляем cookie
+        return response
+   
+
 class UserCreateAPIView(rest_framework.generics.CreateAPIView):
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     serializer_class = users.serializer.UserCreateSerializer
@@ -19,8 +26,22 @@ class UserCreateAPIView(rest_framework.generics.CreateAPIView):
 class UserLoginAPIView(jwt_views.TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
+        # print(response.data)
+        access_token = response.data['access']
+        # print(response.__dict__)
+        response.set_cookie(
+            key='access_token',  # Имя cookie
+            value=access_token,  # Значение (access токен)
+            httponly=True,       # HTTP-only
+            secure=False,       # Для HTTPS установите True
+            samesite='Lax',      # Политика SameSite
+            max_age=50000,        # Время жизни cookie (в секундах)
+        )
+        print(response.cookies)
 
-        return Response({"tokens": response.data}, status=response.status_code)
+        return response
+        # else:
+        #     return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserProfileAPIView(APIView):
@@ -29,6 +50,7 @@ class UserProfileAPIView(APIView):
 
     def get(self, request):
         user = request.user
+        print("Authenticated user:", user)  # Логируем пользователяЁЁ
         serializer = self.serializer_class(user)
         print(serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)

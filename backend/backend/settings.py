@@ -82,10 +82,14 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=30),
     'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',  # должен быть HTTP_ перед названием и капсом все
+    # 'AUTH_HEADER_TYPES': ('Bearer',),
+    # 'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',  # должен быть HTTP_ перед названием и капсом все
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
+    'AUTH_COOKIE': 'access_token',                  # Имя cookie для access токена
+    'AUTH_COOKIE_HTTP_ONLY': True,                  # HTTP-only cookie
+    'AUTH_COOKIE_SECURE': False,                    # Для HTTPS установите True
+    'AUTH_COOKIE_SAMESITE': 'Lax',                  # Политика SameSite
 }
 
 # разрешенные хосты имеющие доступ к бэкэнду
