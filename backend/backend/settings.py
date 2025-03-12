@@ -89,9 +89,12 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_COOKIE': 'access_token',                  # Имя cookie для access токена
     'AUTH_COOKIE_HTTP_ONLY': True,                  # HTTP-only cookie
-    'AUTH_COOKIE_SECURE': False,                    # Для HTTPS установите True
-    'AUTH_COOKIE_SAMESITE': 'Lax',                  # Политика SameSite
+    'AUTH_COOKIE_SECURE': True,                    # Для HTTPS установите True
+    'AUTH_COOKIE_SAMESITE': 'None',                  # Политика SameSite
 }
+
+if DEBUG:
+    SIMPLE_JWT["AUTH_COOKIE_SECURE"] = False
 
 # разрешенные хосты имеющие доступ к бэкэнду
 CORS_ALLOWED_ORIGINS = [

@@ -1,6 +1,6 @@
 from functools import wraps
-from rest_framework.authentication import CSRFCheck
-from rest_framework import exceptions, request, response
+from django.middleware.csrf import CsrfViewMiddleware
+from rest_framework import exceptions
 
 
 def enforce_csrf(func):
@@ -9,10 +9,15 @@ def enforce_csrf(func):
     """
     @wraps(func)
     def wrapped_view(request, *args, **kwargs):
-        check = CSRFCheck(dummy_get_response)
-        check.process_request(request)
-        reason = check.process_view(request, None, (), {})
+        middleware = CsrfViewMiddleware(lambda request: None)
+        # Вызываем метод process_request для проверки CSRF
+        middleware.process_request(request)
+        
+        # Проверяем, есть ли ошибки
+        reason = middleware.process_view(request, None, (), {})
         if reason:
-            raise exceptions.PermissionDenied('CSRF Failed: %s' % reason) 
+            raise exceptions.PermissionDenied('CSRF Failed: %s' % reason)
+        
         return func(request, *args, **kwargs)
+    
     return wrapped_view

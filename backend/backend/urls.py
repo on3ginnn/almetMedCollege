@@ -11,13 +11,9 @@ import schedule.urls
 
 
 urlpatterns = [
-    # django.urls.path(
-    #     "admin/autocomplete/",  
-    #     backend.views.CustomAutocompleteJsonView.as_view(admin_site=django.contrib.admin.site),
-    #     name="ajax-autocomplete",
-    # ),
-
+    django.urls.path('login/', users.views.UserLoginAPIView.as_view(), name='login'),
     django.urls.path("logout/", users.views.UserLogoutAPIView.as_view(), name="logout"),
+
     django.urls.path("user/", django.urls.include(users.urls)),
     django.urls.path("group/", django.urls.include(group.urls)),
     django.urls.path("news/", django.urls.include(news.urls)),

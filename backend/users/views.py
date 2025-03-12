@@ -28,7 +28,7 @@ class UserCreateAPIView(rest_framework.generics.CreateAPIView):
 
 class UserLoginAPIView(jwt_views.TokenObtainPairView):
 
-    @method_decorator(users.utils.enforce_csrf)
+    # @method_decorator(users.utils.enforce_csrf)
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         # print(response.data)
