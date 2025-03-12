@@ -5,6 +5,7 @@ from rest_framework.response import Response
 import rest_framework.permissions
 from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
 import users.serializer
 import users.permissions
@@ -30,14 +31,17 @@ class UserLoginAPIView(jwt_views.TokenObtainPairView):
         access_token = response.data['access']
         # print(response.__dict__)
         response.set_cookie(
-            key='access_token',  # Имя cookie
+            key=settings.SIMPLE_JWT['AUTH_COOKIE'],  # Имя cookie
             value=access_token,  # Значение (access токен)
-            httponly=True,       # HTTP-only
-            secure=False,       # Для HTTPS установите True
-            samesite='Lax',      # Политика SameSite
-            max_age=50000,        # Время жизни cookie (в секундах)
+            httponly=settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],       # HTTP-only
+            secure=settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],       # Для HTTPS установите True
+            samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],      # Политика SameSite
+            expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],        # Время жизни cookie (в секундах)
         )
         print(response.cookies)
+        
+        del response.data['access']
+        del response.data['refresh']
 
         return response
         # else:
