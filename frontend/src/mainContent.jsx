@@ -1,4 +1,6 @@
 import * as React from 'react';
+import axios from "axios";
+import { useEffect, useState } from "react"
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -241,7 +243,7 @@ const demoSession = {
 function MainContent(props) {
   const { window } = props;
 
-  const [pathname, setPathname] = React.useState('/dashboard');
+  const [pathname, setPathname] = useState('/dashboard');
 
   const router = React.useMemo(() => {
     return {
@@ -254,11 +256,73 @@ function MainContent(props) {
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
 
-  const [session, setSession] = React.useState(demoSession);
+  const [session, setSession] = useState(null);
+  const [error, setError] = useState(null); // Состояние для ошибок
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/login/', {
+          username: "cooper",
+          password: "123ABCabc@"
+        }, {
+          withCredentials: true // Включаем куки
+        });
+        console.log(response);
+      } catch (error) {
+        if (error.response) {
+          console.log('Error Response:', error.response.data);
+          console.log('Status Code:', error.response.status);
+        } else if (error.request) {
+          console.log('No Response Received:', error.request);
+        } else {
+          console.log('Error:', error.message);
+        }
+      }
+
+      
+      try {
+        const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
+          withCredentials: true, // Включаем куки в запрос
+        });
+        console.log(response_get.data)
+        setSession({
+          user: {
+            name: `${response_get.data.first_name}`,
+            email: `${response_get.data.email}`,
+            image: 'https://avatars.githubusercontent.com/u/19550456',
+          },
+        }); // Сохраняем данные профиля в состояние
+      } catch (err) {
+        setError(err.message); // Сохраняем сообщение об ошибке
+      }
+    };
+
+    fetchProfile(); // Вызываем функцию получения профиля
+  }, []);
+
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        setSession(demoSession);
+        const fetchProfile = async () => {
+          try {
+            const response = await axios.post('http://127.0.0.1:8000/login/', {
+              withCredentials: true, // Включаем куки в запрос
+              data: {"username": "cooper", "password": "123ABCabc@"}
+            });
+            console.log(response.data);
+            const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
+              withCredentials: true, // Включаем куки в запрос
+            });
+            console.log(response_get.data)
+
+            setSession(response_get.data); // Сохраняем данные профиля в состояние
+          } catch (err) {
+            setError(err.message); // Сохраняем сообщение об ошибке
+          }
+        };
+    
+        fetchProfile(); // Вызываем функцию получения профиля
       },
       signOut: () => {
         setSession(null);
