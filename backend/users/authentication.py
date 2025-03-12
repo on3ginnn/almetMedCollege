@@ -1,8 +1,12 @@
 import rest_framework_simplejwt.authentication
 import django.conf
+from django.utils.decorators import method_decorator
+import users.utils
 
 
 class CookieJWTAuthentication(rest_framework_simplejwt.authentication.JWTAuthentication):
+
+    @method_decorator(users.utils.enforce_csrf)
     def authenticate(self, request):
         # header = self.get_header(request)
         

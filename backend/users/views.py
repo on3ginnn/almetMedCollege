@@ -6,7 +6,9 @@ import rest_framework.permissions
 from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.utils.decorators import method_decorator
 
+import users.utils
 import users.serializer
 import users.permissions
 
@@ -25,6 +27,8 @@ class UserCreateAPIView(rest_framework.generics.CreateAPIView):
 
 
 class UserLoginAPIView(jwt_views.TokenObtainPairView):
+
+    @method_decorator(users.utils.enforce_csrf)
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         # print(response.data)
