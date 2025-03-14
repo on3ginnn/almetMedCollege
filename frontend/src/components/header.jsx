@@ -1,20 +1,14 @@
-// import { Button, Nav, Navbar, Container, Offcanvas, Form } from "react-bootstrap"
-// import { Link, useNavigate } from "react-router-dom";
-// import { authRoutes, publicRoutes } from "../config/routes";
-// import { observer } from "mobx-react";
-// import { userStore } from "../stores/UserStore";
-// import "../assets/css/header.css";
-// import { motion } from 'framer-motion';
+import React from 'react';
+import { AppBar, Toolbar, Typography } from '@mui/material';
 
-const Header = () => {
-    const brandName = "KIBET";
-    const expand = "md";
-    // const logout = ()=>{
-    //     userStore.logout();
-    //         navigate('/login');
-    // }
-    return (
-        <h1>шапка</h1>
-    )
+export const Header = () => {
+  return (
+    <AppBar position="static">
+      <Toolbar>
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          Dashboard Header
+        </Typography>
+      </Toolbar>
+    </AppBar>
+  );
 }
-export default Header;

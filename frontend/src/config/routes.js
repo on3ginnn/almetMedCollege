@@ -9,13 +9,16 @@
 // import addProduct from "../components/products/add_product";
 // import editCategory from "../components/categories/edit_category";
 
+import LoginForm from "../components/login";
+import HomePage from "../components/homepage";
 
-// export const publicRoutes = [
-//     {
-//         name:'Главная',
-//         path:'/',
-//         component:Home
-//     },
+
+export const publicRoutes = [
+    {
+        name:'Главная',
+        path:'/',
+        component:HomePage
+    },
 //     {
 //         name:'Категории',
 //         path:'/categories',
@@ -31,13 +34,13 @@
 //         path:'/register',
 //         component:Register
 //     },
-//     {
-//         name:'Авторизация',
-//         path:'/login',
-//         component:Auth
-//     }
+    {
+        name: 'Войти',
+        path: '/login',
+        component:LoginForm
+    }
 
-// ];
+];
 // export const authRoutes = [
 //     {
 //         name:'Профиль',

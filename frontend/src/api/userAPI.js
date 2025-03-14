@@ -64,12 +64,7 @@ export default class UserAPI {
     }
     static async getProfile() {
         try {
-            const response = await apiClient.get('/auth/profile/', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                }
-            });
-
+            const response = await apiClient.get('/user/profile/');
             return response.data;
         } catch (error) {
             console.error(error.response.data.message);

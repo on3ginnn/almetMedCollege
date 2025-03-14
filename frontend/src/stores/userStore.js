@@ -33,11 +33,18 @@ class UserStore{
         } catch (error) {
         }
     }
-    async getProfileUser(){
+    async getProfile(){
         try {
-            const response = await UserAPI.getProfile();
-            return response;
+            const response =  userAPI.getProfile();
+            console.log(response.data);
+            if (response.ok) { // Проверка статуса ответа
+                return response.data;
+            } else {
+                throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+            }
         } catch (error) {
+            console.error('Ошибка при получении профиля:', error);
+            throw error; // Перебрасываем ошибку для обработки выше
         }
     }
     async loginUser(data){

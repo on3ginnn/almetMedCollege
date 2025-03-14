@@ -1,26 +1,35 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container } from '@mui/material';
 import { userStore } from './../stores/userStore';
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
-const LoginForm = () => {
+
+export const LoginForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
   });
 
   const handleChange = (e) => {
+    console.log(e.target);
     const { name, value } = e.target;
+    console.log(name);
+    console.log(value);
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Здесь можно добавить логику отправки данных на сервер
-    return userStore.loginUser(formData);
+    try {
+      await userStore.loginUser(formData); // Используем async/await
+      navigate('/'); // Перенаправляем после успешной авторизации
+    } catch (error) {
+      setError(error.message); // Отображаем ошибку
+    }
   };
 
   return (
@@ -57,5 +66,3 @@ const LoginForm = () => {
     </Container>
   );
 };
-
-export default LoginForm;

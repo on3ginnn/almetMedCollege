@@ -1,26 +1,20 @@
-import { useState } from 'react'
 import MainContent from './mainContent';
-// import Main from './components/main';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import * as React from 'react';
-import { BrowserRouter, Routes, Route } from "react-router";
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import LoginForm from './components/login';
+import {LoginForm } from './components/login';
+import { HomePage } from './components/homepage';
 
 function App() {
   return (
-    // <Container>
-        // <MainContent />
-    <LoginForm />
-    // </Container>
-    // <BrowserRouter>
-    // <Header/>
-    // <Main/>
-    // </BrowserRouter>
-
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<MainContent />} >
+          <Route index element={<HomePage />} />
+          <Route path='/login' element={<LoginForm />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
-    
 }
 
 export default App

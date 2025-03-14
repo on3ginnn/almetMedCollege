@@ -22,6 +22,14 @@ import {
   AccountPopoverFooter,
   SignOutButton,
 } from '@toolpad/core/Account';
+import { Outlet, useNavigate, } from 'react-router-dom';
+import { LoginForm } from "./components/login"
+import { HomePage } from './components/homepage';
+import { Header } from './components/header';
+import { SideBar } from './components/sidebar';
+import { customRouter } from './components/customRouter';
+import { userStore } from './stores/userStore';
+import { apiClient } from './config/APIClient'
 
 const NAVIGATION = [
   {
@@ -29,13 +37,13 @@ const NAVIGATION = [
     title: 'Main items',
   },
   {
-    segment: 'dashboard',
-    title: 'Dashboard',
+    segment: '',
+    title: 'Главная',
     icon: <DashboardIcon />,
   },
   {
-    segment: 'orders',
-    title: 'Orders',
+    segment: 'login',
+    title: 'Войти',
     icon: <ShoppingCartIcon />,
   },
 ];
@@ -242,16 +250,8 @@ const demoSession = {
 
 function MainContent(props) {
   const { window } = props;
-
-  const [pathname, setPathname] = useState('/dashboard');
-
-  const router = React.useMemo(() => {
-    return {
-      pathname,
-      searchParams: new URLSearchParams(),
-      navigate: (path) => setPathname(String(path)),
-    };
-  }, [pathname]);
+  const router = customRouter();
+  const navigate = useNavigate();
 
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
@@ -259,64 +259,83 @@ function MainContent(props) {
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null); // Состояние для ошибок
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axios.post('http://127.0.0.1:8000/login/', {
-          username: "cooper",
-          password: "123ABCabc@"
-        }, {
-          withCredentials: true // Включаем куки
-        });
-        console.log(response);
-      } catch (error) {
-        if (error.response) {
-          console.log('Error Response:', error.response.data);
-          console.log('Status Code:', error.response.status);
-        } else if (error.request) {
-          console.log('No Response Received:', error.request);
-        } else {
-          console.log('Error:', error.message);
-        }
-      }
+  // useEffect(() => {
+  //   const fetchProfile = async () => {
+  //     try {
+  //       const response = await axios.post('http://127.0.0.1:8000/login/', {
+  //         username: "cooper",
+  //         password: "123ABCabc@"
+  //       }, {
+  //         withCredentials: true // Включаем куки
+  //       });
+  //       console.log(response);
+  //     } catch (error) {
+  //       if (error.response) {
+  //         console.log('Error Response:', error.response.data);
+  //         console.log('Status Code:', error.response.status);
+  //       } else if (error.request) {
+  //         console.log('No Response Received:', error.request);
+  //       } else {
+  //         console.log('Error:', error.message);
+  //       }
+  //     }
 
       
-      try {
-        const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
-          withCredentials: true, // Включаем куки в запрос
-        });
-        console.log(response_get.data)
-        setSession({
-          user: {
-            name: `${response_get.data.first_name}`,
-            email: `${response_get.data.email}`,
-            image: 'https://avatars.githubusercontent.com/u/19550456',
-          },
-        }); // Сохраняем данные профиля в состояние
-      } catch (err) {
-        setError(err.message); // Сохраняем сообщение об ошибке
-      }
-    };
+  //     try {
+  //       const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
+  //         withCredentials: true, // Включаем куки в запрос
+  //       });
+  //       console.log(response_get.data)
+  //       setSession({
+  //         user: {
+  //           name: `${response_get.data.first_name}`,
+  //           email: `${response_get.data.email}`,
+  //           image: 'https://avatars.githubusercontent.com/u/19550456',
+  //         },
+  //       }); // Сохраняем данные профиля в состояние
+  //     } catch (err) {
+  //       setError(err.message); // Сохраняем сообщение об ошибке
+  //     }
+  //   };
 
-    fetchProfile(); // Вызываем функцию получения профиля
-  }, []);
+  //   fetchProfile(); // Вызываем функцию получения профиля
+  // }, []);
 
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
         const fetchProfile = async () => {
+          // try {
+          //   const response = await axios.post('http://127.0.0.1:8000/login/', {
+          //     username: "cooper",
+          //     password: "123ABCabc@"
+          //   }, {
+          //     withCredentials: true // Включаем куки
+          //   });
+          //   console.log(response);
+          // } catch (error) {
+          //   if (error.response) {
+          //     console.log('Error Response:', error.response.data);
+          //     console.log('Status Code:', error.response.status);
+          //   } else if (error.request) {
+          //     console.log('No Response Received:', error.request);
+          //   } else {
+          //     console.log('Error:', error.message);
+          //   }
+          // }
+    
+          console.log("fff")
           try {
-            const response = await axios.post('http://127.0.0.1:8000/login/', {
-              withCredentials: true, // Включаем куки в запрос
-              data: {"username": "cooper", "password": "123ABCabc@"}
-            });
-            console.log(response.data);
-            const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
-              withCredentials: true, // Включаем куки в запрос
-            });
-            console.log(response_get.data)
-
-            setSession(response_get.data); // Сохраняем данные профиля в состояние
+            const response = await apiClient.get('/user/profile/');
+            const response_get = response.data; // Теперь response_get содержит данные
+            console.log(response_get)
+            setSession({
+              user: {
+                name: `${response.data.first_name}`,
+                email: `${response.data.email}`,
+                image: 'https://avatars.githubusercontent.com/u/19550456',
+              },
+            }); // Сохраняем данные профиля в состояние
           } catch (err) {
             setError(err.message); // Сохраняем сообщение об ошибке
           }
@@ -333,16 +352,23 @@ function MainContent(props) {
   return (
     <AppProvider
       navigation={NAVIGATION}
+      branding={{
+        // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
+        title: 'Альметьевский медицинский колледж',
+        homeUrl: '/',
+      }}
       router={router}
       theme={demoTheme}
       window={demoWindow}
       authentication={authentication}
+      // authentication={React.useMemo(() => navigate('/login'))}
       session={session}
     >
       <DashboardLayout
         slots={{ toolbarAccount: () => null, sidebarFooter: SidebarFooterAccount }}
       >
-        <DemoPageContent pathname={pathname} />
+        {/* <DemoPageContent pathname={pathname} /> */}
+        <Outlet />
       </DashboardLayout>
     </AppProvider>
   );
