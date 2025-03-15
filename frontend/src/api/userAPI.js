@@ -17,6 +17,28 @@ export default class UserAPI {
             console.log(error);
         }
     }
+    static async getProfile() {
+        try {
+            const response = await apiClient.get('/user/profile/');
+            const res_data = response.data;
+            console.log(res_data);
+            return res_data;
+            return response;
+        } catch (error) {
+            console.error(error.response.data.message);
+            if (error.response.status === 401) {
+                console.error('Требуется повторный вход в систему');
+            }
+        }
+    }
+    static async logout(){
+        try{
+            const response = await apiClient.get("logout");
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
     static async setUser(data){
         try {
 
@@ -60,17 +82,6 @@ export default class UserAPI {
             return response;
         } catch (error) {
             return error;
-        }
-    }
-    static async getProfile() {
-        try {
-            const response = await apiClient.get('/user/profile/');
-            return response.data;
-        } catch (error) {
-            console.error(error.response.data.message);
-            if (error.response.status === 401) {
-                console.error('Требуется повторный вход в систему');
-            }
         }
     }
 }

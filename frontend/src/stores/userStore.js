@@ -35,10 +35,10 @@ class UserStore{
     }
     async getProfile(){
         try {
-            const response =  userAPI.getProfile();
-            console.log(response.data);
-            if (response.ok) { // Проверка статуса ответа
-                return response.data;
+            const res_data = await userAPI.getProfile();
+            console.log(res_data);
+            if (res_data) { // Проверка статуса ответа
+                return res_data;
             } else {
                 throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
             }
@@ -50,21 +50,26 @@ class UserStore{
     async loginUser(data){
         try {
             const response = await userAPI.login(data);
-
-            if (response.ok) {
+            if (response.status == 200) {
                 return true;
             }
             return false;
-            
         } catch (error) {
-            
+            console.log(error);
         }
     }
-    logout(){
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('isAuth');
-        this.accessToken = '';
+    async logoutUser(){
+        try {
+            const response = await userAPI.logout();
+            console.log(response);
+
+            if (response.status == 200) {
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
 export let userStore = new UserStore();

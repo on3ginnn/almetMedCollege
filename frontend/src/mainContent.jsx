@@ -259,92 +259,35 @@ function MainContent(props) {
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null); // Состояние для ошибок
 
-  // useEffect(() => {
-  //   const fetchProfile = async () => {
-  //     try {
-  //       const response = await axios.post('http://127.0.0.1:8000/login/', {
-  //         username: "cooper",
-  //         password: "123ABCabc@"
-  //       }, {
-  //         withCredentials: true // Включаем куки
-  //       });
-  //       console.log(response);
-  //     } catch (error) {
-  //       if (error.response) {
-  //         console.log('Error Response:', error.response.data);
-  //         console.log('Status Code:', error.response.status);
-  //       } else if (error.request) {
-  //         console.log('No Response Received:', error.request);
-  //       } else {
-  //         console.log('Error:', error.message);
-  //       }
-  //     }
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res_data = await userStore.getProfile();
+        setSession({
+          user: {
+            name: `${res_data.first_name}`,
+            email: `${res_data.email}`,
+            image: 'https://avatars.githubusercontent.com/u/19550456',
+          },
+        }); // Сохраняем данные профиля в состояние
+      } catch (err) {
+        setError(err.message); // Сохраняем сообщение об ошибке
+      }
+    };
 
-      
-  //     try {
-  //       const response_get = await axios.get('http://127.0.0.1:8000/user/profile/', {
-  //         withCredentials: true, // Включаем куки в запрос
-  //       });
-  //       console.log(response_get.data)
-  //       setSession({
-  //         user: {
-  //           name: `${response_get.data.first_name}`,
-  //           email: `${response_get.data.email}`,
-  //           image: 'https://avatars.githubusercontent.com/u/19550456',
-  //         },
-  //       }); // Сохраняем данные профиля в состояние
-  //     } catch (err) {
-  //       setError(err.message); // Сохраняем сообщение об ошибке
-  //     }
-  //   };
-
-  //   fetchProfile(); // Вызываем функцию получения профиля
-  // }, []);
+    fetchProfile(); // Вызываем функцию получения профиля
+  }, []);
 
   const authentication = React.useMemo(() => {
     return {
       signIn: () => {
-        const fetchProfile = async () => {
-          // try {
-          //   const response = await axios.post('http://127.0.0.1:8000/login/', {
-          //     username: "cooper",
-          //     password: "123ABCabc@"
-          //   }, {
-          //     withCredentials: true // Включаем куки
-          //   });
-          //   console.log(response);
-          // } catch (error) {
-          //   if (error.response) {
-          //     console.log('Error Response:', error.response.data);
-          //     console.log('Status Code:', error.response.status);
-          //   } else if (error.request) {
-          //     console.log('No Response Received:', error.request);
-          //   } else {
-          //     console.log('Error:', error.message);
-          //   }
-          // }
-    
-          console.log("fff")
-          try {
-            const response = await apiClient.get('/user/profile/');
-            const response_get = response.data; // Теперь response_get содержит данные
-            console.log(response_get)
-            setSession({
-              user: {
-                name: `${response.data.first_name}`,
-                email: `${response.data.email}`,
-                image: 'https://avatars.githubusercontent.com/u/19550456',
-              },
-            }); // Сохраняем данные профиля в состояние
-          } catch (err) {
-            setError(err.message); // Сохраняем сообщение об ошибке
-          }
-        };
-    
-        fetchProfile(); // Вызываем функцию получения профиля
+        navigate('/login');
       },
-      signOut: () => {
+      signOut: async () => {
         setSession(null);
+        const response = await userStore.logoutUser();
+        console.log("success logout");
+        console.log(response);
       },
     };
   }, []);
