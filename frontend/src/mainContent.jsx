@@ -22,19 +22,19 @@ import {
   AccountPopoverFooter,
   SignOutButton,
 } from '@toolpad/core/Account';
-import { Outlet, useNavigate, } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { LoginForm } from "./components/login"
 import { HomePage } from './components/homepage';
 import { Header } from './components/header';
 import { SideBar } from './components/sidebar';
 import { customRouter } from './components/customRouter';
-import { userStore } from './stores/userStore';
+import { userStore, useUserStore } from './stores/userStore';
 import { apiClient } from './config/APIClient'
 
-const NAVIGATION = [
+let NAVIGATION = [
   {
     kind: 'header',
-    title: 'Main items',
+    title: 'Разделы',
   },
   {
     segment: '',
@@ -46,7 +46,25 @@ const NAVIGATION = [
     title: 'Войти',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'news',
+    title: 'Новости',
+    icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: 'shedule',
+    title: 'Расписание',
+    icon: <ShoppingCartIcon />,
+  },
 ];
+
+const adminNavigaion = [
+  {
+    segment: 'user/all',
+    title: 'Все пользователи',
+    icon: <ShoppingCartIcon />,
+  },
+]
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -123,13 +141,6 @@ const accounts = [
         title: 'Project X',
       },
     ],
-  },
-  {
-    id: 2,
-    name: 'Bharat MUI',
-    email: 'bharat@mui.com',
-    color: '#8B4513', // Brown color
-    projects: [{ id: 4, title: 'Project A' }],
   },
 ];
 
@@ -240,27 +251,29 @@ SidebarFooterAccount.propTypes = {
   mini: PropTypes.bool.isRequired,
 };
 
-const demoSession = {
-  user: {
-    name: 'Bharat Kashyap',
-    email: 'bharatkashyap@outlook.com',
-    image: 'https://avatars.githubusercontent.com/u/19550456',
-  },
-};
 
 function MainContent(props) {
   const { window } = props;
   const router = customRouter();
   const navigate = useNavigate();
+  const location = useLocation(); // Используем хук useLocation
+  const { userRole } = useUserStore();
 
+  if (userRole && userRole === "admin"){
+    NAVIGATION = [...NAVIGATION, ...adminNavigaion];
+    console.log(NAVIGATION)
+  }
+  
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
 
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null); // Состояние для ошибок
-
+  console.log(location);
+  console.log(location.pathname);
   useEffect(() => {
     const fetchProfile = async () => {
+      console.log("Call fetchProfile in mainContent.jsx")
       try {
         const res_data = await userStore.getProfile();
         setSession({
@@ -276,7 +289,7 @@ function MainContent(props) {
     };
 
     fetchProfile(); // Вызываем функцию получения профиля
-  }, []);
+  }, [location.pathname]);
 
   const authentication = React.useMemo(() => {
     return {
@@ -308,7 +321,6 @@ function MainContent(props) {
       session={session}
     >
       <DashboardLayout
-        slots={{ toolbarAccount: () => null, sidebarFooter: SidebarFooterAccount }}
       >
         {/* <DemoPageContent pathname={pathname} /> */}
         <Outlet />

@@ -1,5 +1,13 @@
 import { atom } from 'jotai';
-import userAPI from './../api/userAPI';
+import UserAPI from './../api/userAPI';
+
+import {create} from 'zustand';
+
+export const useUserStore = create((set) => ({
+  userRole: null, // Первоначально роль не установлена
+  setUserRole: (role) => set({ userRole: role }),
+}));
+
 
 export const isAuth = atom(false);
 
@@ -35,9 +43,11 @@ class UserStore{
     }
     async getProfile(){
         try {
-            const res_data = await userAPI.getProfile();
+            const res_data = await UserAPI.getProfile();
             console.log(res_data);
             if (res_data) { // Проверка статуса ответа
+                useUserStore.setState({ userRole: res_data.role }); // Обновляем роль пользователя
+
                 return res_data;
             } else {
                 throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
@@ -49,7 +59,7 @@ class UserStore{
     }
     async loginUser(data){
         try {
-            const response = await userAPI.login(data);
+            const response = await UserAPI.login(data);
             if (response.status == 200) {
                 return true;
             }
@@ -60,7 +70,7 @@ class UserStore{
     }
     async logoutUser(){
         try {
-            const response = await userAPI.logout();
+            const response = await UserAPI.logout();
             console.log(response);
 
             if (response.status == 200) {
