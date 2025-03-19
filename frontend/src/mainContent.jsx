@@ -259,10 +259,14 @@ function MainContent(props) {
   const location = useLocation(); // Используем хук useLocation
   const { userRole } = useUserStore();
 
-  if (userRole && userRole === "admin"){
-    NAVIGATION = [...NAVIGATION, ...adminNavigaion];
-    console.log(NAVIGATION)
+  const protectedNavigation = () => {
+    if (userRole && userRole === "admin"){
+      // NAVIGATION = [...NAVIGATION, ...adminNavigaion];
+      return [...NAVIGATION, ...adminNavigaion];
+    }
+    return NAVIGATION;
   }
+
   
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
@@ -304,10 +308,10 @@ function MainContent(props) {
       },
     };
   }, []);
-
+  
   return (
     <AppProvider
-      navigation={NAVIGATION}
+      navigation={protectedNavigation()}
       branding={{
         // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
         title: 'Альметьевский медицинский колледж',
