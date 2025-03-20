@@ -12,10 +12,18 @@ export const useUserStore = create((set) => ({
 export const isAuth = atom(false);
 
 class UserStore{
-    async addUser(data){
+    async createUser(data){
         try {
             const response = await UserAPI.register(data);
+            if (response.status == 200){
+                console.log("Пользователь успешно добавлен")
+            } else {
+                console.log(response.status)
+                throw new Error(response.status);
+            }
         } catch (error) {
+            console.log(error)
+            console.error("Ошибка создания пользователя", error.response);
         }
     }
     async setUser(data){
@@ -50,7 +58,7 @@ class UserStore{
 
                 return res_data;
             } else {
-                throw new Error(`Ошибка ${response.status}: ${response.statusText}`);
+                throw new Error(`нету юзера`);
             }
         } catch (error) {
             console.error('Ошибка при получении профиля:', error);

@@ -4,9 +4,11 @@ export default class UserAPI {
     static async register(data){
         try {
             const response = await apiClient.post('/user/create/', data);
-            return response;
+            console.log(response.status);
+            return response.status;
         } catch (error) {
             console.log(error);
+            return response;
         }
     }
     static async login(data){

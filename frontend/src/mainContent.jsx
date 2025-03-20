@@ -56,6 +56,11 @@ let NAVIGATION = [
     title: 'Расписание',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'user/create',
+    title: 'Добавить пользователя',
+    icon: <ShoppingCartIcon />,
+  },
 ];
 
 const adminNavigaion = [
@@ -282,7 +287,7 @@ function MainContent(props) {
         const res_data = await userStore.getProfile();
         setSession({
           user: {
-            name: `${res_data.first_name}`,
+            name: `${res_data.last_name} ${res_data.first_name}`,
             email: `${res_data.email}`,
             image: 'https://avatars.githubusercontent.com/u/19550456',
           },
@@ -293,6 +298,7 @@ function MainContent(props) {
     };
 
     fetchProfile(); // Вызываем функцию получения профиля
+  // }, []);
   }, [location.pathname]);
 
   const authentication = React.useMemo(() => {
