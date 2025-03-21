@@ -35,10 +35,19 @@ export default class UserAPI {
     }
     static async logout(){
         try{
-            const response = await apiClient.get("logout");
+            const response = await apiClient.get("logout/");
             return response;
         } catch (error) {
             console.log(error);
+        }
+    }
+    static async getUserList(){
+        try{
+            const response = await apiClient.get("/user/all/");
+            // console.log(response);
+            return response.data;
+        } catch (error) {
+            return error;
         }
     }
     static async setUser(data){
@@ -73,14 +82,6 @@ export default class UserAPI {
                 }
             }
             );
-            return response;
-        } catch (error) {
-            return error;
-        }
-    }
-    static async getUsers(){
-        try{
-            const response = await apiClient.get("/auth/users/");
             return response;
         } catch (error) {
             return error;

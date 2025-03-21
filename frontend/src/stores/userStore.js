@@ -26,27 +26,12 @@ class UserStore{
             console.error("Ошибка создания пользователя", error.response);
         }
     }
-    async setUser(data){
-        try {
-            const response = await UserAPI.setUser(data);
-        } catch (error) {
-        }
-    }
-    async deleteUser(){
-        try {
-            const response = await UserAPI.deleteUser();
-        } catch (error) {
-            console.log(error.response.data.message);
-
-        }
-    }
     async getUserList(){
         try {
-            const response = await UserAPI.getUsers();
-
-            this.userList = response.data;
+            const response = await UserAPI.getUserList();
             return response;
         } catch (error) {
+            console.error(error);
         }
     }
     async getProfile(){
@@ -87,6 +72,21 @@ class UserStore{
             return false;
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    async setUser(data){
+        try {
+            const response = await UserAPI.setUser(data);
+        } catch (error) {
+        }
+    }
+    async deleteUser(){
+        try {
+            const response = await UserAPI.deleteUser();
+        } catch (error) {
+            console.log(error.response.data.message);
+
         }
     }
 }

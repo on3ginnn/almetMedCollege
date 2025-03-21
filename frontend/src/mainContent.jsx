@@ -23,13 +23,8 @@ import {
   SignOutButton,
 } from '@toolpad/core/Account';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LoginForm } from "./components/login"
-import { HomePage } from './components/homepage';
-import { Header } from './components/header';
-import { SideBar } from './components/sidebar';
-import { customRouter } from './components/customRouter';
+import { customRouter } from './config/customRouter';
 import { userStore, useUserStore } from './stores/userStore';
-import { apiClient } from './config/APIClient'
 
 let NAVIGATION = [
   {
@@ -56,17 +51,17 @@ let NAVIGATION = [
     title: 'Расписание',
     icon: <ShoppingCartIcon />,
   },
-  {
-    segment: 'user/create',
-    title: 'Добавить пользователя',
-    icon: <ShoppingCartIcon />,
-  },
 ];
 
 const adminNavigaion = [
   {
     segment: 'user/all',
     title: 'Все пользователи',
+    icon: <ShoppingCartIcon />,
+  },
+  {
+    segment: 'user/create',
+    title: 'Добавить пользователя',
     icon: <ShoppingCartIcon />,
   },
 ]
