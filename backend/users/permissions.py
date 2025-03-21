@@ -21,10 +21,12 @@ class DjangoModelPermissionsWithGroups(rest_framework.permissions.DjangoModelPer
 
         # Базовый список прав, который использует DjangoModelPermissions
         perms = self.get_required_permissions(request.method, model_cls)
-
+        print("user permissions:")
+        print(perms)
         # Получаем все права пользователя (его + группы)
         user_permissions = set(user.get_user_permissions()) | set(user.get_group_permissions())
-
+        print(user_permissions)
+        print(any(perm in user_permissions for perm in perms))
         # Проверяем, есть ли у пользователя (или его групп) нужные права
         return any(perm in user_permissions for perm in perms)
 

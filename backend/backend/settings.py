@@ -100,7 +100,17 @@ if DEBUG:
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
-
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [

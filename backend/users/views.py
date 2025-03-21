@@ -67,7 +67,7 @@ class UserProfileAPIView(APIView):
 class UserListAPIView(rest_framework.generics.ListAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = users.serializer.UserListWithPasswordSerializer
-    permission_classes = [users.permissions.IsAdminRole]
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
 
 
 class UserDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
@@ -85,3 +85,16 @@ class UserSearchAPIView(rest_framework.generics.RetrieveAPIView):
         self.kwargs = {"username":request.GET.get("username")}
 
         return super().retrieve(request, *args, **kwargs)
+    
+
+class UserListFilterByRoleAPIView(rest_framework.generics.RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = users.serializer.UserListWithPasswordSerializer
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+    lookup_field = "role"
+    
+    def retrieve(self, request, *args, **kwargs):
+        self.kwargs = {"role":request.GET.get("role")}
+
+        return super().retrieve(request, *args, **kwargs)
+    

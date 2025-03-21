@@ -11,13 +11,13 @@ USER_MODEL = django.contrib.auth.get_user_model()
 class UserSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL     
-        fields = ['id', 'username', "first_name", "last_name", 'father_name', 'phone_number', "email", "role"]
+        fields = ['id', 'username', "first_name", "last_name", 'father_name', 'phone_number', "phone_number", "role"]
     
 
 class UserListWithPasswordSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL
-        fields = ['id', 'username', 'password', "first_name", "last_name", "email", "role"]
+        fields = ['id', 'username', 'password', "last_name", "first_name", "father_name", "phone_number", "role"]
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -70,9 +70,11 @@ class UserCreateSerializer(rest_framework.serializers.ModelSerializer):
         password = self.generate_password()  # Генерируем пароль
         user = USER_MODEL(
             username=username,
+            password=password,
             **validated_data
         )
-        user.set_password(password)  # Устанавливаем сгенерированный пароль
+        print(password)
+        # user.set_password(password)  # Устанавливаем сгенерированный пароль
         user.save()
         return user
     
@@ -89,6 +91,7 @@ class UserCreateSerializer(rest_framework.serializers.ModelSerializer):
         if not any(char.isdigit() for char in value):
             raise rest_framework.serializers.ValidationError("Пароль должен содержать хотя бы одну цифру.")
         
+        return value
         return django.contrib.auth.hashers.make_password(value)
 
 
