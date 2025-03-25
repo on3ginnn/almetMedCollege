@@ -16,7 +16,7 @@ class NewsCreateAPIView(rest_framework.generics.CreateAPIView):
 class NewsListAPIView(rest_framework.generics.ListAPIView):
     queryset = news.models.News.objects.all()
     serializer_class = news.serializer.NewsSerializer
-    permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
 
 
 class NewsDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
