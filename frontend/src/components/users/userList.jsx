@@ -8,11 +8,14 @@ import {
   TableHead, 
   TableRow, 
   Paper, 
-  Typography 
+  Typography,
+  Button
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export const UserList = () => {
   const [userList, setUserList] = useState([]);
+  const navigate = new useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -22,6 +25,10 @@ export const UserList = () => {
     fetchUsers();
   }, []);
 
+  const handleUserDelete = (pk) => {
+    deleteNews(pk);
+  }
+  
   return (
     <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table sx={{ minWidth: 650 }}>
@@ -35,6 +42,7 @@ export const UserList = () => {
             <TableCell>Отчество</TableCell>
             <TableCell>Телефон</TableCell>
             <TableCell>Роль</TableCell>
+            <TableCell>Действия</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -48,6 +56,10 @@ export const UserList = () => {
               <TableCell>{user.father_name}</TableCell>
               <TableCell>{user.phone_number}</TableCell>
               <TableCell>{user.role}</TableCell>
+              <TableCell>
+                <Button variant="contained" color="warning" onClick={() => navigate(`/user/edit/${user.id}`, user)}>Редактировать</Button>
+                <Button variant="contained" color="error" onClick={() => handleUserDelete(user.id)}>Удалить</Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

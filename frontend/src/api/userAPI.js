@@ -33,6 +33,15 @@ export default class UserAPI {
             }
         }
     }
+    static async getUser(pk) {
+        try {
+            const response = await apiClient.get(`/user/${pk}/`);
+            const res_data = response.data;
+            return res_data;
+        } catch (error) {
+            console.error(error);
+        }
+    }
     static async logout(){
         try{
             const response = await apiClient.get("logout/");
@@ -50,13 +59,13 @@ export default class UserAPI {
             return error;
         }
     }
-    static async setUser(data){
+    static async updateUser(pk, data){
         try {
 
-            const response = await apiClient.patch(`/auth/user/${userId}/`, data);
+            const response = await apiClient.patch(`/user/${pk}/`, data);
             return response;
         } catch (error) {
-            console.log(error.response?.data?.message || error.message);
+            console.error(error);
         }
     }
     static async deleteUser(){

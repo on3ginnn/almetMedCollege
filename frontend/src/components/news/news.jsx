@@ -1,11 +1,13 @@
-import { Box, Typography, Stack, Card, CardContent } from "@mui/material";
+import { Box, Typography, Stack, Card, CardContent, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import {  useNewsStore } from '../../stores/newsStore';
+import { useNavigate } from "react-router-dom";
 
 export const NewsList = () => {
-    const { newsList, getNewsList } = useNewsStore();
+    const { newsList, getNewsList, deleteNews } = useNewsStore();
+    const navigate = new useNavigate();
 
-    console.log(newsList);
+    // console.log(newsList);
     useEffect(() => {
         async function fetchNews(){
             await getNewsList();
@@ -13,6 +15,9 @@ export const NewsList = () => {
         fetchNews();
     }, []);
 
+    const handleNewsDelete = (pk) => {
+        deleteNews(pk);
+    }
 
     return (
         <Box>
@@ -36,6 +41,10 @@ export const NewsList = () => {
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                         Опубликовано: {news.created_on}
                     </Typography>
+                    <Stack spacing={1} direction='row'>
+                        <Button variant="contained" color="warning" onClick={() => navigate(`/news/edit/${news.id}`)}>Редактировать</Button>
+                        <Button variant="contained" color="error" onClick={() => handleNewsDelete(news.id)}>Удалить</Button>
+                    </Stack>
                     </CardContent>
                 </Card>
                 </Stack>

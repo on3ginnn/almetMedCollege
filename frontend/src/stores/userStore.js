@@ -74,11 +74,22 @@ class UserStore{
             console.log(error);
         }
     }
-
-    async setUser(data){
+    async getUser(pk){
         try {
-            const response = await UserAPI.setUser(data);
+            const res_data = await UserAPI.getUser(pk);
+            console.log(res_data);
+            return res_data;
         } catch (error) {
+            console.error('Ошибка при получении пользователя:', error);
+            throw error; // Перебрасываем ошибку для обработки выше
+        }
+    }
+    async updateUser(pk, data){
+        try {
+            const response = await UserAPI.updateUser(pk, data);
+            return response;
+        } catch (error) {
+            console.error('Ошибка при редактировании пользователя:', error);
         }
     }
     async deleteUser(){
