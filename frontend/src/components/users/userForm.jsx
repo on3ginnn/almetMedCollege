@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, Button, Typography, Container } from '@mui/material';
+import { TextField, Button, Typography, Container, MenuItem } from '@mui/material';
 import { userStore } from '../../stores/userStore';
 import { useNavigate, useParams } from "react-router-dom";
+import SelectInput from '@mui/material/Select/SelectInput';
 
 
 export const UserForm = () => {
@@ -96,7 +97,23 @@ export const UserForm = () => {
           onChange={handleChange}
           required
         />
-        <TextField
+        <TextField 
+          label="Выберите роль"
+          name="role"
+          select
+          fullWidth
+          value={formData.role}
+          onChange={handleChange}
+          size='small'
+          // color="warning"
+          helperText="Обязательно для заполнения"
+          error={formData.role == 0}
+        >
+          <MenuItem value="student">Студент</MenuItem>
+          <MenuItem value="teacher">Преподаватель</MenuItem>
+          <MenuItem value="admin">Администратор</MenuItem>
+        </TextField>
+        {/* <TextField
           label="Роль"
           name="role"
           variant="outlined"
@@ -105,7 +122,7 @@ export const UserForm = () => {
           value={formData.role}
           onChange={handleChange}
           required
-        />
+        /> */}
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Добавить
         </Button>
