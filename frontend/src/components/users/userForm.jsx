@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Typography, Container, MenuItem } from '@mui/material';
-import { userStore } from '../../stores/userStore';
 import { useNavigate, useParams } from "react-router-dom";
 import SelectInput from '@mui/material/Select/SelectInput';
+import { useUserStore } from '../../stores/userStore';
 
 
 export const UserForm = () => {
@@ -15,11 +15,12 @@ export const UserForm = () => {
     phone_number: '', 
     role: ''
   });
+  const { getUser, updateUser, createUser } = useUserStore();
 
   useEffect(() => {
     if (params.id) {
       const fetchUser = async () => {
-        const user = await userStore.getUser(params.id);
+        const user = await getUser(params.id);
         if (user) {
           setFormData(user); // Обновляем состояние с данными пользователя
         }
@@ -41,9 +42,9 @@ export const UserForm = () => {
     e.preventDefault();
     try {
       if (params.id) {
-        await userStore.updateUser(params.id, formData); // Обновляем пользователя
+        await updateUser(params.id, formData); // Обновляем пользователя
       } else {
-        await userStore.createUser(formData); // Используем async/await
+        await createUser(formData); // Используем async/await
       }
       navigate('/user/all');
     } catch (error) {

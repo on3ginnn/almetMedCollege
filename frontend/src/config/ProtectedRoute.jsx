@@ -3,11 +3,10 @@ import { useUserStore } from '../stores/userStore';
 
 
 export const ProtectedRoute = ({ allowedRoles }) => {
-  const { userRole } = useUserStore();
-    console.log(userRole)
-    console.log(allowedRoles)
-    console.log(!userRole || !allowedRoles.includes(userRole))
-  if (!userRole || !allowedRoles.includes(userRole)) {
+  const { currentUser } = useUserStore();
+  
+  if (!currentUser || !allowedRoles.includes(currentUser.role)) {
+    console.log(`Protected routes not allowed`);
     return <Navigate to="/login" replace />;
   }
 

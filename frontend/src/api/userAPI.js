@@ -4,11 +4,9 @@ export default class UserAPI {
     static async register(data){
         try {
             const response = await apiClient.post('/user/create/', data);
-            console.log(response.status);
-            return response.status;
-        } catch (error) {
-            console.log(error);
             return response;
+        } catch (error) {
+            console.error(error);
         }
     }
     static async login(data){
@@ -22,22 +20,19 @@ export default class UserAPI {
     static async getProfile() {
         try {
             const response = await apiClient.get('/user/profile/');
-            const res_data = response.data;
-            console.log(res_data);
-            return res_data;
             return response;
         } catch (error) {
-            console.error(error.response.data.message);
+            // console.error(error);
             if (error.response.status === 401) {
                 console.error('Требуется повторный вход в систему');
             }
+            return response;
         }
     }
     static async getUser(pk) {
         try {
             const response = await apiClient.get(`/user/${pk}/`);
-            const res_data = response.data;
-            return res_data;
+            return response;
         } catch (error) {
             console.error(error);
         }
@@ -54,6 +49,7 @@ export default class UserAPI {
         try{
             const response = await apiClient.get("/user/all/");
             // console.log(response);
+            return response;
             return response.data;
         } catch (error) {
             return error;
@@ -61,36 +57,16 @@ export default class UserAPI {
     }
     static async updateUser(pk, data){
         try {
-
+            console.log(data);
             const response = await apiClient.patch(`/user/${pk}/`, data);
             return response;
         } catch (error) {
             console.error(error);
         }
     }
-    static async deleteUser(){
+    static async deleteUser(pk){
         try{
-            const token = localStorage.getItem('accessToken');
-            if (!token) {
-                throw new Error('Токен не найден');
-            }
-
-            // Декодируем токен для получения userId
-            const decoded = jwtDecode(token);
-            const userId = decoded.user_id || decoded.id; // Убедитесь, какое поле содержит ID
-
-            if (!userId) {
-                throw new Error('ID пользователя не найден в токене');
-            }
-
-            console.log('UserID из токена:', userId);
-
-            const response = await apiClient.delete(`/auth/user/${userId}/`, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                }
-            }
-            );
+            const response = await apiClient.delete(`/user/${pk}/`);
             return response;
         } catch (error) {
             return error;

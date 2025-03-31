@@ -1,47 +1,80 @@
-import { atom } from 'jotai';
-import UserAPI from './../api/userAPI';
-
+import UserAPI from "../api/userAPI";
 import {create} from 'zustand';
 
 export const useUserStore = create((set) => ({
-  userRole: null, // Первоначально роль не установлена
-  setUserRole: (role) => set({ userRole: role }),
-}));
+    userList: [],
+    currentUser: null,
+    userRole: null, // Первоначально роль не установлена
+    setUserRole: (role) => set({ userRole: role }),
+    getUserList: async ()=>{
+        try {
+            const response = await UserAPI.getUserList();
+            console.warn(`get user list with code ${response.status}`);
 
-
-export const isAuth = atom(false);
-
-class UserStore{
-    async createUser(data){
+            if (response.status === 200) {
+                // console.log(res_data);
+                set({ userList:response.data });
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    },
+    createUser: async (data) => {
         try {
             const response = await UserAPI.register(data);
-            if (response.status == 200){
+            console.warn(`create user with code ${response.status}`);
+
+            if (response.status == 201){
                 console.log("Пользователь успешно добавлен")
             } else {
-                console.log(response.status)
                 throw new Error(response.status);
             }
         } catch (error) {
             console.log(error)
-            console.error("Ошибка создания пользователя", error.response);
+            console.error("Ошибка создания пользователя", error);
         }
-    }
-    async getUserList(){
-        try {
-            const response = await UserAPI.getUserList();
-            return response;
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    async getProfile(){
-        try {
-            const res_data = await UserAPI.getProfile();
-            console.log(res_data);
-            if (res_data) { // Проверка статуса ответа
-                useUserStore.setState({ userRole: res_data.role }); // Обновляем роль пользователя
+    },
+    updateUser: async (pk, data) => {
+        try{
+            const response = await UserAPI.updateUser(pk, data);
+            console.warn(`update user with code ${response.status}`);
 
-                return res_data;
+            if (response.state === 200) {
+                set((state) => ({ userList: state.userList.map((user) => user.id === response.id ? response : user) }));
+            }
+        } catch (error) {
+            console.error('Ошибка редактирования новости: ', error);
+        }
+    },
+    deleteUser: async (pk) => {
+        try {
+            const response = await UserAPI.deleteUser(pk);
+            console.warn(`delete user with code ${response.status}`);
+            if (response.status === 204) {
+                set((state) => ({ userList: state.userList.filter((user) => user.id !== pk) }));
+            }
+        } catch (error) {
+            console.error('Ошибка удаления новости', error);
+        }
+    },
+    loginUser: async (data) => {
+        try {
+            const response = await UserAPI.login(data);
+            console.log(`login with code ${response.status}`);
+            // if (response.status == 200) {
+            //     return true;
+            // }
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    getProfile: async () => {
+        try {
+            const response = await UserAPI.getProfile();
+            console.warn(`get profile user with code ${response.status}`);
+            // if (res_data) { // Проверка статуса ответа
+            if (response.status === 200) { // Проверка статуса ответа
+                useUserStore.setState({ currentUser: response.data });
             } else {
                 throw new Error(`нету юзера`);
             }
@@ -49,56 +82,24 @@ class UserStore{
             console.error('Ошибка при получении профиля:', error);
             throw error; // Перебрасываем ошибку для обработки выше
         }
-    }
-    async loginUser(data){
-        try {
-            const response = await UserAPI.login(data);
-            if (response.status == 200) {
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    async logoutUser(){
+    },
+    logoutUser: async () => {
         try {
             const response = await UserAPI.logout();
-            console.log(response);
-
-            if (response.status == 200) {
-                return true;
-            }
-            return false;
+            set({ currentUser: null} );
+            console.log(`logout user with code ${response.status}`);
         } catch (error) {
             console.log(error);
         }
-    }
-    async getUser(pk){
+    },
+    getUser: async (pk) => {
         try {
-            const res_data = await UserAPI.getUser(pk);
-            console.log(res_data);
-            return res_data;
+            const response = await UserAPI.getUser(pk);
+            console.warn(`get user with code ${response.status}`);
+            return response.data;
         } catch (error) {
             console.error('Ошибка при получении пользователя:', error);
             throw error; // Перебрасываем ошибку для обработки выше
         }
     }
-    async updateUser(pk, data){
-        try {
-            const response = await UserAPI.updateUser(pk, data);
-            return response;
-        } catch (error) {
-            console.error('Ошибка при редактировании пользователя:', error);
-        }
-    }
-    async deleteUser(){
-        try {
-            const response = await UserAPI.deleteUser();
-        } catch (error) {
-            console.log(error.response.data.message);
-
-        }
-    }
-}
-export let userStore = new UserStore();
+}));

@@ -24,7 +24,7 @@ import {
 } from '@toolpad/core/Account';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { customRouter } from './config/customRouter';
-import { userStore, useUserStore } from './stores/userStore';
+import { useUserStore } from './stores/userStore';
 
 let NAVIGATION = [
   {
@@ -120,46 +120,47 @@ function MainContent(props) {
   const router = customRouter();
   const navigate = useNavigate();
   const location = useLocation(); // Используем хук useLocation
-  const { userRole } = useUserStore();
   const demoWindow = window !== undefined ? window() : undefined;
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null); // Состояние для ошибок
+  const { currentUser, getProfile, logoutUser } = useUserStore();
 
   const protectedNavigation = () => {
-    if (userRole && userRole === "admin"){
+    if (currentUser && currentUser.role === "admin"){
       // NAVIGATION = [...NAVIGATION, ...adminNavigaion];
       return [...NAVIGATION, ...adminNavigaion];
     }
     return NAVIGATION;
   }
 
-  console.log(location);
-  console.log(location.pathname);
-  console.log()
-  // useEffect(() => {
-  //   newsStore.getNewsList();
-  // }, []);
-
   useEffect(() => {
-    const fetchProfile = async () => {
+    async function fetchProfile () {
       console.log("Call fetchProfile in mainContent.jsx")
       try {
-        const res_data = await userStore.getProfile();
-        setSession({
-          user: {
-            name: `${res_data.last_name} ${res_data.first_name}`,
-            email: `${res_data.email}`,
-            image: 'https://avatars.githubusercontent.com/u/19550456',
-          },
-        }); // Сохраняем данные профиля в состояние
+        await getProfile();
       } catch (err) {
         setError(err.message); // Сохраняем сообщение об ошибке
       }
     };
 
     fetchProfile(); // Вызываем функцию получения профиля
-  // }, []);
+  // запрос на сервер для получения актуальных данных профиля будет происходить при каждом изменении пути url
   }, [location.pathname]);
+
+  useEffect(() => {
+    async function getSession () {
+
+      setSession({
+        user: {
+          name: `${currentUser.last_name} ${currentUser.first_name}`,
+          email: `${currentUser.email}`,
+          image: 'https://avatars.githubusercontent.com/u/19550456',
+        },
+      }); // Сохраняем данные профиля в состояние
+    }
+
+    currentUser ? getSession() : null; // Вызываем функцию получения профиля
+  }, [currentUser]);
 
   const authentication = React.useMemo(() => {
     return {
@@ -168,9 +169,7 @@ function MainContent(props) {
       },
       signOut: async () => {
         setSession(null);
-        const response = await userStore.logoutUser();
-        console.log("success logout");
-        console.log(response);
+        await logoutUser();
       },
     };
   }, []);

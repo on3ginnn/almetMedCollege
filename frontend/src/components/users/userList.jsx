@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userStore } from "../../stores/userStore";
+import { useUserStore } from "../../stores/userStore";
 import { 
   Table, 
   TableBody, 
@@ -14,21 +14,20 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export const UserList = () => {
-  const [userList, setUserList] = useState([]);
   const navigate = new useNavigate();
+  const { userList, getUserList, deleteUser } = useUserStore();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      const users = await userStore.getUserList();
-      setUserList(users);
-    };
+    async function fetchUsers(){
+        await getUserList();
+    }
     fetchUsers();
   }, []);
-
-  const handleUserDelete = (pk) => {
-    deleteNews(pk);
-  }
   
+  const handleUserDelete = (pk) => {
+    deleteUser(pk);
+  }
+
   return (
     <TableContainer component={Paper} sx={{ mt: 3 }}>
       <Table sx={{ minWidth: 650 }}>

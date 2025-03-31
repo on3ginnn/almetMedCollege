@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container } from '@mui/material';
-import { userStore } from '../../stores/userStore';
 import { useNavigate } from "react-router-dom";
-
+import { useUserStore } from '../../stores/userStore';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
+  const { loginUser } = useUserStore();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -25,7 +25,7 @@ export const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await userStore.loginUser(formData); // Используем async/await
+      await loginUser(formData); // Используем async/await
       navigate('/'); // Перенаправляем после успешной авторизации
     } catch (error) {
       setError(error.message); // Отображаем ошибку
