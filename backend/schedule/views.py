@@ -11,9 +11,9 @@ class ScheduleCreateAPIView(rest_framework.generics.CreateAPIView):
     serializer_class = schedule.serializer.ScheduleCreateSerializer
     queryset = schedule.models.Schedule.objects.prefetch_related(
         "group",
-        "lessons_set__major",
-        "lessons_set__teacher",
-        "lessons_set__classroom"
+        "lessons__major",
+        "lessons__teacher",
+        "lessons__classroom"
     )
 
 
@@ -40,9 +40,9 @@ class ScheduleDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDe
     """
     queryset = schedule.models.Schedule.objects.prefetch_related(
         "group",
-        "lessons_set__major",
-        "lessons_set__teacher",
-        "lessons_set__classroom"
+        "lessons__major",
+        "lessons__teacher",
+        "lessons__classroom"
     )
     serializer_class = schedule.serializer.ScheduleSerializer
 

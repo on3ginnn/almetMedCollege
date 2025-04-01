@@ -32,7 +32,7 @@ class GroupLessonSerializer(rest_framework.serializers.ModelSerializer):
 class ScheduleSerializer(rest_framework.serializers.ModelSerializer):
     # group = group.serializer.GroupSerializer()
     group = rest_framework.serializers.CharField(source='group.name')
-    lessons = GroupLessonSerializer(many=True, source='lessons_set')
+    lessons = GroupLessonSerializer(many=True)
 
     class Meta:
         model = schedule.models.Schedule
