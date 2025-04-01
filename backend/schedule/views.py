@@ -24,9 +24,9 @@ class ScheduleListAPIView(rest_framework.generics.ListAPIView):
     """
     queryset = schedule.models.Schedule.objects.prefetch_related(
         "group",
-        "lessons_set__major",
-        "lessons_set__teacher",
-        "lessons_set__classroom"
+        "lessons__major",
+        "lessons__teacher",
+        "lessons__classroom"
     )
     serializer_class = schedule.serializer.ScheduleSerializer
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
@@ -45,3 +45,21 @@ class ScheduleDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDe
         "lessons_set__classroom"
     )
     serializer_class = schedule.serializer.ScheduleSerializer
+
+
+class ScheduleDateGroup(rest_framework.generics.RetrieveAPIView):
+    queryset = schedule.models.Schedule.objects.all()
+    serializer_class = schedule.serializer.ScheduleSerializer
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
+    lookup_field = "group"
+    
+    def retrieve(self, request, *args, **kwargs):
+        self.queryset = schedule.models.Schedule.objects.filter(date=request.query_params.get("date"))
+        print(request.query_params)
+        print(self.kwargs)
+
+        self.kwargs = {self.lookup_field: request.query_params.get(self.lookup_field)}
+        print(self.kwargs)
+
+        return super().retrieve(request, *args, **kwargs)
+    
