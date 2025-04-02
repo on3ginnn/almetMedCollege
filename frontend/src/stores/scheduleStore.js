@@ -4,9 +4,9 @@ import ScheduleAPI from '../api/scheduleAPI';
 
 export const useScheduleStore = create((set) => ({
     schedule: null,
-    getSchedule: async (data) => {
+    getSchedule: async (date, group) => {
         try {
-            const response = await ScheduleAPI.getSchedule(data);
+            const response = await ScheduleAPI.getSchedule(date, group);
             console.warn(`get schedule with code ${response.status}`);
             set({ schedule: response.data});
         } catch (error) {

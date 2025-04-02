@@ -189,8 +189,10 @@ function MainContent(props) {
       // authentication={React.useMemo(() => navigate('/login'))}
       session={session}
     >
-      <DashboardLayout
-      >
+      <DashboardLayout sx={{
+        py: "30px",
+        px: "15px",
+      }}>
         <Outlet />
       </DashboardLayout>
     </AppProvider>
