@@ -47,7 +47,7 @@ let NAVIGATION = [
     icon: <ShoppingCartIcon />,
   },
   {
-    segment: 'shedule',
+    segment: 'schedule',
     title: 'Расписание',
     icon: <ShoppingCartIcon />,
   },

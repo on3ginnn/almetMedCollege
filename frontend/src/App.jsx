@@ -8,6 +8,7 @@ import { UserForm } from './components/users/userForm';
 import { UserList } from './components/users/userList';
 import { NewsList } from './components/news/news';
 import { NewsForm } from "./components/news/newsForm";
+import { Schedule } from "./components/schedule/schedule";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/news/create" element={<NewsForm />} />
             <Route path="/news/edit/:id" element={<NewsForm />} />
           </Route>
+          <Route path='/schedule' element={<Schedule />} />
 
         </Route>
       </Routes>
