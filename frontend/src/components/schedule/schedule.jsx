@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell } from "@mui/material";
+import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell, Autocomplete } from "@mui/material";
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import { useScheduleStore } from "../../stores/scheduleStore";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -7,24 +7,42 @@ import dayjs from 'dayjs';
 
 export const Schedule = () => {
     const [lessons, setLessons] = useState([]);
-    const { schedule, getSchedule } = useScheduleStore();
+    const { schedule, getSchedule, getGroupList } = useScheduleStore();
     const [calendarDate, setCalendarDate] = useState(dayjs());
-    const [group, setGroup] = useState('');
-
+    const [group, setGroup] = useState(null);
+    const [groupList, setGroupList] = useState(null);
     console.log(calendarDate.format());
 
     useEffect(() => {
         schedule ? setLessons(schedule.lessons) : [];
     }, [schedule]);
 
+    useEffect(() => {
+        async function fetchGroups(){
+            const response = await getGroupList();
+            console.log(response);
+            console.log(response.map(element => element.name));
+            // setGroupList(
+            //     response.map(element => element.name)
+            // );
+            setGroupList(response);
+        }
+
+        fetchGroups();
+    }, []);
+
+    const handleChange = (event, newValue) => {
+        setGroup(newValue);
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await getSchedule(calendarDate.format("YYYY-MM-DD"), group); // Используем async/await
+            await getSchedule(calendarDate.format("YYYY-MM-DD"), group.id); // Используем async/await
             navigate('/schedule');
-          } catch (error) {
-            // setError(error.message); // Отображаем ошибку
-          }
+        } catch (error) {
+        // setError(error.message); // Отображаем ошибку
+        }
     }
 
     return (
@@ -64,15 +82,8 @@ export const Schedule = () => {
                             views={['month', 'day']}
                         />
                     </LocalizationProvider>
-
-                    <TextField
-                        label="Группа"
-                        name="group"
-                        variant="outlined"
-                        value={group}
-                        onChange={(e) => setGroup(e.target.value)}
-                        required
-                    />
+                    {console.log(groupList)}
+                    <Autocomplete getOptionLabel={(option) => option.name} freeSolo onChange={handleChange} options={groupList} renderInput={(params) => <TextField {...params} label='Группы' />} />
                     <Button type="submit" variant="contained" color="primary">
                         Посмотреть
                     </Button>
