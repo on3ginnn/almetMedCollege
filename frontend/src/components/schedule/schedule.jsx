@@ -4,6 +4,8 @@ import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import { useScheduleStore } from "../../stores/scheduleStore";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+// import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
+import "dayjs/locale/ru";
 
 export const Schedule = () => {
     const [lessons, setLessons] = useState([]);
@@ -75,7 +77,7 @@ export const Schedule = () => {
             </Box>
             <Box width='350px'>
                 <form onSubmit={handleSubmit}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                         <DateCalendar
                             value={calendarDate}
                             onChange={(newDate) => setCalendarDate(newDate)}
