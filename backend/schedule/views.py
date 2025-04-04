@@ -6,6 +6,12 @@ import users.permissions
 import schedule.models
 
 
+class ClassroomListAPIView(rest_framework.generics.ListAPIView):
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
+    queryset = schedule.models.ClassRoom.objects.all()
+    serializer_class = schedule.serializer.ClassRoomSerializer
+
+
 class ScheduleCreateAPIView(rest_framework.generics.CreateAPIView):
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     serializer_class = schedule.serializer.ScheduleCreateSerializer

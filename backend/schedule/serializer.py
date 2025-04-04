@@ -55,7 +55,7 @@ class ScheduleCreateSerializer(rest_framework.serializers.ModelSerializer):
 
     class Meta:
         model = schedule.models.Schedule
-        fields = ['group', 'lessons']
+        fields = ['date', 'group', 'lessons']
 
     def create(self, validated_data):
         print(validated_data)

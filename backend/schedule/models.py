@@ -17,7 +17,7 @@ class ClassRoom(django.db.models.Model):
 
 
 class Schedule(django.db.models.Model):
-    date = django.db.models.DateField("Дата", auto_now_add=True)
+    date = django.db.models.DateField("Дата")
     group = django.db.models.ForeignKey(Group, on_delete=django.db.models.CASCADE, related_name="schedules", verbose_name="Группа")
 
     class Meta:
