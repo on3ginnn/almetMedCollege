@@ -18,7 +18,7 @@ class GroupSerializer(rest_framework.serializers.ModelSerializer):
 
 class ScheduleGroupSerializer(GroupSerializer):
     class Meta(GroupSerializer.Meta):
-        fields = ['name']
+        fields = ['id', 'name']
 
 
 class GroupCreateSerializer(rest_framework.serializers.ModelSerializer):

@@ -14,7 +14,7 @@ class GroupCreateAPIView(rest_framework.generics.CreateAPIView):
 
 class GroupListAPIView(rest_framework.generics.ListAPIView):
     queryset = group.models.Group.objects.all()
-    serializer_class = group.serializer.GroupSerializer
+    serializer_class = group.serializer.ScheduleGroupSerializer
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
 
 
