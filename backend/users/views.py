@@ -70,6 +70,12 @@ class UserListAPIView(rest_framework.generics.ListAPIView):
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
 
 
+class UserTeacherListAPIView(rest_framework.generics.ListAPIView):
+    queryset = get_user_model().objects.filter(role="teacher")
+    serializer_class = users.serializer.TeacherListSerializer
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
+
+
 class UserDetailUpdateDeleteAPIView(rest_framework.generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [users.permissions.DjangoModelPermissionsWithGroups]
     queryset = get_user_model().objects.all()
