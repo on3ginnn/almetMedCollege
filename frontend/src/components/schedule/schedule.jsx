@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell, Autocomplete } from "@mui/material";
+import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell, Autocomplete, Typography } from "@mui/material";
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import { useScheduleStore } from "../../stores/scheduleStore";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,14 +9,16 @@ import "dayjs/locale/ru";
 
 export const Schedule = () => {
     const [lessons, setLessons] = useState([]);
-    const { schedule, getSchedule, getGroupList } = useScheduleStore();
-    const [calendarDate, setCalendarDate] = useState(dayjs());
+    const { schedule, getSchedule, getGroupList, currentGroup, setCurrentGroup, currentDate, setCurrentDate } = useScheduleStore();
     const [group, setGroup] = useState(null);
+    const [calendarDate, setCalendarDate] = useState(dayjs());
     const [groupList, setGroupList] = useState(null);
-    console.log(calendarDate.format());
+    console.log(schedule);
+    console.log(lessons);
 
     useEffect(() => {
-        schedule ? setLessons(schedule.lessons) : [];
+        console.log("global var schedule was edited");
+        schedule !== null ? setLessons(schedule.lessons) : setLessons([]);
     }, [schedule]);
 
     useEffect(() => {
@@ -29,8 +31,14 @@ export const Schedule = () => {
             // );
             setGroupList(response);
         }
+        async function fetchSchedule(){
+            await getSchedule(currentDate.format("YYYY-MM-DD"), currentGroup);
+        }
 
         fetchGroups();
+        if (group !== null) {
+            fetchSchedule();
+        }
     }, []);
 
     const handleChange = (event, newValue) => {
@@ -40,8 +48,9 @@ export const Schedule = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            setCurrentGroup(group) & setCurrentDate(calendarDate);
             await getSchedule(calendarDate.format("YYYY-MM-DD"), group.id); // Используем async/await
-            navigate('/schedule');
+            // navigate('/schedule');
         } catch (error) {
         // setError(error.message); // Отображаем ошибку
         }
@@ -52,6 +61,11 @@ export const Schedule = () => {
             <Box sx={{
                 width: "100%"
             }}>
+                <Typography>
+                    {currentGroup !== null ? 
+                        (schedule !== null ? `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")}` : `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")} не опубликовано`)
+                     : 'Выберите числу и группу'}
+                </Typography>
                 <Table sx={{ minWidth: 650 }}>
                     <TableHead>
                         <TableRow>
@@ -85,7 +99,7 @@ export const Schedule = () => {
                         />
                     </LocalizationProvider>
                     {console.log(groupList)}
-                    <Autocomplete getOptionLabel={(option) => option.name} freeSolo onChange={handleChange} options={groupList} renderInput={(params) => <TextField {...params} label='Группы' />} />
+                    <Autocomplete value={group} getOptionLabel={(option) => option.name} freeSolo onChange={handleChange} options={groupList} renderInput={(params) => <TextField {...params} label='Группы' />} />
                     <Button type="submit" variant="contained" color="primary">
                         Посмотреть
                     </Button>
