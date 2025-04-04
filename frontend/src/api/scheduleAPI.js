@@ -6,9 +6,13 @@ export default class ScheduleAPI {
             console.log(date)
             console.log(group)
             const response = await apiClient.get(`/schedule/`, {params: {date: date, group: group}});
-            return response;
+            return response.data;
         } catch (error) {
-            console.error(error);
+            throw error;
         }
+    }
+    static async createSchedule(scheduleData) {
+        const response = await apiClient.post('/schedule/create/', scheduleData);
+        return response.data;
     }
 }

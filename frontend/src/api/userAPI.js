@@ -48,9 +48,15 @@ export default class UserAPI {
     static async getUserList(){
         try{
             const response = await apiClient.get("/user/all/");
-            // console.log(response);
             return response;
-            return response.data;
+        } catch (error) {
+            return error;
+        }
+    }
+    static async getTeacherList(){
+        try{
+            const response = await apiClient.get("/user/teacher/");
+            return response;
         } catch (error) {
             return error;
         }

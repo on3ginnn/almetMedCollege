@@ -69,6 +69,11 @@ const adminNavigaion = [
     title: 'Добавить новости',
     icon: <ShoppingCartIcon />,
   },
+  {
+    segment: 'schedule/create',
+    title: 'Добавить расписание',
+    icon: <ShoppingCartIcon />,
+  },
   
 ]
 

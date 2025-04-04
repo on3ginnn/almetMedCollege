@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell, Autocomplete, Typography } from "@mui/material";
+import { Box, TextField, Button, Stack, Table, TableHead, TableBody, TableRow, TableCell, Autocomplete, Typography, Paper, Card, CardContent, Grid } from "@mui/material";
 import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
 import { useScheduleStore } from "../../stores/scheduleStore";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -8,103 +8,191 @@ import dayjs from 'dayjs';
 import "dayjs/locale/ru";
 
 export const Schedule = () => {
+    const {
+        schedule,
+        getSchedule,
+        currentGroup,
+        setCurrentGroup,
+        currentDate,
+        setCurrentDate,
+        getGroupList,
+        isLoading,
+    } = useScheduleStore();
+    
     const [lessons, setLessons] = useState([]);
-    const { schedule, getSchedule, getGroupList, currentGroup, setCurrentGroup, currentDate, setCurrentDate } = useScheduleStore();
     const [group, setGroup] = useState(null);
     const [calendarDate, setCalendarDate] = useState(dayjs());
-    const [groupList, setGroupList] = useState(null);
-    console.log(schedule);
-    console.log(lessons);
+    const [groupList, setGroupList] = useState([]);
 
     useEffect(() => {
-        console.log("global var schedule was edited");
-        schedule !== null ? setLessons(schedule.lessons) : setLessons([]);
+        if (schedule) {
+            setLessons(schedule.lessons || []);
+        } else {
+            setLessons([]);
+        }
     }, [schedule]);
 
     useEffect(() => {
-        async function fetchGroups(){
+        async function fetchGroups() {
             const response = await getGroupList();
-            console.log(response);
-            console.log(response.map(element => element.name));
-            // setGroupList(
-            //     response.map(element => element.name)
-            // );
-            setGroupList(response);
+            setGroupList(response || []);
         }
-        async function fetchSchedule(){
-            await getSchedule(currentDate.format("YYYY-MM-DD"), currentGroup);
-        }
-
         fetchGroups();
-        if (group !== null) {
-            fetchSchedule();
-        }
+
+        setGroup(currentGroup);
+        setCalendarDate(currentDate);
     }, []);
 
-    const handleChange = (event, newValue) => {
+    const handleGroupChange = (event, newValue) => {
         setGroup(newValue);
-    }
+    };
+
+    const handleDateChange = (newDate) => {
+        setCalendarDate(newDate);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            setCurrentGroup(group) & setCurrentDate(calendarDate);
-            await getSchedule(calendarDate.format("YYYY-MM-DD"), group.id); // Используем async/await
-            // navigate('/schedule');
-        } catch (error) {
-        // setError(error.message); // Отображаем ошибку
-        }
-    }
+        if (!group) return;
+        
+        setCurrentGroup(group);
+        setCurrentDate(calendarDate);
+        await getSchedule();
+    };
+
 
     return (
         <Stack direction='row' spacing={10}>
-            <Box sx={{
+            {/* <Box sx={{
                 width: "100%"
             }}>
-                <Typography>
-                    {currentGroup !== null ? 
-                        (schedule !== null ? `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")}` : `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")} не опубликовано`)
-                     : 'Выберите числу и группу'}
+                <Typography variant="h4">
+                    {currentGroup !== null ? `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")}` : 'Выберите число и группу'}
                 </Typography>
-                <Table sx={{ minWidth: 650 }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>№</TableCell>
-                            <TableCell>Предмет</TableCell>
-                            <TableCell>Кабинет</TableCell>
-                            <TableCell>Преподаватель</TableCell>
-                            <TableCell>Подгруппа</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {lessons.map((lesson, index) => (
-                            <TableRow key={lesson.id}>
-                                <TableCell>{index + 1}</TableCell>
-                                <TableCell>{lesson.major}</TableCell>
-                                <TableCell>{lesson.classroom}</TableCell>
-                                <TableCell>{lesson.teacher}</TableCell>
-                                <TableCell>{lesson.subgroup}</TableCell>
+                {schedule !== null ? 
+                    (<Table sx={{ minWidth: 650 }}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>№</TableCell>
+                                <TableCell>Предмет</TableCell>
+                                <TableCell>Кабинет</TableCell>
+                                <TableCell>Преподаватель</TableCell>
+                                <TableCell>Подгруппа</TableCell>
                             </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </Box>
-            <Box width='350px'>
+                        </TableHead>
+                        <TableBody>
+                            {lessons.map((lesson, index) => (
+                                <TableRow key={lesson.id}>
+                                    <TableCell>{index + 1}</TableCell>
+                                    <TableCell>{lesson.major}</TableCell>
+                                    <TableCell>{lesson.classroom}</TableCell>
+                                    <TableCell>{lesson.teacher}</TableCell>
+                                    <TableCell>{lesson.subgroup}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>)
+                : (currentGroup !== null ? (<Typography variant='subtitle1'>Не опубликовано</Typography>) : "")}
+            </Box> */}
+            <Paper sx={{ width: "100%" }} elevation={0}>
+                <Box sx={{ p: 3 }}>
+                <Typography variant="h5" gutterBottom>
+                    Расписание
+                    <Typography component="span" color="text.secondary">
+                        {' '}для группы{' '}
+                    </Typography>
+                    {currentGroup && (
+                    <Typography variant="h6" component="span">{currentGroup.name}</Typography>
+                    )}
+                    <Typography component="span" color="text.secondary">
+                        {' '}на{' '}
+                    </Typography>
+                    {currentDate && (
+                        <Typography variant="h6" component="span">{currentDate.format("DD-MM-YYYY")}</Typography>
+                    )}
+                </Typography>
+
+                {isLoading ? (
+                    <Typography variant='body2'>Загрузка...</Typography>
+                ) : lessons.length > 0 ? (
+                    <Stack spacing={2}>
+                    {lessons.map((lesson, index) => (<Card key={index} variant="outlined">
+                        <CardContent>
+                            <Grid container spacing={2}>
+                            <Grid item xs={2}>
+                                <Typography variant="subtitle1">
+                                {lesson.number.slice(1)}
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={10}>
+                                <Typography variant="h6" component="div">
+                                {lesson.major}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                {lesson.teacher} · {lesson.classroom}
+                                </Typography>
+                            </Grid>
+                            </Grid>
+                        </CardContent>
+                        </Card>
+                    ))}
+                    </Stack>
+                ) : (
+                    <Typography variant="body1" color="text.secondary" sx={{ py: 4 }}>
+                    {currentGroup
+                        ? 'Нет занятий на выбранную дату'
+                        : 'Выберите группу для отображения расписания'}
+                    </Typography>
+                )}
+                </Box>
+            </Paper>
+            <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                Параметры расписания
+                </Typography>
+                
                 <form onSubmit={handleSubmit}>
+                <Stack spacing={3}>
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-                        <DateCalendar
-                            value={calendarDate}
-                            onChange={(newDate) => setCalendarDate(newDate)}
-                            views={['month', 'day']}
-                        />
+                    <DateCalendar
+                        label="Дата"
+                        onChange={handleDateChange}
+                        views={['month', 'day']}
+                        value={calendarDate}
+                        // format="DD.MM.YYYY"
+                        // slotProps={{ textField: { fullWidth: true } }}
+                    />
                     </LocalizationProvider>
-                    {console.log(groupList)}
-                    <Autocomplete value={group} getOptionLabel={(option) => option.name} freeSolo onChange={handleChange} options={groupList} renderInput={(params) => <TextField {...params} label='Группы' />} />
-                    <Button type="submit" variant="contained" color="primary">
-                        Посмотреть
+
+                    <Autocomplete
+                    options={groupList}
+                    getOptionLabel={(option) => option.name}
+                    value={group}
+                    onChange={handleGroupChange}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Группа" fullWidth />
+                    )}
+                    />
+
+                    <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    disabled={isLoading || !group}
+                    // startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                    >
+                    {isLoading ? 'Загрузка...' : 'Показать расписание'}
                     </Button>
+
+                    {/* {error && (
+                    <Alert severity="error" sx={{ mt: 2 }}>
+                        {error}
+                    </Alert>
+                    )} */}
+                </Stack>
                 </form>
-            </Box>
+            </Paper>
         </Stack>
     )
 }

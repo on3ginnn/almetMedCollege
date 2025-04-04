@@ -8,6 +8,7 @@ import { UserForm } from './components/users/userForm';
 import { UserList } from './components/users/userList';
 import { NewsList } from './components/news/news';
 import { NewsForm } from "./components/news/newsForm";
+import { ScheduleForm } from "./components/schedule/scheduleForm";
 import { Schedule } from "./components/schedule/schedule";
 
 function App() {
@@ -28,7 +29,9 @@ function App() {
             <Route path="/news/edit/:id" element={<NewsForm />} />
           </Route>
           <Route path='/schedule' element={<Schedule />} />
-
+          <Route path="/schedule" element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route path="/schedule/create" element={<ScheduleForm />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
