@@ -43,9 +43,7 @@ export const Schedule = () => {
         setCalendarDate(currentDate);
     }, []);
 
-    const handleGroupChange = (event, newValue) => {
-        setGroup(newValue);
-    };
+    const handleGroupChange = (event, newValue) => setGroup(newValue);
 
     const handleDateChange = (newDate) => {
         setCalendarDate(newDate);

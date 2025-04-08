@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -15,6 +15,7 @@ import {
   Typography,
   IconButton,
   Alert,
+  Autocomplete,
 } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -22,6 +23,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from 'dayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useScheduleStore } from "../../stores/scheduleStore";
 
 export const ScheduleForm = () => {
   // Состояния формы
@@ -33,7 +35,74 @@ export const ScheduleForm = () => {
   const [groups, setGroups] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [lessonNumbers, setlessonNumbers] = useState([
+    {
+      title:"1",
+      code_name:"n1"
+    },
+    {
+      title:"2",
+      code_name:"n2"
+    },
+    {
+      title:"3",
+      code_name:"n3"
+    },
+    {
+      title:"4",
+      code_name:"n4"
+    },
+    {
+      title:"5",
+      code_name:"n5"
+    },
+    {
+      title:"6",
+      code_name:"n6"
+    },
+    {
+      title:"7",
+      code_name:"n7"
+    }
+  ]);
+  const [subgroups, setSubgroups] = useState([
+    {
+      title: "Общая",
+      code_name: "all"
+    },
+    {
+      title: "1п/г",
+      code_name: "first_subgroup"
+    },
+    {
+      title: "2п/г",
+      code_name: "second_subgroup"
+    },
+    {
+      title: "1 бригада",
+      code_name: "first_brigade"
+    },
+    {
+      title: "2 бригада",
+      code_name: "second_brigade"
+    },
+    {
+      title: "3 бригада",
+      code_name: "third_brigade"
+    },
+  ]);
+  const [classRooms, setClassRooms] = useState()
+  const { getClassroomList } = useScheduleStore();
 
+  useEffect(() => {
+    const fetchClassRooms = async () => {
+      const response = await getClassroomList();
+      console.log(response.data);
+      setClassRooms(response.data);
+    }
+    fetchClassRooms();
+  }, []);
+  console.log(classRooms);
   // Добавить новое поле урока
   const addLesson = () => {
     setLessons([...lessons, { time: '', subject: '', teacher: '', room: '' }]);
@@ -48,9 +117,9 @@ export const ScheduleForm = () => {
   };
 
   // Обновить данные урока
-  const handleLessonChange = (index, field, value) => {
+  const handleLessonChange = (index, target) => {
     const updatedLessons = lessons.map((lesson, i) =>
-      i === index ? { ...lesson, [field]: value } : lesson
+      i === index ? { ...lesson, [target.name]: target.value } : lesson
     );
     setLessons(updatedLessons);
   };
@@ -80,7 +149,7 @@ export const ScheduleForm = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container fullWidth sx={{ py: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
           Создание нового расписания
@@ -101,8 +170,8 @@ export const ScheduleForm = () => {
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
             {/* Поля даты и группы */}
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+              <Box sx={{ flex: 1 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
                     label="Дата расписания"
@@ -112,9 +181,9 @@ export const ScheduleForm = () => {
                     slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
-              </Grid>
+              </Box>
 
-              <Grid item xs={12} md={6}>
+              <Box sx={{ flex: 1 }}>
                 <FormControl fullWidth>
                   <InputLabel>Группа</InputLabel>
                   <Select
@@ -130,8 +199,8 @@ export const ScheduleForm = () => {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-            </Grid>
+              </Box>
+            </Stack>
 
             <Divider sx={{ my: 2 }} />
 
@@ -156,53 +225,71 @@ export const ScheduleForm = () => {
                   <DeleteOutlineIcon />
                 </IconButton>
 
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={3}>
-                    <TextField
-                      label="Время (например, 9:00-10:30)"
-                      value={lesson.time}
-                      onChange={(e) =>
-                        handleLessonChange(index, 'time', e.target.value)
-                      }
-                      fullWidth
-                      required
-                    />
-                  </Grid>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+                  <TextField
+                    label="Пара"
+                    value={lesson.number}
+                    name="number"
+                    onChange={(e) => handleLessonChange(index, e.target.value)}
+                    fullWidth
+                    required
+                    sx={{ flex: 1 }}
+                    select
+                    defaultValue={`n${index + 1}`}
+                  >
+                    {lessonNumbers.map((index, item) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
+                  </TextField>
+                  <TextField
+                    label="Подгруппа"
+                    name='subgroup'
+                    value={lesson.subgroup}
+                    onChange={(e) => handleLessonChange(index, e.target)}
+                    fullWidth
+                    required
+                    select
+                    sx={{ flex: 2 }}
+                    defaultValue="all"
+                    >
+                    {subgroups.map(item => (<MenuItem value={item.code_name}>{item.title}</MenuItem>))}
+                  </TextField>
 
-                  <Grid item xs={12} sm={4}>
-                    <TextField
-                      label="Предмет"
-                      value={lesson.subject}
-                      onChange={(e) =>
-                        handleLessonChange(index, 'subject', e.target.value)
-                      }
-                      fullWidth
-                      required
-                    />
-                  </Grid>
+                  <TextField
+                    label="Предмет"
+                    value={lesson.subject}
+                    onChange={(e) => handleLessonChange(index, 'subject', e.target.value)}
+                    fullWidth
+                    required
+                    sx={{ flex: 4 }}
+                  />
 
-                  <Grid item xs={12} sm={3}>
-                    <TextField
-                      label="Преподаватель"
-                      value={lesson.teacher}
-                      onChange={(e) =>
-                        handleLessonChange(index, 'teacher', e.target.value)
-                      }
-                      fullWidth
-                    />
-                  </Grid>
+                  <TextField
+                    label="Преподаватель"
+                    value={lesson.teacher}
+                    onChange={(e) => handleLessonChange(index, 'teacher', e.target.value)}
+                    fullWidth
+                    sx={{ flex: 3 }}
+                  />
 
-                  <Grid item xs={12} sm={2}>
-                    <TextField
-                      label="Аудитория"
-                      value={lesson.room}
-                      onChange={(e) =>
-                        handleLessonChange(index, 'room', e.target.value)
-                      }
-                      fullWidth
-                    />
-                  </Grid>
-                </Grid>
+                  <Autocomplete
+                    options={classRooms}
+                    // getOptionLabel={(option) => option.title}
+                    value={lesson.room}
+                    onChange={(event, newValue) => lesson.room = newValue}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Кабинет" fullWidth />
+                    )}
+                    fullWidth
+                    sx={{ flex: 2 }}
+                  />
+  
+                  <TextField
+                    label="Аудитория"
+                    value={lesson.room}
+                    onChange={(e) => handleLessonChange(index, 'room', e.target.value)}
+                    fullWidth
+                    sx={{ flex: 1 }}
+                  />
+                </Stack>
               </Box>
             ))}
 
@@ -216,19 +303,9 @@ export const ScheduleForm = () => {
             </Button>
 
             <Divider sx={{ my: 2 }} />
-
-            {/* Кнопка отправки */}
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              sx={{ mt: 2 }}
-            >
-              Создать расписание
-            </Button>
           </Stack>
         </form>
+
       </Paper>
     </Container>
   );
