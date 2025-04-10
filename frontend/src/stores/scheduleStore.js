@@ -14,7 +14,7 @@ export const useScheduleStore = create((set, get) => ({
     groups: [],
     majors: [],
     teachers: [],
-    classrooms: [],
+    classRooms: [],
     
     // Получение расписания
     getSchedule: async () => {
@@ -83,7 +83,7 @@ export const useScheduleStore = create((set, get) => ({
     getClassroomList: async () => {
         try {
             const response = await ClassRoomAPI.getClassroomList();
-            set({ classrooms: response.data });
+            set({ classRooms: response.data });
             return response.data;
         } catch (error) {
             console.error('Ошибка при получении списка аудиторий:', error);

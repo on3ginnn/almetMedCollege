@@ -30,38 +30,38 @@ export const ScheduleForm = () => {
   const [date, setDate] = useState(dayjs());
   const [selectedGroup, setSelectedGroup] = useState('');
   const [lessons, setLessons] = useState([
-    { time: '', subject: '', teacher: '', room: '' },
+    { time: '', subject: '', teacher: '', classroom: '' },
   ]);
   const [groups, setGroups] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [lessonNumbers, setlessonNumbers] = useState([
     {
-      title:"1",
+      title:"1 - 08:00-09:30",
       code_name:"n1"
     },
     {
-      title:"2",
+      title:"2 - 09:40-11:10",
       code_name:"n2"
     },
     {
-      title:"3",
+      title:"3 - 11:40-13:10",
       code_name:"n3"
     },
     {
-      title:"4",
+      title:"4 - 13:20-14:50",
       code_name:"n4"
     },
     {
-      title:"5",
+      title:"5 - 15:00-16:30",
       code_name:"n5"
     },
     {
-      title:"6",
+      title:"6 - 16:40-18:10",
       code_name:"n6"
     },
     {
-      title:"7",
+      title:"7 - 18:20-19:50",
       code_name:"n7"
     }
   ]);
@@ -91,14 +91,14 @@ export const ScheduleForm = () => {
       code_name: "third_brigade"
     },
   ]);
-  const [classRooms, setClassRooms] = useState()
-  const { getClassroomList } = useScheduleStore();
+  // const [classRooms, setClassRooms] = useState()
+  const { getClassroomList, classRooms } = useScheduleStore();
 
   useEffect(() => {
     const fetchClassRooms = async () => {
-      const response = await getClassroomList();
-      console.log(response.data);
-      setClassRooms(response.data);
+      await getClassroomList();
+      // console.log(response);
+      // setClassRooms(response);
     }
     fetchClassRooms();
   }, []);
@@ -118,8 +118,16 @@ export const ScheduleForm = () => {
 
   // Обновить данные урока
   const handleLessonChange = (index, target) => {
-    const updatedLessons = lessons.map((lesson, i) =>
-      i === index ? { ...lesson, [target.name]: target.value } : lesson
+    console.log(lessons);
+    console.log(index)
+    const updatedLessons = lessons.map((lesson, i) => {
+      if (i === index) {
+        console.log("updated")
+        return { ...lesson, [target.name]: target.value }
+      } 
+      return lesson;
+    }
+      // i === index ? { ...lesson, [target.name]: target.value } : lesson
     );
     setLessons(updatedLessons);
   };
@@ -149,7 +157,7 @@ export const ScheduleForm = () => {
   };
 
   return (
-    <Container fullWidth sx={{ py: 4 }}>
+    <Container maxWidth='xl' sx={{ py: 4 }}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
           Создание нового расписания
@@ -227,17 +235,17 @@ export const ScheduleForm = () => {
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <TextField
-                    label="Пара"
+                    label="№"
                     value={lesson.number}
                     name="number"
-                    onChange={(e) => handleLessonChange(index, e.target.value)}
+                    onChange={(e) => handleLessonChange(index, e.target)}
                     fullWidth
                     required
-                    sx={{ flex: 1 }}
+                    sx={{ flex: 2 }}
                     select
                     defaultValue={`n${index + 1}`}
                   >
-                    {lessonNumbers.map((index, item) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
+                    {lessonNumbers.map((item, index) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
                   </TextField>
                   <TextField
                     label="Подгруппа"
@@ -269,12 +277,12 @@ export const ScheduleForm = () => {
                     fullWidth
                     sx={{ flex: 3 }}
                   />
-
+                  {console.log(classRooms)}
                   <Autocomplete
                     options={classRooms}
                     // getOptionLabel={(option) => option.title}
                     value={lesson.room}
-                    onChange={(event, newValue) => lesson.room = newValue}
+                    onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}
                     renderInput={(params) => (
                         <TextField {...params} label="Кабинет" fullWidth />
                     )}
