@@ -32,7 +32,7 @@ export const ScheduleForm = () => {
   const [lessons, setLessons] = useState([
     { time: '', subject: '', teacher: '', classroom: '' },
   ]);
-  const [groups, setGroups] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
+  // const [groupList, setGroupList] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [lessonNumbers, setlessonNumbers] = useState([
@@ -92,11 +92,12 @@ export const ScheduleForm = () => {
     },
   ]);
   // const [classRooms, setClassRooms] = useState()
-  const { getClassroomList, classRooms } = useScheduleStore();
+  const { getClassroomList, getGroupList, classRooms, groups } = useScheduleStore();
 
   useEffect(() => {
     const fetchClassRooms = async () => {
       await getClassroomList();
+      await getGroupList();
       // console.log(response);
       // setClassRooms(response);
     }
@@ -180,12 +181,13 @@ export const ScheduleForm = () => {
             {/* Поля даты и группы */}
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
               <Box sx={{ flex: 1 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
                   <DatePicker
                     label="Дата расписания"
                     value={date}
                     onChange={(newDate) => setDate(newDate)}
                     format="DD.MM.YYYY"
+                    views={['month', 'day']}
                     slotProps={{ textField: { fullWidth: true } }}
                   />
                 </LocalizationProvider>
@@ -201,8 +203,8 @@ export const ScheduleForm = () => {
                     required
                   >
                     {groups.map((group) => (
-                      <MenuItem key={group} value={group}>
-                        {group}
+                      <MenuItem key={group.id} value={group.id}>
+                        {group.name}
                       </MenuItem>
                     ))}
                   </Select>
@@ -225,17 +227,9 @@ export const ScheduleForm = () => {
                   position: 'relative',
                 }}
               >
-                <IconButton
-                  onClick={() => removeLesson(index)}
-                  sx={{ position: 'absolute', top: 8, right: 8 }}
-                  color="error"
-                >
-                  <DeleteOutlineIcon />
-                </IconButton>
-
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                   <TextField
-                    label="№"
+                    label="Пара"
                     value={lesson.number}
                     name="number"
                     onChange={(e) => handleLessonChange(index, e.target)}
@@ -267,7 +261,7 @@ export const ScheduleForm = () => {
                     onChange={(e) => handleLessonChange(index, 'subject', e.target.value)}
                     fullWidth
                     required
-                    sx={{ flex: 4 }}
+                    sx={{ flex: 5 }}
                   />
 
                   <TextField
@@ -290,13 +284,15 @@ export const ScheduleForm = () => {
                     sx={{ flex: 2 }}
                   />
   
-                  <TextField
-                    label="Аудитория"
-                    value={lesson.room}
-                    onChange={(e) => handleLessonChange(index, 'room', e.target.value)}
-                    fullWidth
-                    sx={{ flex: 1 }}
-                  />
+
+                <Button
+                  onClick={() => removeLesson(index)}
+                  sx={{  }}
+                  color="error"
+                  size="small"
+                >
+                  <DeleteOutlineIcon />
+                </Button>
                 </Stack>
               </Box>
             ))}
