@@ -30,7 +30,7 @@ export const ScheduleForm = () => {
   const [date, setDate] = useState(dayjs());
   const [selectedGroup, setSelectedGroup] = useState('');
   const [lessons, setLessons] = useState([
-    { time: '', subject: '', teacher: '', classroom: '' },
+    { number: 'n1', subgroup: 'all', major: '', teacher: '', classroom: null },
   ]);
   // const [groupList, setGroupList] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
   const [error, setError] = useState('');
@@ -103,18 +103,28 @@ export const ScheduleForm = () => {
     }
     fetchClassRooms();
   }, []);
-  console.log(classRooms);
   // Добавить новое поле урока
   const addLesson = () => {
-    setLessons([...lessons, { time: '', subject: '', teacher: '', room: '' }]);
+    // Находим максимальный номер урока
+    const maxNumber = lessons.reduce((max, lesson) => {
+      const lessonNumber = parseInt(lesson.number.slice(1)); // Извлекаем число из строки "n1", "n2" и т.д.
+      return lessonNumber > max ? lessonNumber : max;
+    }, 0);
+
+    // Формируем новый номер урока
+    const newLessonNumber = `n${maxNumber + 1}`;
+
+    // Создаем новый урок с номером по умолчанию
+    setLessons([...lessons, { number: newLessonNumber, subgroup: "all", major: '', teacher: '', classroom: null }]);
   };
 
   // Удалить урок
-  const removeLesson = (index) => {
-    if (lessons.length > 1) {
-      const updatedLessons = lessons.filter((_, i) => i !== index);
-      setLessons(updatedLessons);
-    }
+  const removeLesson = (number) => {
+    console.log(number);
+    console.log(lessons);
+    const updatedLessons = lessons.filter((item) => item.number !== number);
+    console.log(updatedLessons);
+    setLessons(updatedLessons);
   };
 
   // Обновить данные урока
@@ -131,6 +141,8 @@ export const ScheduleForm = () => {
       // i === index ? { ...lesson, [target.name]: target.value } : lesson
     );
     setLessons(updatedLessons);
+    console.log(lessons);
+
   };
 
   // Отправить форму
@@ -235,9 +247,8 @@ export const ScheduleForm = () => {
                     onChange={(e) => handleLessonChange(index, e.target)}
                     fullWidth
                     required
-                    sx={{ flex: 2 }}
                     select
-                    defaultValue={`n${index + 1}`}
+                    sx={{ flex: 2 }}
                   >
                     {lessonNumbers.map((item, index) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
                   </TextField>
@@ -257,8 +268,9 @@ export const ScheduleForm = () => {
 
                   <TextField
                     label="Предмет"
-                    value={lesson.subject}
-                    onChange={(e) => handleLessonChange(index, 'subject', e.target.value)}
+                    name='major'
+                    value={lesson.major}
+                    onChange={(e) => handleLessonChange(index, e.target)}
                     fullWidth
                     required
                     sx={{ flex: 5 }}
@@ -266,16 +278,17 @@ export const ScheduleForm = () => {
 
                   <TextField
                     label="Преподаватель"
+                    name='teacher'
                     value={lesson.teacher}
-                    onChange={(e) => handleLessonChange(index, 'teacher', e.target.value)}
+                    onChange={(e) => handleLessonChange(index, e.target)}
                     fullWidth
                     sx={{ flex: 3 }}
                   />
-                  {console.log(classRooms)}
+                  {console.log(lessons)}
                   <Autocomplete
                     options={classRooms}
-                    // getOptionLabel={(option) => option.title}
-                    value={lesson.room}
+                    getOptionLabel={(option) => option.label}
+                    value={lesson.classroom}
                     onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}
                     renderInput={(params) => (
                         <TextField {...params} label="Кабинет" fullWidth />
@@ -283,10 +296,9 @@ export const ScheduleForm = () => {
                     fullWidth
                     sx={{ flex: 2 }}
                   />
-  
-
                 <Button
-                  onClick={() => removeLesson(index)}
+                  onClick={() => removeLesson(lesson.number || `n${index + 1}`)}
+                  // onClick={() => removeLesson(`n${index + 1}`)}
                   sx={{  }}
                   color="error"
                   size="small"
