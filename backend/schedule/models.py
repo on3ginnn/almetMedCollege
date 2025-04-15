@@ -60,13 +60,13 @@ class GroupLesson(django.db.models.Model):
     number = django.db.models.CharField(
         "номер пары",
         choices=[
-            ("l1", "1"),
-            ("l2", "2"),
-            ("l3", "3"),
-            ("l4", "4"),
-            ("l5", "5"),
-            ("l6", "6"),
-            ("l7", "7"),
+            ("n1", "1"),
+            ("n2", "2"),
+            ("n3", "3"),
+            ("n4", "4"),
+            ("n5", "5"),
+            ("n6", "6"),
+            ("n7", "7"),
         ],
         max_length=2,
     )
