@@ -24,13 +24,15 @@ import dayjs from 'dayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { useScheduleStore } from "../../stores/scheduleStore";
+import { useNavigate } from "react-router-dom";
 
 export const ScheduleForm = () => {
+  const navigate = useNavigate();
   // Состояния формы
   const [date, setDate] = useState(dayjs());
   const [selectedGroup, setSelectedGroup] = useState('');
   const [lessons, setLessons] = useState([
-    { number: 'n1', subgroup: 'all', major: '', teacher: '', classroom: null },
+    { number: 'n1', subgroup: 'all', major: null, teacher: null, classroom: null },
   ]);
   // const [groupList, setGroupList] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
   const [error, setError] = useState('');
@@ -92,17 +94,21 @@ export const ScheduleForm = () => {
     },
   ]);
   // const [classRooms, setClassRooms] = useState()
-  const { getClassroomList, getGroupList, classRooms, groups } = useScheduleStore();
+  const { getClassroomList, getGroupList, classRooms, groups, teachers, getTeacherList, majors, getMajorList, createSchedule } = useScheduleStore();
 
   useEffect(() => {
     const fetchClassRooms = async () => {
       await getClassroomList();
       await getGroupList();
+      await getTeacherList();
+      await getMajorList();
       // console.log(response);
       // setClassRooms(response);
     }
     fetchClassRooms();
   }, []);
+  console.log(teachers);
+  console.log(majors);
   // Добавить новое поле урока
   const addLesson = () => {
     // Находим максимальный номер урока
@@ -115,7 +121,7 @@ export const ScheduleForm = () => {
     const newLessonNumber = `n${maxNumber + 1}`;
 
     // Создаем новый урок с номером по умолчанию
-    setLessons([...lessons, { number: newLessonNumber, subgroup: "all", major: '', teacher: '', classroom: null }]);
+    setLessons([...lessons, { number: newLessonNumber, subgroup: "all", major: null, teacher: null, classroom: null }]);
   };
 
   // Удалить урок
@@ -148,11 +154,12 @@ export const ScheduleForm = () => {
   // Отправить форму
   const handleSubmit = (e) => {
     e.preventDefault();
+    localStorage.setItem('lessons', lessons);
     if (!selectedGroup) {
       setError('Выберите группу');
       return;
     }
-    if (lessons.some((lesson) => !lesson.time || !lesson.subject)) {
+    if (lessons.some((lesson) => !lesson.number || !lesson.subgroup || !lesson.major || !lesson.teacher || !lesson.classroom)) {
       setError('Заполните все обязательные поля уроков');
       return;
     }
@@ -161,12 +168,18 @@ export const ScheduleForm = () => {
     const scheduleData = {
       date: date.format('YYYY-MM-DD'),
       group: selectedGroup,
-      lessons,
+      lessons: lessons.map(lesson => ({
+        number: lesson.number,
+        subgroup: lesson.subgroup,
+        major: lesson.major.id,       // строка
+        teacher: lesson.teacher.id, // строка
+        classroom: lesson.classroom.id // строка
+      })),
     };
-
+    createSchedule(scheduleData);
     console.log('Отправка данных:', scheduleData);
-    setSuccess('Расписание успешно создано!');
-    setError('');
+    // setSuccess('Расписание успешно создано!');
+    navigate('/schedule');
   };
 
   return (
@@ -265,22 +278,25 @@ export const ScheduleForm = () => {
                     >
                     {subgroups.map(item => (<MenuItem value={item.code_name}>{item.title}</MenuItem>))}
                   </TextField>
-
-                  <TextField
-                    label="Предмет"
-                    name='major'
+                  <Autocomplete
+                    options={majors}
+                    getOptionLabel={(option) => option.title}
                     value={lesson.major}
-                    onChange={(e) => handleLessonChange(index, e.target)}
+                    onChange={(event, newValue) => handleLessonChange(index, {name: "major", value: newValue})}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Предмет" fullWidth />
+                    )}
                     fullWidth
-                    required
                     sx={{ flex: 5 }}
                   />
-
-                  <TextField
-                    label="Преподаватель"
-                    name='teacher'
+                  <Autocomplete
+                    options={teachers}
+                    getOptionLabel={(option) => option.get_full_name}
                     value={lesson.teacher}
-                    onChange={(e) => handleLessonChange(index, e.target)}
+                    onChange={(event, newValue) => handleLessonChange(index, {name: "teacher", value: newValue})}
+                    renderInput={(params) => (
+                        <TextField {...params} label="Преподаватель" fullWidth />
+                    )}
                     fullWidth
                     sx={{ flex: 3 }}
                   />
@@ -319,6 +335,13 @@ export const ScheduleForm = () => {
             </Button>
 
             <Divider sx={{ my: 2 }} />
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+            >
+              Создать расписание
+            </Button>
           </Stack>
         </form>
 

@@ -12,7 +12,11 @@ export default class ScheduleAPI {
         }
     }
     static async createSchedule(scheduleData) {
-        const response = await apiClient.post('/schedule/create/', scheduleData);
-        return response.data;
+        try {
+            const response = await apiClient.post('/schedule/create/', scheduleData);
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     }
 }
