@@ -89,7 +89,24 @@ export const useScheduleStore = create((set, get) => ({
             console.error('Ошибка при получении списка аудиторий:', error);
         }
     },
-    
+    getBusyTeachers: async (date) => {
+        try{
+            const response = await ScheduleAPI.getBusyTeachers(date);
+            console.log(response.data)
+            return response;
+        } catch (error) {
+            console.error('Ошибка при получении списка занятых преподавателей');
+        }
+    },
+    getBusyClassrooms: async (date) => {
+        try{
+            const response = await ScheduleAPI.getBusyClassrooms(date);
+            console.log(response.data)
+            return response;
+        } catch (error) {
+            console.error('Ошибка при получении списка занятых кабинетов');
+        }
+    },
     setCurrentGroup: (newGroup) => set({ currentGroup: newGroup }),
     setCurrentDate: (newDate) => set({ currentDate: newDate }),
 }));

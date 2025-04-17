@@ -19,4 +19,22 @@ export default class ScheduleAPI {
             throw error;
         }
     }
+    static async getBusyTeachers(date) {
+        try {
+            const response = await apiClient.get(`/schedule/teacher/busy/`, {params: {date: date}});
+            console.log(response.data)
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async getBusyClassrooms(date) {
+        try {
+            const response = await apiClient.get(`/schedule/classroom/busy/`, {params: {date: date}});
+            console.log(response.data)
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

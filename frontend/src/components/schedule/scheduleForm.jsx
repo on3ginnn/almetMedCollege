@@ -28,13 +28,21 @@ import { useNavigate } from "react-router-dom";
 
 export const ScheduleForm = () => {
   const navigate = useNavigate();
-  // Состояния формы
+  // занятые преподы и кабинеты
+  const [busyTeachers, setBusyTeachers] = useState([]);
+  const [busyClassrooms, setBusyClassrooms] = useState([]);
+
+  console.log('-----');
+  console.log(busyTeachers)
+  console.log(busyClassrooms)
+
   const [date, setDate] = useState(dayjs());
   const [selectedGroup, setSelectedGroup] = useState('');
   const [lessons, setLessons] = useState([
     { number: 'n1', subgroup: 'all', major: null, teacher: null, classroom: null },
   ]);
   // const [groupList, setGroupList] = useState(['Группа 1', 'Группа 2', 'Группа 3']); // Пример списка групп
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [lessonNumbers, setlessonNumbers] = useState([
@@ -94,7 +102,36 @@ export const ScheduleForm = () => {
     },
   ]);
   // const [classRooms, setClassRooms] = useState()
-  const { getClassroomList, getGroupList, classRooms, groups, teachers, getTeacherList, majors, getMajorList, createSchedule } = useScheduleStore();
+  const { 
+    getClassroomList,
+    getGroupList,
+    classRooms,
+    groups,
+    teachers,
+    getTeacherList,
+    majors,
+    getMajorList,
+    createSchedule,
+    getBusyTeachers,
+    getBusyClassrooms
+  } = useScheduleStore();
+
+
+  useEffect(() => {
+    const fetchBusyTeachers = async () => {
+      const response = await getBusyTeachers(date.format('YYYY-MM-DD'));
+      setBusyTeachers(response.data);
+    };
+    fetchBusyTeachers();
+  }, [date]);
+
+  useEffect(() => {
+    const fetchBusyClassrooms = async () => {
+      const response = await getBusyClassrooms(date.format('YYYY-MM-DD')); // Предполагается, что у вас есть функция getBusyClassrooms в store
+      setBusyClassrooms(response.data);
+    };
+    fetchBusyClassrooms();
+  }, [date]);
 
   useEffect(() => {
     const fetchClassRooms = async () => {
@@ -107,7 +144,18 @@ export const ScheduleForm = () => {
     }
     fetchClassRooms();
   }, []);
+  useEffect(() => {
+    const currentGroupLessons = lessons.reduce((acc, lesson) => {
+      if (lesson.teacher) {
+        acc.push({ lessonNumber: lesson.number, teacherId: lesson.teacher.id });
+      }
+      return acc;
+    }, []);
+    setBusyTeachers(prev => [...prev, ...currentGroupLessons]);
+  }, [lessons]);
+
   console.log(teachers);
+  console.log('ffffff')
   console.log(majors);
   // Добавить новое поле урока
   const addLesson = () => {
@@ -125,13 +173,11 @@ export const ScheduleForm = () => {
   };
 
   // Удалить урок
-  const removeLesson = (number) => {
-    console.log(number);
-    console.log(lessons);
-    const updatedLessons = lessons.filter((item) => item.number !== number);
-    console.log(updatedLessons);
+  const removeLesson = (number, subgroup) => {
+    const updatedLessons = lessons.filter((item) => !(item.number === number && item.subgroup === subgroup));
     setLessons(updatedLessons);
   };
+  
 
   // Обновить данные урока
   const handleLessonChange = (index, target) => {
@@ -290,7 +336,17 @@ export const ScheduleForm = () => {
                     sx={{ flex: 5 }}
                   />
                   <Autocomplete
-                    options={teachers}
+                    options={teachers.filter(teacher => 
+                      !busyTeachers.some(b => 
+                        b.lessonNumber === lesson.number && 
+                        b.teacherId === teacher.id
+                      ) && 
+                      !lessons.some((l, i) => 
+                        i !== index && 
+                        l.number === lesson.number && 
+                        l.teacher?.id === teacher.id
+                      )
+                    )}
                     getOptionLabel={(option) => option.get_full_name}
                     value={lesson.teacher}
                     onChange={(event, newValue) => handleLessonChange(index, {name: "teacher", value: newValue})}
@@ -302,7 +358,20 @@ export const ScheduleForm = () => {
                   />
                   {console.log(lessons)}
                   <Autocomplete
-                    options={classRooms}
+                    options={
+                      classRooms.filter(classroom => 
+                        !busyClassrooms.some(b => (
+                          b.lessonNumber === lesson.number &&
+                          b.classroomId === classroom.id
+                        ) && 
+                        !lessons.some((l, i) => (
+                          i !== index &&
+                          l.number === lesson.number &&
+                          // l.subgroup === lesson.subgroup &&
+                          l.classroom?.id === classroom.id
+                        ))
+                      )
+                    )}
                     getOptionLabel={(option) => option.label}
                     value={lesson.classroom}
                     onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}
@@ -312,15 +381,15 @@ export const ScheduleForm = () => {
                     fullWidth
                     sx={{ flex: 2 }}
                   />
-                <Button
-                  onClick={() => removeLesson(lesson.number || `n${index + 1}`)}
-                  // onClick={() => removeLesson(`n${index + 1}`)}
-                  sx={{  }}
-                  color="error"
-                  size="small"
-                >
-                  <DeleteOutlineIcon />
-                </Button>
+                  <Button
+                    onClick={() => removeLesson(lesson.number, lesson.subgroup)}
+                    sx={{}}
+                    color="error"
+                    size="small"
+                  >
+                    <DeleteOutlineIcon />
+                  </Button>
+
                 </Stack>
               </Box>
             ))}
