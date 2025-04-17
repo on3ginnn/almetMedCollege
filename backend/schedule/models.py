@@ -51,7 +51,7 @@ class GroupLesson(django.db.models.Model):
     classroom = django.db.models.ForeignKey(
         ClassRoom,
         verbose_name="кабинет",
-        related_name="classroom_lessons",
+        related_name="classroom",
         null=True,
         default=None,
         on_delete=django.db.models.SET_NULL,
@@ -81,7 +81,7 @@ class GroupLesson(django.db.models.Model):
     class Meta:
         verbose_name = "пара"
         verbose_name = "пары"
-        unique_together = ('schedule', 'number', 'subgroup')  # Теперь порядок внутри подгруппы разрешен
+        unique_together = ('schedule', 'number', 'subgroup', 'classroom')
         ordering = ["number"]
 
     def __str__(self):

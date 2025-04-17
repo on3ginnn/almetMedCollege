@@ -1,5 +1,7 @@
 import rest_framework.generics
 import rest_framework.permissions
+import rest_framework.response
+from django.db.models import Prefetch
 
 import schedule.serializer
 import users.permissions
@@ -21,6 +23,44 @@ class ScheduleCreateAPIView(rest_framework.generics.CreateAPIView):
         "lessons__teacher",
         "lessons__classroom"
     )
+
+
+class BusyClassroomsAPIView(rest_framework.views.APIView):
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
+    serializer_class = schedule.serializer.ScheduleClassroomBusySerializer
+    queryset = schedule.models.Schedule.objects.prefetch_related(
+        Prefetch('lessons', queryset=schedule.models.GroupLesson.objects.select_related('classroom'))
+    )
+
+    def get(self, request):
+        date = request.query_params.get('date')
+        lessons = schedule.models.Schedule.objects.filter(date=date).values_list(
+            'lessons__number', 'lessons__classroom'
+        )
+        print(lessons)
+        return rest_framework.response.Response([
+            {'lessonNumber': num, 'classroomId': cr} 
+            for num, cr in lessons
+        ])
+
+
+class BusyTeachersAPIView(rest_framework.views.APIView):
+    permission_classes = [users.permissions.DjangoModelPermissionsWithGroupsOrReadOnly]
+    serializer_class = schedule.serializer.ScheduleTeacherBusySerializer
+    queryset = schedule.models.Schedule.objects.prefetch_related(
+        Prefetch('lessons', queryset=schedule.models.GroupLesson.objects.select_related('teacher'))
+    )
+
+    def get(self, request):
+        date = request.query_params.get('date')
+        lessons = schedule.models.Schedule.objects.filter(date=date).values_list(
+            'lessons__number', 'lessons__teacher'
+        )
+        print(lessons)
+        return rest_framework.response.Response([
+            {'lessonNumber': num, 'teacherId': tid} 
+            for num, tid in lessons
+        ])
 
 
 class ScheduleListAPIView(rest_framework.generics.ListAPIView):

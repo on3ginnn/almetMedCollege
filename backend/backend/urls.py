@@ -8,6 +8,7 @@ import users.views
 import group.urls
 import news.urls
 import schedule.urls
+import major.urls
 
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     django.urls.path("group/", django.urls.include(group.urls)),
     django.urls.path("news/", django.urls.include(news.urls)),
     django.urls.path("schedule/", django.urls.include(schedule.urls)),
+    django.urls.path("major/", django.urls.include(major.urls)),
     django.urls.path("admin/", django.contrib.admin.site.urls),
 ]
 

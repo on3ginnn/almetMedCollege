@@ -17,7 +17,7 @@ class UserSerializer(rest_framework.serializers.ModelSerializer):
 class TeacherListSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL     
-        fields = ['id', 'username', "first_name", "last_name", 'father_name']
+        fields = ['id', 'username', "first_name", "last_name", 'father_name', 'get_full_name']
     
 
 class UserListWithPasswordSerializer(rest_framework.serializers.ModelSerializer):
