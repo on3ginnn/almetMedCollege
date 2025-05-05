@@ -25,6 +25,8 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { customRouter } from './config/customRouter';
 import { useUserStore } from './stores/userStore';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
 
 let NAVIGATION = [
   {
@@ -44,16 +46,20 @@ let NAVIGATION = [
   {
     segment: 'news',
     title: 'Новости',
-    icon: <ShoppingCartIcon />,
+    icon: <NewspaperIcon />,
   },
   {
     segment: 'schedule',
     title: 'Расписание',
-    icon: <ShoppingCartIcon />,
+    icon: <EventNoteIcon />,
   },
 ];
 
 const adminNavigaion = [
+  {
+    kind: 'header',
+    title: 'Админка',
+  },
   {
     segment: 'user/all',
     title: 'Все пользователи',
@@ -176,6 +182,8 @@ function MainContent(props) {
         setSession(null);
         await logoutUser();
       },
+      signInButtonContent: 'Войти',
+      signOutButtonContent: 'Войти',
     };
   }, []);
   
