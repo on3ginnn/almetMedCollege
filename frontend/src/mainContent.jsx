@@ -158,7 +158,7 @@ function MainContent(props) {
       setSession({
         user: {
           name: `${currentUser.last_name} ${currentUser.first_name}`,
-          email: `${currentUser.email}`,
+          email: `${currentUser.phone_number}`,
           image: 'https://avatars.githubusercontent.com/u/19550456',
         },
       }); // Сохраняем данные профиля в состояние

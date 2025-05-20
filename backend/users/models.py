@@ -6,6 +6,7 @@ import phonenumber_field.modelfields
 import group.models
 import major.models
 
+
 class User(django.contrib.auth.models.AbstractUser):
     class Role(django.db.models.TextChoices):
         STUDENT = 'student', 'Студент'

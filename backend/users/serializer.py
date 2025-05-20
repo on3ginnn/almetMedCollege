@@ -11,7 +11,7 @@ USER_MODEL = django.contrib.auth.get_user_model()
 class UserSerializer(rest_framework.serializers.ModelSerializer):
     class Meta:
         model = USER_MODEL     
-        fields = ['id', 'username', "first_name", "last_name", 'father_name', 'phone_number', "phone_number", "role"]
+        fields = ['id', 'username', "first_name", "last_name", 'father_name', 'phone_number', "role"]
     
 
 class TeacherListSerializer(rest_framework.serializers.ModelSerializer):
