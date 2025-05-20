@@ -6,6 +6,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 // import { AdapterLuxon } from '@mui/x-date-pickers/AdapterLuxon';
 import "dayjs/locale/ru";
+import GroupIcon from '@mui/icons-material/Group';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 
 export const Schedule = () => {
     const {
@@ -60,137 +63,162 @@ export const Schedule = () => {
 
 
     return (
-        <Stack direction='row' spacing={10}>
-            {/* <Box sx={{
-                width: "100%"
-            }}>
-                <Typography variant="h4">
-                    {currentGroup !== null ? `Расписание группы ${currentGroup.name} на ${currentDate.format("DD-MM-YYYY")}` : 'Выберите число и группу'}
-                </Typography>
-                {schedule !== null ? 
-                    (<Table sx={{ minWidth: 650 }}>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>№</TableCell>
-                                <TableCell>Предмет</TableCell>
-                                <TableCell>Кабинет</TableCell>
-                                <TableCell>Преподаватель</TableCell>
-                                <TableCell>Подгруппа</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {lessons.map((lesson, index) => (
-                                <TableRow key={lesson.id}>
-                                    <TableCell>{index + 1}</TableCell>
-                                    <TableCell>{lesson.major}</TableCell>
-                                    <TableCell>{lesson.classroom}</TableCell>
-                                    <TableCell>{lesson.teacher}</TableCell>
-                                    <TableCell>{lesson.subgroup}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>)
-                : (currentGroup !== null ? (<Typography variant='subtitle1'>Не опубликовано</Typography>) : "")}
-            </Box> */}
-            <Paper sx={{ width: "100%" }} elevation={0}>
-                <Box sx={{ p: 3 }}>
-                <Typography variant="h5" gutterBottom>
+      <Stack direction='row' spacing={10}>
+        <Paper sx={{ width: "100%" }} elevation={0}>
+          <Box sx={{ p: 3 }}>
+
+            <Paper sx={{ width: "100%", mb: 3, bgcolor: '#f5f5f5' }} elevation={0}>
+              <Box sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2 }}>
+                <Stack direction='row' spacing={4} alignItems="center">
+                  <Typography variant="h5" gutterBottom fontWeight="bold">
                     Расписание
-                    <Typography component="span" color="text.secondary">
-                        {' '}для группы{' '}
+                  </Typography>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <GroupIcon color="primary" />
+                    <Typography variant="h6" noWrap fontWeight="">
+                      {currentGroup ? currentGroup.name : 'Группа не выбрана'}
                     </Typography>
-                    {currentGroup && (
-                    <Typography variant="h6" component="span">{currentGroup.name}</Typography>
-                    )}
-                    <Typography component="span" color="text.secondary">
-                        {' '}на{' '}
-                    </Typography>
-                    {currentDate && (
-                        <Typography variant="h6" component="span">{currentDate.format("DD-MM-YYYY")}</Typography>
-                    )}
-                </Typography>
-
-                {isLoading ? (
-                    <Typography variant='body2'>Загрузка...</Typography>
-                ) : lessons.length > 0 ? (
-                    <Stack spacing={2}>
-                    {lessons.map((lesson, index) => (<Card key={index} variant="outlined">
-                        <CardContent>
-                            <Grid container spacing={2}>
-                            <Grid item xs={2}>
-                                <Typography variant="subtitle1">
-                                {lesson.number.slice(1)}
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={10}>
-                                <Typography variant="h6" component="div">
-                                {lesson.major}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                {lesson.teacher} · {lesson.classroom}
-                                </Typography>
-                            </Grid>
-                            </Grid>
-                        </CardContent>
-                        </Card>
-                    ))}
-                    </Stack>
-                ) : (
-                    <Typography variant="body1" color="text.secondary" sx={{ py: 4 }}>
-                    {currentGroup
-                        ? 'Нет занятий на выбранную дату'
-                        : 'Выберите группу для отображения расписания'}
-                    </Typography>
-                )}
-                </Box>
-            </Paper>
-            <Paper elevation={3} sx={{ p: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                Параметры расписания
-                </Typography>
-                
-                <form onSubmit={handleSubmit}>
-                <Stack spacing={3}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-                    <DateCalendar
-                        label="Дата"
-                        onChange={handleDateChange}
-                        views={['month', 'day']}
-                        value={calendarDate}
-                        // format="DD.MM.YYYY"
-                        // slotProps={{ textField: { fullWidth: true } }}
-                    />
-                    </LocalizationProvider>
-
-                    <Autocomplete
-                    options={groupList}
-                    getOptionLabel={(option) => option.name}
-                    value={group}
-                    onChange={handleGroupChange}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Группа" fullWidth />
-                    )}
-                    />
-
-                    <Button
-                    type="submit"
-                    variant="contained"
-                    size="large"
-                    fullWidth
-                    disabled={isLoading || !group}
-                    // startIcon={isLoading ? <CircularProgress size={20} /> : null}
-                    >
-                    {isLoading ? 'Загрузка...' : 'Показать расписание'}
-                    </Button>
-
-                    {/* {error && (
-                    <Alert severity="error" sx={{ mt: 2 }}>
-                        {error}
-                    </Alert>
-                    )} */}
+                  </Stack>
                 </Stack>
-                </form>
+
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <CalendarTodayIcon color="primary" />
+                  <Typography variant="h6" fontWeight="" noWrap>
+                    {currentDate ? currentDate.format('DD.MM.YYYY') : 'Дата не выбрана'}
+                  </Typography>
+                </Stack>
+              </Box>
             </Paper>
-        </Stack>
+            <Stack spacing={2}>
+              {lessons.length === 0 ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 4,
+                    textAlign: 'center',
+                    bgcolor: '#f9f9f9',
+                    border: '1px dashed #bdbdbd',
+                    mt: 4,
+                  }}
+                >
+                  <EventBusyIcon color="disabled" sx={{ fontSize: 48, mb: 2 }} />
+                  <Typography variant="h6" color="text.secondary" gutterBottom>
+                    Нет расписания
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Для выбранной группы и даты расписание отсутствует.
+                  </Typography>
+                </Paper>
+              ) : (lessons.map((lesson, index) => (
+                <Card
+                  key={lesson.id || index}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: '#fff',
+                    borderLeft: '6px solid #1976d2',
+                    boxShadow: '0 2px 8px rgba(25, 118, 210, 0.04)',
+                    transition: 'box-shadow 0.2s',
+                    '&:hover': { boxShadow: '0 4px 16px rgba(25, 118, 210, 0.10)' },
+                  }}
+                >
+                  <CardContent sx={{ p: 2 }}>
+                    <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                      {/* Номер пары и время */}
+                      <Box sx={{ minWidth: 64, textAlign: 'center' }}>
+                        <Typography variant="h4" color="primary" fontWeight="bold">
+                          {lesson.number.replace(/\D/g, '')}
+                        </Typography>
+                        {lesson.timeStart && lesson.timeEnd && (
+                          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                            {lesson.timeStart}–{lesson.timeEnd}
+                          </Typography>
+                        )}
+                      </Box>
+
+                      {/* Основная информация */}
+                      <Box sx={{ flexGrow: 1, minWidth: 200 }}>
+                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
+                          {lesson.major}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {lesson.teacher}
+                        </Typography>
+                      </Box>
+
+                      {/* Кабинет и подгруппа */}
+                      <Stack direction="row" spacing={2} alignItems="center">
+                        <Box sx={{ minWidth: 80, textAlign: 'right' }}>
+                          <Typography variant="body2" color="text.secondary">
+                            Кабинет
+                          </Typography>
+                          <Typography variant="body1" fontWeight="medium">
+                            {lesson.classroom}
+                          </Typography>
+                        </Box>
+                        {lesson.subgroup && (
+                          <Box sx={{ minWidth: 80, textAlign: 'right' }}>
+                            <Typography variant="body2" color="text.secondary">
+                              Подгруппа
+                            </Typography>
+                            <Typography variant="body1" fontWeight="medium">
+                              {lesson.subgroup}
+                            </Typography>
+                          </Box>
+                        )}
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              )))}
+            </Stack>
+          </Box>
+        </Paper>
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Typography variant="h6" gutterBottom>
+          Параметры расписания
+          </Typography>
+          <form onSubmit={handleSubmit}>
+          <Stack spacing={3}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+              <DateCalendar
+                  label="Дата"
+                  onChange={handleDateChange}
+                  views={['month', 'day']}
+                  value={calendarDate}
+                  // format="DD.MM.YYYY"
+                  // slotProps={{ textField: { fullWidth: true } }}
+              />
+              </LocalizationProvider>
+
+              <Autocomplete
+              options={groupList}
+              getOptionLabel={(option) => option.name}
+              value={group}
+              onChange={handleGroupChange}
+              renderInput={(params) => (
+                  <TextField {...params} label="Группа" fullWidth />
+              )}
+              />
+
+              <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              fullWidth
+              disabled={isLoading || !group}
+              // startIcon={isLoading ? <CircularProgress size={20} /> : null}
+              >
+              {isLoading ? 'Загрузка...' : 'Показать расписание'}
+              </Button>
+
+              {/* {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                  {error}
+              </Alert>
+              )} */}
+          </Stack>
+          </form>
+        </Paper>
+      </Stack>
     )
 }
