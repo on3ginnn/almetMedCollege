@@ -27,6 +27,7 @@ import { customRouter } from './config/customRouter';
 import { useUserStore } from './stores/userStore';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
+import { theme } from './theme';
 
 let NAVIGATION = [
   {
@@ -196,7 +197,7 @@ function MainContent(props) {
         homeUrl: '/',
       }}
       router={router}
-      theme={demoTheme}
+      theme={theme}
       window={demoWindow}
       authentication={authentication}
       // authentication={React.useMemo(() => navigate('/login'))}

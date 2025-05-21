@@ -1,68 +1,100 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  Box,
+  Paper,
+  Avatar,
+  Alert,
+  Stack
+} from '@mui/material';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../../stores/userStore';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
   const { loginUser } = useUserStore();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
+  const [formData, setFormData] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    console.log(e.target);
     const { name, value } = e.target;
-    console.log(name);
-    console.log(value);
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
-      await loginUser(formData); // Используем async/await
-      navigate('/'); // Перенаправляем после успешной авторизации
+      await loginUser(formData);
+      navigate('/');
     } catch (error) {
-      setError(error.message); // Отображаем ошибку
+      setError(error.message || 'Ошибка входа');
     }
   };
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Вход
-      </Typography>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Юзернейм"
-          name="username"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
-        <TextField
-          label="Пароль"
-          name="password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <Button type="submit" variant="contained" color="primary" fullWidth>
-          Войти
-        </Button>
-      </form>
+    <Container maxWidth="xs">
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          mt: 8,
+          borderRadius: 3,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
+          <LockOutlinedIcon />
+        </Avatar>
+
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Вход в аккаунт
+        </Typography>
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
+          <Stack spacing={2}>
+            <TextField
+              label="Юзернейм"
+              name="username"
+              variant="outlined"
+              fullWidth
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              label="Пароль"
+              name="password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            {error && (
+              <Alert severity="error" variant="outlined">
+                {error}
+              </Alert>
+            )}
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+              sx={{ mt: 1 }}
+            >
+              Войти
+            </Button>
+          </Stack>
+        </Box>
+      </Paper>
     </Container>
   );
 };

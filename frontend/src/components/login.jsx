@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Typography, Container } from '@mui/material';
+import { TextField, Button, Typography, Container, Box } from '@mui/material';
 import { userStore } from './../stores/userStore';
 import { useNavigate } from "react-router-dom";
 
@@ -33,9 +33,9 @@ export const LoginForm = () => {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h4" gutterBottom>
-        Вход
+    <Box sx={{ px: { xs: 1, sm: 3, md: 6 }, py: 2 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold">
+        Новости
       </Typography>
       <form onSubmit={handleSubmit}>
         <TextField
@@ -63,6 +63,6 @@ export const LoginForm = () => {
           Войти
         </Button>
       </form>
-    </Container>
+    </Box>
   );
 };

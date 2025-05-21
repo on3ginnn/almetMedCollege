@@ -1,56 +1,139 @@
-import { Box, Typography, Stack, Card, CardContent, Button } from "@mui/material";
-import { useEffect, useState } from "react";
-import {  useNewsStore } from '../../stores/newsStore';
+import React, { useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Stack,
+  Card,
+  CardContent,
+  Button,
+  CardMedia,
+  Fade,
+} from "@mui/material";
+import { useNewsStore } from "../../stores/newsStore";
 import { useNavigate } from "react-router-dom";
+import { theme } from '../../theme';
+import { useUserStore } from "../../stores/userStore";
+
+// Пример: роль пользователя (замените на вашу логику получения роли)
+const useUserRole = () => {
+  // return "student" | "teacher" | "admin"
+  return "admin";
+};
+
+// Форматирование даты
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+};
 
 export const NewsList = () => {
-    const { newsList, getNewsList, deleteNews } = useNewsStore();
-    const navigate = new useNavigate();
+  const { newsList, getNewsList, deleteNews } = useNewsStore();
+  const navigate = useNavigate();
+  const userRole = useUserRole();
+  const { currentUser } = useUserStore();
 
-    // console.log(newsList);
-    useEffect(() => {
-        async function fetchNews(){
-            await getNewsList();
-        }
-        fetchNews();
-    }, []);
+  useEffect(() => {
+    getNewsList();
+    // eslint-disable-next-line
+  }, []);
 
-    const handleNewsDelete = (pk) => {
-        deleteNews(pk);
-    }
+  const handleNewsDelete = (pk) => {
+    deleteNews(pk);
+  };
 
-    return (
-        <Box>
-            <Typography variant="h4" gutterBottom>
-                Новости
-            </Typography>
-            <Stack container spacing={2} sx={{ padding: 2 }}>
-            {newsList.map((news, index) => (
-                <Stack item key={index} xs={12} sm={6} md={4} lg={3}>
-                <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column', borderColor: "primary.main", borderWidth: "5px", borderStyle: 'solid', }}>
-                    <CardContent sx={{ flex: 1 }}>
-                    <Typography variant="h5" component="h2">
-                        {news.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                        {news.body}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                        Издатель: {news.publisher}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Опубликовано: {news.created_on}
-                    </Typography>
-                    <Stack spacing={1} direction='row'>
-                        <Button variant="contained" color="warning" onClick={() => navigate(`/news/edit/${news.id}`)}>Редактировать</Button>
-                        <Button variant="contained" color="error" onClick={() => handleNewsDelete(news.id)}>Удалить</Button>
-                    </Stack>
-                    </CardContent>
-                </Card>
-                </Stack>
-            ))}
-            </Stack>
-        </Box>
+  const canEdit = currentUser && ["admin", "teacher"].includes(currentUser.role);
 
-    );
+  return (
+    <Box sx={{ px: { xs: 1, sm: 3, md: 6 }, py: 2 }}>
+      <Typography variant="h4" gutterBottom fontWeight="bold">
+        Новости
+      </Typography>
+      <Stack spacing={3}>
+        {newsList.map((news) => (
+          <Card
+            key={news.id}
+            variant="outlined"
+            sx={{
+              bgcolor: '#fff',
+              borderLeft: '6px solid #1976d2',
+              boxShadow: '0 2px 8px rgba(25, 118, 210, 0.04)',
+              transition: 'box-shadow 0.2s',
+              '&:hover': {
+                boxShadow: '0 4px 16px rgba(25, 118, 210, 0.1)',
+              },
+            }}
+          >
+            <CardContent sx={{ p: 2 }}>
+              <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                {/* Картинка */}
+                {news.image && (
+                  <Box
+                    component="img"
+                    src={news.image}
+                    alt={news.title}
+                    sx={{
+                      width: { xs: "100%", sm: 180 },
+                      height: { xs: 120, sm: 100 },
+                      objectFit: "cover",
+                      borderRadius: 1,
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+
+                {/* Контент */}
+                <Box sx={{ flexGrow: 1, minWidth: 200 }}>
+                  <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
+                    {news.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitLineClamp: 3,
+                      WebkitBoxOrient: "vertical",
+                      overflow: "hidden",
+                    }}
+                  >
+                    {news.body}
+                  </Typography>
+
+                  <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 2 }} flexWrap="wrap">
+                    <Typography variant="caption" color="text.secondary">
+                      Издатель: <b>{news.publisher}</b> — {formatDate(news.created_on)}
+                    </Typography>
+                    {canEdit && (
+                      <Stack direction="row" spacing={1}>
+                        <Button
+                          variant="outlined"
+                          color="warning"
+                          size="small"
+                          onClick={() => navigate(`/news/edit/${news.id}`)}
+                        >
+                          Редактировать
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          size="small"
+                          onClick={() => handleNewsDelete(news.id)}
+                        >
+                          Удалить
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                </Box>
+              </Stack>
+            </CardContent>
+          </Card>
+        ))}
+      </Stack>
+    </Box>
+  );
 };
