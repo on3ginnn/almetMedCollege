@@ -137,7 +137,7 @@ class ScheduleCreateSerializer(rest_framework.serializers.ModelSerializer):
         # print(group_obj)
         
         # Создаем расписание
-        schedule_obj = schedule.models.Schedule.objects.get_or_create(group=validated_data['group'], date=str(datetime.date.today()))[0]
+        schedule_obj = schedule.models.Schedule.objects.get_or_create(group=validated_data['group'], date=validated_data['date'])[0]
         print(schedule_obj)
         
         # Создаем уроки и связываем их с расписанием

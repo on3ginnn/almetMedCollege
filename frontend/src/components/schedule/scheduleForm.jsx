@@ -46,60 +46,21 @@ export const ScheduleForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [lessonNumbers, setlessonNumbers] = useState([
-    {
-      title:"1 - 08:00-09:30",
-      code_name:"n1"
-    },
-    {
-      title:"2 - 09:40-11:10",
-      code_name:"n2"
-    },
-    {
-      title:"3 - 11:40-13:10",
-      code_name:"n3"
-    },
-    {
-      title:"4 - 13:20-14:50",
-      code_name:"n4"
-    },
-    {
-      title:"5 - 15:00-16:30",
-      code_name:"n5"
-    },
-    {
-      title:"6 - 16:40-18:10",
-      code_name:"n6"
-    },
-    {
-      title:"7 - 18:20-19:50",
-      code_name:"n7"
-    }
+    { title:"1 - 08:00-09:30", code_name:"n1" },
+    { title:"2 - 09:40-11:10", code_name:"n2" },
+    { title:"3 - 11:40-13:10", code_name:"n3" },
+    { title:"4 - 13:20-14:50", code_name:"n4" },
+    { title:"5 - 15:00-16:30", code_name:"n5" },
+    { title:"6 - 16:40-18:10", code_name:"n6" },
+    { title:"7 - 18:20-19:50", code_name:"n7" }
   ]);
   const [subgroups, setSubgroups] = useState([
-    {
-      title: "Общая",
-      code_name: "all"
-    },
-    {
-      title: "1п/г",
-      code_name: "first_subgroup"
-    },
-    {
-      title: "2п/г",
-      code_name: "second_subgroup"
-    },
-    {
-      title: "1 бригада",
-      code_name: "first_brigade"
-    },
-    {
-      title: "2 бригада",
-      code_name: "second_brigade"
-    },
-    {
-      title: "3 бригада",
-      code_name: "third_brigade"
-    },
+    { title: "Общая", code_name: "all" },
+    { title: "1п/г", code_name: "first_subgroup" },
+    { title: "2п/г", code_name: "second_subgroup" },
+    { title: "1 бригада", code_name: "first_brigade" },
+    { title: "2 бригада", code_name: "second_brigade" },
+    { title: "3 бригада", code_name: "third_brigade" },
   ]);
   // const [classRooms, setClassRooms] = useState()
   const { 
@@ -144,16 +105,21 @@ export const ScheduleForm = () => {
     }
     fetchClassRooms();
   }, []);
-  useEffect(() => {
-    const currentGroupLessons = lessons.reduce((acc, lesson) => {
-      if (lesson.teacher) {
-        acc.push({ lessonNumber: lesson.number, teacherId: lesson.teacher.id });
-      }
-      return acc;
-    }, []);
-    setBusyTeachers(prev => [...prev, ...currentGroupLessons]);
-  }, [lessons]);
-
+  // useEffect(() => {
+  //   const currentGroupLessons = lessons.reduce((acc, lesson) => {
+  //     if (lesson.teacher) {
+  //       acc.push({ lessonNumber: lesson.number, teacherId: lesson.teacher.id });
+  //     }
+  //     return acc;
+  //   }, []);
+  //   setBusyTeachers(prev => [...prev, ...currentGroupLessons]);
+  // }, [lessons]);
+  const isTeacherBusy = (number, teacherId) => {
+    return (
+      busyTeachers.some(b => b.lessonNumber === number && b.teacherId === teacherId) ||
+      lessons.some((l, i) => l.number === number && l.teacher?.id === teacherId)
+    );
+  };
   console.log(teachers);
   console.log('ffffff')
   console.log(majors);
@@ -229,192 +195,132 @@ export const ScheduleForm = () => {
   };
 
   return (
-    <Container maxWidth='xl' sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
-          Создание нового расписания
-        </Typography>
-
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert severity="success" sx={{ mb: 3 }}>
-            {success}
-          </Alert>
-        )}
-
+    <Box sx={{ px: { xs: 1, sm: 3, md: 6 }, py: 2 }}>
+      <Typography variant="h4" fontWeight="bold" gutterBottom>
+        Создание расписания
+      </Typography>
+      <Paper sx={{ p: 3 }} elevation={3}>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
-            {/* Поля даты и группы */}
-            <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
-              <Box sx={{ flex: 1 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-                  <DatePicker
-                    label="Дата расписания"
-                    value={date}
-                    onChange={(newDate) => setDate(newDate)}
-                    format="DD.MM.YYYY"
-                    views={['month', 'day']}
-                    slotProps={{ textField: { fullWidth: true } }}
-                  />
-                </LocalizationProvider>
-              </Box>
-
-              <Box sx={{ flex: 1 }}>
-                <FormControl fullWidth>
-                  <InputLabel>Группа</InputLabel>
-                  <Select
-                    value={selectedGroup}
-                    onChange={(e) => setSelectedGroup(e.target.value)}
-                    label="Группа"
-                    required
-                  >
-                    {groups.map((group) => (
-                      <MenuItem key={group.id} value={group.id}>
-                        {group.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Box>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+              <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+                <DatePicker
+                  label="Дата"
+                  value={date}
+                  onChange={(newValue) => setDate(newValue)}
+                  slotProps={{ textField: { fullWidth: true } }}
+                />
+              </LocalizationProvider>
+              <FormControl fullWidth>
+                <InputLabel>Группа</InputLabel>
+                <Select
+                  value={selectedGroup}
+                  label="Группа"
+                  onChange={(e) => setSelectedGroup(e.target.value)}
+                >
+                  {groups.map(group => (
+                    <MenuItem key={group.id} value={group.id}>{group.name}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Stack>
 
-            <Divider sx={{ my: 2 }} />
-
-            {/* Список уроков */}
-            <Typography variant="h6">Уроки</Typography>
-
+            <Divider />
+            <Typography variant="h6">Список уроков</Typography>
             {lessons.map((lesson, index) => (
-              <Box
-                key={index}
-                sx={{
-                  p: 2,
-                  border: '1px solid #ddd',
-                  borderRadius: 1,
-                  position: 'relative',
-                }}
-              >
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                  <TextField
-                    label="Пара"
-                    value={lesson.number}
-                    name="number"
-                    onChange={(e) => handleLessonChange(index, e.target)}
-                    fullWidth
-                    required
-                    select
-                    sx={{ flex: 2 }}
-                  >
-                    {lessonNumbers.map((item, index) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
-                  </TextField>
-                  <TextField
-                    label="Подгруппа"
-                    name='subgroup'
-                    value={lesson.subgroup}
-                    onChange={(e) => handleLessonChange(index, e.target)}
-                    fullWidth
-                    required
-                    select
-                    sx={{ flex: 2 }}
-                    defaultValue="all"
-                    >
-                    {subgroups.map(item => (<MenuItem value={item.code_name}>{item.title}</MenuItem>))}
-                  </TextField>
-                  <Autocomplete
-                    options={majors}
-                    getOptionLabel={(option) => option.title}
-                    value={lesson.major}
-                    onChange={(event, newValue) => handleLessonChange(index, {name: "major", value: newValue})}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Предмет" fullWidth />
-                    )}
-                    fullWidth
-                    sx={{ flex: 5 }}
-                  />
-                  <Autocomplete
-                    options={teachers.filter(teacher => 
-                      !busyTeachers.some(b => 
-                        b.lessonNumber === lesson.number && 
-                        b.teacherId === teacher.id
-                      ) && 
-                      !lessons.some((l, i) => 
-                        i !== index && 
-                        l.number === lesson.number && 
-                        l.teacher?.id === teacher.id
-                      )
-                    )}
-                    getOptionLabel={(option) => option.get_full_name}
-                    value={lesson.teacher}
-                    onChange={(event, newValue) => handleLessonChange(index, {name: "teacher", value: newValue})}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Преподаватель" fullWidth />
-                    )}
-                    fullWidth
-                    sx={{ flex: 3 }}
-                  />
-                  {console.log(lessons)}
-                  <Autocomplete
-                    options={
-                      classRooms.filter(classroom => 
-                        !busyClassrooms.some(b => (
-                          b.lessonNumber === lesson.number &&
-                          b.classroomId === classroom.id
-                        ) && 
-                        !lessons.some((l, i) => (
-                          i !== index &&
-                          l.number === lesson.number &&
-                          // l.subgroup === lesson.subgroup &&
-                          l.classroom?.id === classroom.id
-                        ))
-                      )
-                    )}
-                    getOptionLabel={(option) => option.label}
-                    value={lesson.classroom}
-                    onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}
-                    renderInput={(params) => (
-                        <TextField {...params} label="Кабинет" fullWidth />
-                    )}
-                    fullWidth
-                    sx={{ flex: 2 }}
-                  />
-                  <Button
-                    onClick={() => removeLesson(lesson.number, lesson.subgroup)}
-                    sx={{}}
-                    color="error"
-                    size="small"
-                  >
-                    <DeleteOutlineIcon />
-                  </Button>
+              <Stack key={index} direction={{ xs: 'column', md: 'row' }} spacing={2} alignItems="center">
+                <TextField
+                  label="Пара"
+                  select
+                  value={lesson.number}
+                  onChange={(e) => handleLessonChange(index, e.target)}
+                  sx={{ flex: 2 }}
+                  fullWidth
+                  name="number"
 
-                </Stack>
-              </Box>
+                >
+                  {lessonNumbers.map((item, index) => (<MenuItem key={index} value={item.code_name}>{item.title}</MenuItem>))}
+                </TextField>
+                <TextField
+                  label="Подгруппа"
+                  select
+                  value={lesson.subgroup}
+                  onChange={(e) => handleLessonChange(index, e.target)}
+                  fullWidth
+                  sx={{ flex: 2 }}
+                  name='subgroup'
+
+                >
+                  {subgroups.map(item => (<MenuItem value={item.code_name}>{item.title}</MenuItem>))}
+                </TextField>
+                <Autocomplete
+                  options={majors}
+                  getOptionLabel={(option) => option.title || ''}
+                  value={lesson.major}
+                    onChange={(event, newValue) => handleLessonChange(index, {name: "major", value: newValue})}
+                  renderInput={(params) => <TextField {...params} label="Предмет" fullWidth />}
+                  sx={{ flex: 5 }}
+ 
+                />
+                {console.log('lessons:')}
+                {console.log(lessons)}
+                {console.log(busyTeachers)}
+                <Autocomplete
+                  options={teachers.filter(teacher => !isTeacherBusy(lesson.number, teacher.id))}
+
+                  getOptionLabel={(option) => option.get_full_name}
+                  value={lesson.teacher}
+                  onChange={(event, newValue) => handleLessonChange(index, {name: "teacher", value: newValue})}
+                  renderInput={(params) => (
+                      <TextField {...params} label="Преподаватель" fullWidth />
+                  )}
+                  sx={{ flex: 4 }}
+
+                />
+                <Autocomplete
+                  options={
+                    classRooms.filter(classroom => 
+                      !busyClassrooms.some(b => (
+                        b.lessonNumber === lesson.number &&
+                        b.classroomId === classroom.id
+                      ) && 
+                      !lessons.some((l, i) => (
+                        i !== index &&
+                        l.number === lesson.number &&
+                        // l.subgroup === lesson.subgroup &&
+                        l.classroom?.id === classroom.id
+                      ))
+                    )
+                  )}
+                  getOptionLabel={(option) => option.label || ''}
+                  value={lesson.classroom}
+                  onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}
+                  renderInput={(params) => <TextField {...params} label="Кабинет" fullWidth />}
+                  sx={{ flex: 2 }}
+
+                />
+                <Button color="error" onClick={() => removeLesson(lesson.number, lesson.subgroup)}>
+                  <DeleteOutlineIcon />
+                </Button>
+              </Stack>
             ))}
 
             <Button
               startIcon={<AddCircleOutlineIcon />}
               onClick={addLesson}
               variant="outlined"
-              sx={{ alignSelf: 'flex-start' }}
             >
               Добавить урок
             </Button>
 
-            <Divider sx={{ my: 2 }} />
-            <Button
-              type="submit"
-              variant="contained"
-              size="large"
-            >
+            <Divider />
+            <Button type="submit" variant="contained" size="large">
               Создать расписание
             </Button>
           </Stack>
         </form>
-
       </Paper>
-    </Container>
+    </Box>
   );
 };

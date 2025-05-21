@@ -27,6 +27,23 @@ export const Schedule = () => {
     const [calendarDate, setCalendarDate] = useState(dayjs());
     const [groupList, setGroupList] = useState([]);
 
+    const [subgroups, setSubgroups] = useState([
+      { title: "Общая", code_name: "all" },
+      { title: "1п/г", code_name: "first_subgroup" },
+      { title: "2п/г", code_name: "second_subgroup" },
+      { title: "1 бригада", code_name: "first_brigade" },
+      { title: "2 бригада", code_name: "second_brigade" },
+      { title: "3 бригада", code_name: "third_brigade" },
+    ]);
+    const [lessonNumbers, setlessonNumbers] = useState([
+      { title:"1 - 08:00-09:30", code_name:"n1" },
+      { title:"2 - 09:40-11:10", code_name:"n2" },
+      { title:"3 - 11:40-13:10", code_name:"n3" },
+      { title:"4 - 13:20-14:50", code_name:"n4" },
+      { title:"5 - 15:00-16:30", code_name:"n5" },
+      { title:"6 - 16:40-18:10", code_name:"n6" },
+      { title:"7 - 18:20-19:50", code_name:"n7" }
+    ]);
     useEffect(() => {
         if (schedule) {
             setLessons(schedule.lessons || []);
@@ -61,6 +78,15 @@ export const Schedule = () => {
         await getSchedule();
     };
 
+    const getSubgroupTitle = (codeName) => {
+      const subgroup = subgroups.find((item) => item.code_name === codeName);
+      return subgroup ? subgroup.title : codeName;
+    };
+
+    const getLessonTitle = (codeName) => {
+      const match = lessonNumbers.find((l) => l.code_name === codeName);
+      return match ? match.title : codeName;
+    };
 
     return (
       <Stack direction='row' spacing={10}>
@@ -124,22 +150,48 @@ export const Schedule = () => {
                   <CardContent sx={{ p: 2 }}>
                     <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
                       {/* Номер пары и время */}
-                      <Box sx={{ minWidth: 64, textAlign: 'center' }}>
-                        <Typography variant="h4" color="primary" fontWeight="bold">
-                          {lesson.number.replace(/\D/g, '')}
-                        </Typography>
-                        {lesson.timeStart && lesson.timeEnd && (
-                          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                            {lesson.timeStart}–{lesson.timeEnd}
-                          </Typography>
-                        )}
-                      </Box>
+<Box sx={{ minWidth: 80, textAlign: 'center' }}>
+        <Typography variant="h4" color="primary" fontWeight="bold">
+          {lesson.number.replace(/\D/g, '')}
+        </Typography>
+        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+          {lesson.number ? (
+            <>
+              <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ mt: 1 }}>
+                {getLessonTitle(lesson.number).split(' - ')[1]}
+              </Typography>
+            </>
+          ) : null}
+        </Typography>
+      </Box>
+{/* <Box sx={{ minWidth: 80, textAlign: 'center' }}>
+  <Box
+    sx={{
+      bgcolor: 'primary.main',
+      color: '#fff',
+      fontSize: 14,
+      fontWeight: 'bold',
+      px: 1.5,
+      py: 0.5,
+      borderRadius: 1,
+      display: 'inline-block',
+      mb: 0.5,
+    }}
+  >
+    {lesson.number.replace(/\D/g, '')}
+  </Box>
+  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+    {getLessonTitle(lesson.number).split(' - ')[1]}
+  </Typography>
+</Box> */}
 
                       {/* Основная информация */}
                       <Box sx={{ flexGrow: 1, minWidth: 200 }}>
-                        <Typography variant="h6" fontWeight="bold" sx={{ mb: 0.5 }}>
-                          {lesson.major}
-                        </Typography>
+                        <Stack direction="row" spacing={1} alignItems="baseline" sx={{ mb: 0.5 }}>
+                          <Typography variant="h6" fontWeight="bold">
+                            {lesson.major}
+                          </Typography>
+                        </Stack>
                         <Typography variant="body2" color="text.secondary">
                           {lesson.teacher}
                         </Typography>
@@ -161,7 +213,7 @@ export const Schedule = () => {
                               Подгруппа
                             </Typography>
                             <Typography variant="body1" fontWeight="medium">
-                              {lesson.subgroup}
+                              {getSubgroupTitle(lesson.subgroup)}
                             </Typography>
                           </Box>
                         )}
@@ -201,14 +253,14 @@ export const Schedule = () => {
               />
 
               <Button
-              type="submit"
-              variant="contained"
-              size="large"
-              fullWidth
-              disabled={isLoading || !group}
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                disabled={isLoading || !group}
               // startIcon={isLoading ? <CircularProgress size={20} /> : null}
               >
-              {isLoading ? 'Загрузка...' : 'Показать расписание'}
+                {isLoading ? 'Загрузка...' : 'Показать расписание'}
               </Button>
 
               {/* {error && (

@@ -52,17 +52,17 @@ export const HomePage = () => {
         Добро пожаловать!
       </Typography>
 
-      <Box sx={{ mt: 3 }}>
-        <Slider {...settings}>
+      <Box sx={{ mt: 3, borderRadius: 2, overflow: 'hidden' }}>
+        <Slider {...settings} sx={{ borderRadius: 2, overflow: "hidden" }}>
           {slides.map((slide, index) => (
             <Box
               key={index}
               sx={{
                 position: 'relative',
                 height: { xs: 220, sm: 300, md: 400 },
-                borderRadius: 2,
                 overflow: 'hidden',
                 backgroundImage: `url(${slide.image})`,
+                borderRadius: 2, overflow: "hidden",
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 // boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
@@ -78,7 +78,6 @@ export const HomePage = () => {
                   maxWidth: '70%',
                   backgroundColor: 'rgba(0,0,0,0.4)',
                   p: 3,
-                  borderRadius: 2,
                 }}
               >
                 <Typography variant="h5" fontWeight="bold" gutterBottom>

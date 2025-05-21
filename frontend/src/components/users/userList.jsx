@@ -1,68 +1,113 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserStore } from "../../stores/userStore";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
-  Paper, 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
   Typography,
-  Button
+  Button,
+  Box,
+  Stack,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupIcon from '@mui/icons-material/Group';
 
 export const UserList = () => {
-  const navigate = new useNavigate();
+  const navigate = useNavigate();
   const { userList, getUserList, deleteUser } = useUserStore();
 
   useEffect(() => {
-    async function fetchUsers(){
-        await getUserList();
-    }
-    fetchUsers();
+    getUserList();
+    // eslint-disable-next-line
   }, []);
-  
+
   const handleUserDelete = (pk) => {
     deleteUser(pk);
-  }
+  };
 
   return (
-    <TableContainer component={Paper} sx={{ mt: 3 }}>
-      <Table sx={{ minWidth: 650 }}>
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Логин</TableCell>
-            <TableCell>Пароль</TableCell>
-            <TableCell>Фамилия</TableCell>
-            <TableCell>Имя</TableCell>
-            <TableCell>Отчество</TableCell>
-            <TableCell>Телефон</TableCell>
-            <TableCell>Роль</TableCell>
-            <TableCell>Действия</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {userList.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>{user.username}</TableCell>
-              <TableCell>{user.password}</TableCell>
-              <TableCell>{user.last_name}</TableCell>
-              <TableCell>{user.first_name}</TableCell>
-              <TableCell>{user.father_name}</TableCell>
-              <TableCell>{user.phone_number}</TableCell>
-              <TableCell>{user.role}</TableCell>
-              <TableCell>
-                <Button variant="contained" color="warning" onClick={() => navigate(`/user/edit/${user.id}`, user)}>Редактировать</Button>
-                <Button variant="contained" color="error" onClick={() => handleUserDelete(user.id)}>Удалить</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Box sx={{ px: { xs: 1, sm: 3, md: 6 }, py: 2 }}>
+      {/* <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+        <GroupIcon color="primary" /> */}
+        <Typography variant="h4" fontWeight="bold">
+          Список пользователей
+        </Typography>
+      {/* </Stack> */}
+
+      {userList.length === 0 ? (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 4,
+            mt: 2,
+            textAlign: "center",
+            bgcolor: "#f9f9f9",
+            border: "1px dashed #bdbdbd",
+          }}
+        >
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            Пользователи не найдены
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Список пользователей пуст или не удалось загрузить данные.
+          </Typography>
+        </Paper>
+      ) : (
+        <TableContainer component={Paper} elevation={2} sx={{ mt: 2 }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+                <TableCell>ID</TableCell>
+                <TableCell>Имя пользователя</TableCell>
+                <TableCell>Фамилия</TableCell>
+                <TableCell>Имя</TableCell>
+                <TableCell>Отчество</TableCell>
+                <TableCell>Телефон</TableCell>
+                <TableCell>Роль</TableCell>
+                <TableCell align="right">Действия</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {userList.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.id}</TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.last_name}</TableCell>
+                  <TableCell>{user.first_name}</TableCell>
+                  <TableCell>{user.father_name}</TableCell>
+                  <TableCell>{user.phone_number}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell align="right">
+                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Button
+                        variant="outlined"
+                        color="warning"
+                        size="small"
+                        onClick={() => navigate(`/user/edit/${user.id}`)}
+                      >
+                        Редактировать
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        size="small"
+                        onClick={() => handleUserDelete(user.id)}
+                      >
+                        Удалить
+                      </Button>
+                    </Stack>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Box>
   );
 };

@@ -28,6 +28,12 @@ import { useUserStore } from './stores/userStore';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
 import { theme } from './theme';
+import LoginIcon from '@mui/icons-material/Login';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import almetMedLogo from './assets/img/almetMedLogo.png';
 
 let NAVIGATION = [
   {
@@ -39,11 +45,11 @@ let NAVIGATION = [
     title: 'Главная',
     icon: <DashboardIcon />,
   },
-  {
-    segment: 'login',
-    title: 'Войти',
-    icon: <ShoppingCartIcon />,
-  },
+  // {
+  //   segment: 'login',
+  //   title: 'Войти',
+  //   icon: <LoginIcon />,
+  // },
   {
     segment: 'news',
     title: 'Новости',
@@ -64,22 +70,22 @@ const adminNavigaion = [
   {
     segment: 'user/all',
     title: 'Все пользователи',
-    icon: <ShoppingCartIcon />,
+    icon: <GroupIcon />,
   },
   {
     segment: 'user/create',
     title: 'Добавить пользователя',
-    icon: <ShoppingCartIcon />,
+    icon: <PersonAddIcon />,
   },
   {
     segment: 'news/create',
     title: 'Добавить новости',
-    icon: <ShoppingCartIcon />,
+    icon: <PostAddIcon />,
   },
   {
     segment: 'schedule/create',
     title: 'Добавить расписание',
-    icon: <ShoppingCartIcon />,
+    icon: <EditCalendarIcon />,
   },
   
 ]
@@ -192,7 +198,7 @@ function MainContent(props) {
     <AppProvider
       navigation={protectedNavigation()}
       branding={{
-        // logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
+        logo: <img src={ almetMedLogo } alt="MUI logo" />,
         title: 'Альметьевский медицинский колледж',
         homeUrl: '/',
       }}
