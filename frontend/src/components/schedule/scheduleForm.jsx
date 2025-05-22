@@ -84,14 +84,13 @@ export const ScheduleForm = () => {
       setBusyTeachers(response.data);
     };
     fetchBusyTeachers();
-  }, [date]);
 
-  useEffect(() => {
     const fetchBusyClassrooms = async () => {
       const response = await getBusyClassrooms(date.format('YYYY-MM-DD')); // Предполагается, что у вас есть функция getBusyClassrooms в store
       setBusyClassrooms(response.data);
     };
     fetchBusyClassrooms();
+    
   }, [date]);
 
   useEffect(() => {
@@ -105,24 +104,20 @@ export const ScheduleForm = () => {
     }
     fetchClassRooms();
   }, []);
-  // useEffect(() => {
-  //   const currentGroupLessons = lessons.reduce((acc, lesson) => {
-  //     if (lesson.teacher) {
-  //       acc.push({ lessonNumber: lesson.number, teacherId: lesson.teacher.id });
-  //     }
-  //     return acc;
-  //   }, []);
-  //   setBusyTeachers(prev => [...prev, ...currentGroupLessons]);
-  // }, [lessons]);
+
   const isTeacherBusy = (number, teacherId) => {
     return (
       busyTeachers.some(b => b.lessonNumber === number && b.teacherId === teacherId) ||
       lessons.some((l, i) => l.number === number && l.teacher?.id === teacherId)
     );
   };
-  console.log(teachers);
-  console.log('ffffff')
-  console.log(majors);
+  const isClassroomBusy = (number, classroomId) => {
+    return (
+      busyClassrooms.some(b => b.lessonNumber === number && b.classroomId === classroomId) ||
+      lessons.some((l, i) => l.number === number && l.classroom?.id === classroomId)
+    );
+  };
+
   // Добавить новое поле урока
   const addLesson = () => {
     // Находим максимальный номер урока
@@ -199,7 +194,7 @@ export const ScheduleForm = () => {
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Создание расписания
       </Typography>
-      <Paper sx={{ p: 3 }} elevation={3}>
+      <Paper sx={{ p: 3 }} elevation={1}>
         {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <form onSubmit={handleSubmit}>
           <Stack spacing={3}>
@@ -279,20 +274,7 @@ export const ScheduleForm = () => {
 
                 />
                 <Autocomplete
-                  options={
-                    classRooms.filter(classroom => 
-                      !busyClassrooms.some(b => (
-                        b.lessonNumber === lesson.number &&
-                        b.classroomId === classroom.id
-                      ) && 
-                      !lessons.some((l, i) => (
-                        i !== index &&
-                        l.number === lesson.number &&
-                        // l.subgroup === lesson.subgroup &&
-                        l.classroom?.id === classroom.id
-                      ))
-                    )
-                  )}
+                  options={classRooms.filter(classroom => !isClassroomBusy(lesson.number, classroom.id))}
                   getOptionLabel={(option) => option.label || ''}
                   value={lesson.classroom}
                   onChange={(event, newValue) => handleLessonChange(index, {name: "classroom", value: newValue})}

@@ -7,9 +7,7 @@ import rest_framework.validators
 
 import schedule.models
 import major.models
-import users.serializer
-import group.serializer
-import major.serializer
+import group.models
 import users.models
 
 USER_MODEL = get_user_model()
@@ -82,10 +80,7 @@ class ScheduleTeacherBusySerializer(rest_framework.serializers.ModelSerializer):
         return attrs
 
 
-
 class ScheduleSerializer(rest_framework.serializers.ModelSerializer):
-    # group = group.serializer.GroupSerializer()
-    # group = rest_framework.serializers.CharField()
     lessons = GroupLessonSerializer(many=True)
 
     class Meta:
@@ -94,9 +89,6 @@ class ScheduleSerializer(rest_framework.serializers.ModelSerializer):
 
 
 class GroupLessonCreateSerializer(rest_framework.serializers.ModelSerializer):
-    # major = rest_framework.serializers.CharField(source='major.title')
-    # teacher = rest_framework.serializers.CharField(source='teacher.username')
-    # classroom = rest_framework.serializers.CharField(source='classroom.label')
     major = rest_framework.serializers.PrimaryKeyRelatedField(queryset=major.models.Major.objects.all())
     teacher = rest_framework.serializers.PrimaryKeyRelatedField(queryset=users.models.User.objects.filter(role__in=[USER_MODEL.Role.TEACHER, USER_MODEL.Role.ADMIN]))
     classroom = rest_framework.serializers.PrimaryKeyRelatedField(queryset=schedule.models.ClassRoom.objects.all())
@@ -129,13 +121,7 @@ class ScheduleCreateSerializer(rest_framework.serializers.ModelSerializer):
 
     def create(self, validated_data):
         print(validated_data)
-        lessons_data = validated_data.pop('lessons')
-        print(lessons_data)
-        print(validated_data['group'])
-        # Получаем группу по имени
-        # group_obj = group.models.Group.objects.get(name=validated_data['group']['id'])
-        # print(group_obj)
-        
+        lessons_data = validated_data.pop('lessons')        
         # Создаем расписание
         schedule_obj = schedule.models.Schedule.objects.get_or_create(group=validated_data['group'], date=validated_data['date'])[0]
         print(schedule_obj)
@@ -143,10 +129,7 @@ class ScheduleCreateSerializer(rest_framework.serializers.ModelSerializer):
         # Создаем уроки и связываем их с расписанием
         for lesson_data in lessons_data:
             print(lesson_data)
-            # major_obj = major.models.Major.objects.get(title=lesson_data['major']['title'])
-            # teacher_obj = users.models.User.objects.get(username=lesson_data['teacher']['username'])
-            # classroom_obj = schedule.models.ClassRoom.objects.get(label=lesson_data['classroom']['label'])
-            
+
             schedule.models.GroupLesson.objects.create(
                 schedule=schedule_obj,
                 number=lesson_data['number'],

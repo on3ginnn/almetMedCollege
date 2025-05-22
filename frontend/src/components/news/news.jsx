@@ -11,14 +11,7 @@ import {
 } from "@mui/material";
 import { useNewsStore } from "../../stores/newsStore";
 import { useNavigate } from "react-router-dom";
-import { theme } from '../../theme';
 import { useUserStore } from "../../stores/userStore";
-
-// Пример: роль пользователя (замените на вашу логику получения роли)
-const useUserRole = () => {
-  // return "student" | "teacher" | "admin"
-  return "admin";
-};
 
 // Форматирование даты
 const formatDate = (dateString) => {
@@ -33,7 +26,6 @@ const formatDate = (dateString) => {
 export const NewsList = () => {
   const { newsList, getNewsList, deleteNews } = useNewsStore();
   const navigate = useNavigate();
-  const userRole = useUserRole();
   const { currentUser } = useUserStore();
 
   useEffect(() => {
@@ -58,7 +50,7 @@ export const NewsList = () => {
             key={news.id}
             variant="outlined"
             sx={{
-              bgcolor: '#fff',
+              bgcolor: 'background.paper',
               borderLeft: '6px solid #1976d2',
               boxShadow: '0 2px 8px rgba(25, 118, 210, 0.04)',
               transition: 'box-shadow 0.2s',

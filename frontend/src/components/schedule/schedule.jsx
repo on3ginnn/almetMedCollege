@@ -9,6 +9,14 @@ import "dayjs/locale/ru";
 import GroupIcon from '@mui/icons-material/Group';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventBusyIcon from '@mui/icons-material/EventBusy';
+import { useTheme } from "@mui/material/styles";
+import isToday from 'dayjs/plugin/isToday';
+import isTomorrow from 'dayjs/plugin/isTomorrow';
+import 'dayjs/locale/ru'; // Русский язык
+
+dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
+dayjs.locale('ru'); // Установить локаль по умолчанию
 
 export const Schedule = () => {
     const {
@@ -21,7 +29,8 @@ export const Schedule = () => {
         getGroupList,
         isLoading,
     } = useScheduleStore();
-    
+    const theme = useTheme();
+
     const [lessons, setLessons] = useState([]);
     const [group, setGroup] = useState(null);
     const [calendarDate, setCalendarDate] = useState(dayjs());
@@ -44,6 +53,14 @@ export const Schedule = () => {
       { title:"6 - 16:40-18:10", code_name:"n6" },
       { title:"7 - 18:20-19:50", code_name:"n7" }
     ]);
+
+    const weekday = currentDate ? currentDate.format('dddd') : '';
+    const relativeLabel = currentDate?.isToday?.()
+      ? 'на сегодня'
+      : currentDate?.isTomorrow?.()
+      ? 'на завтра'
+      : '';
+
     useEffect(() => {
         if (schedule) {
             setLessons(schedule.lessons || []);
@@ -93,25 +110,34 @@ export const Schedule = () => {
         <Paper sx={{ width: "100%" }} elevation={0}>
           <Box sx={{ p: 3 }}>
 
-            <Paper sx={{ width: "100%", mb: 3, bgcolor: '#f5f5f5' }} elevation={0}>
+            <Paper sx={{ width: "100%", mb: 3, bgcolor: (theme.palette.mode === 'light'
+      ? theme.palette.grey[100]
+      : theme.palette.grey[900]) }} elevation={0} >
               <Box sx={{ p: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2 }}>
-                <Stack direction='row' spacing={4} alignItems="center">
-                  <Typography variant="h5" gutterBottom fontWeight="bold">
-                    Расписание
+                <Stack direction='row' spacing={1} alignItems="center">
+                  <Typography variant="h5" gutterBottom fontWeight="bold" spacing={2}>
+                    Расписание{relativeLabel && <Typography component="span" variant='body' color="primary.main"> {relativeLabel}</Typography>}
+                    {currentDate && (
+                      <Typography fontWeight='medium' variant="body" color="text">
+                        , {currentDate.format('dddd')}
+                      </Typography>
+                    )}
                   </Typography>
-                  <Stack direction="row" spacing={2} alignItems="center">
+                </Stack>
+
+                <Stack direction="row" spacing={4} alignItems="center">
+                  <Stack direction="row" spacing={1} alignItems="center">
                     <GroupIcon color="primary" />
                     <Typography variant="h6" noWrap fontWeight="">
                       {currentGroup ? currentGroup.name : 'Группа не выбрана'}
                     </Typography>
                   </Stack>
-                </Stack>
-
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <CalendarTodayIcon color="primary" />
-                  <Typography variant="h6" fontWeight="" noWrap>
-                    {currentDate ? currentDate.format('DD.MM.YYYY') : 'Дата не выбрана'}
-                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <CalendarTodayIcon color="primary" />
+                    <Typography variant="h6" fontWeight="" noWrap>
+                      {currentDate ? currentDate.format('DD.MM.YYYY') : 'Дата не выбрана'}
+                    </Typography>
+                  </Stack>
                 </Stack>
               </Box>
             </Paper>
@@ -122,7 +148,7 @@ export const Schedule = () => {
                   sx={{
                     p: 4,
                     textAlign: 'center',
-                    bgcolor: '#f9f9f9',
+                    bgcolor: 'background.paper',
                     border: '1px dashed #bdbdbd',
                     mt: 4,
                   }}
@@ -140,7 +166,7 @@ export const Schedule = () => {
                   key={lesson.id || index}
                   variant="outlined"
                   sx={{
-                    bgcolor: '#fff',
+                    bgcolor: 'background.paper',
                     borderLeft: '6px solid #1976d2',
                     boxShadow: '0 2px 8px rgba(25, 118, 210, 0.04)',
                     transition: 'box-shadow 0.2s',
@@ -148,22 +174,22 @@ export const Schedule = () => {
                   }}
                 >
                   <CardContent sx={{ p: 2 }}>
-                    <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+                    <Stack direction="row" spacing={2} alignItems="center" flexWrap="nowrap">
                       {/* Номер пары и время */}
-<Box sx={{ minWidth: 80, textAlign: 'center' }}>
-        <Typography variant="h4" color="primary" fontWeight="bold">
-          {lesson.number.replace(/\D/g, '')}
-        </Typography>
-        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-          {lesson.number ? (
-            <>
-              <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ mt: 1 }}>
-                {getLessonTitle(lesson.number).split(' - ')[1]}
-              </Typography>
-            </>
-          ) : null}
-        </Typography>
-      </Box>
+                      <Box sx={{ minWidth: 80, textAlign: 'center' }}>
+                        <Typography variant="h4" color="primary" fontWeight="bold">
+                          {lesson.number.replace(/\D/g, '')}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                          {lesson.number ? (
+                            <>
+                              <Typography variant="caption" color="text.secondary" fontWeight="medium" sx={{ mt: 1 }}>
+                                {getLessonTitle(lesson.number).split(' - ')[1]}
+                              </Typography>
+                            </>
+                          ) : null}
+                        </Typography>
+                      </Box>
 {/* <Box sx={{ minWidth: 80, textAlign: 'center' }}>
   <Box
     sx={{

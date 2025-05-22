@@ -24,7 +24,7 @@ function App() {
             <Route path="/user/edit/:id" element={<UserForm />} />
           </Route>
           <Route path='/news' element={<NewsList />} />
-          <Route path="/news" element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/news" element={<ProtectedRoute allowedRoles={['admin', 'teacher']} />}>
             <Route path="/news/create" element={<NewsForm />} />
             <Route path="/news/edit/:id" element={<NewsForm />} />
           </Route>

@@ -28,12 +28,9 @@ class UserCreateAPIView(rest_framework.generics.CreateAPIView):
 
 class UserLoginAPIView(jwt_views.TokenObtainPairView):
 
-    # @method_decorator(users.utils.enforce_csrf)
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
-        # print(response.data)
         access_token = response.data['access']
-        # print(response.__dict__)
         response.set_cookie(
             key=settings.SIMPLE_JWT['AUTH_COOKIE'],  # Имя cookie
             value=access_token,  # Значение (access токен)
@@ -42,14 +39,11 @@ class UserLoginAPIView(jwt_views.TokenObtainPairView):
             samesite=settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE'],      # Политика SameSite
             expires=settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],        # Время жизни cookie (в секундах)
         )
-        print(response.cookies)
         
         del response.data['access']
         del response.data['refresh']
 
         return response
-        # else:
-        #     return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserProfileAPIView(APIView):

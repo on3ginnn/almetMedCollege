@@ -16,10 +16,12 @@ import {
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupIcon from '@mui/icons-material/Group';
+import { useTheme } from "@mui/material/styles";
 
 export const UserList = () => {
   const navigate = useNavigate();
   const { userList, getUserList, deleteUser } = useUserStore();
+  const theme = useTheme();
 
   useEffect(() => {
     getUserList();
@@ -41,12 +43,12 @@ export const UserList = () => {
 
       {userList.length === 0 ? (
         <Paper
-          elevation={0}
+          elevation={1}
           sx={{
             p: 4,
             mt: 2,
             textAlign: "center",
-            bgcolor: "#f9f9f9",
+            // bgcolor: "#f9f9f9",
             border: "1px dashed #bdbdbd",
           }}
         >
@@ -58,10 +60,12 @@ export const UserList = () => {
           </Typography>
         </Paper>
       ) : (
-        <TableContainer component={Paper} elevation={2} sx={{ mt: 2 }}>
+        <TableContainer component={Paper} elevation={1} sx={{ mt: 2 }}>
           <Table size="small">
             <TableHead>
-              <TableRow sx={{ bgcolor: "#f5f5f5" }}>
+              <TableRow sx={{ bgcolor: (theme.palette.mode === 'light'
+      ? theme.palette.grey[100]
+      : theme.palette.grey[900]) }}>
                 <TableCell>ID</TableCell>
                 <TableCell>Имя пользователя</TableCell>
                 <TableCell>Фамилия</TableCell>

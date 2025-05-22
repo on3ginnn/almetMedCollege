@@ -62,7 +62,7 @@ export const UserForm = () => {
         {params.id ? 'Редактирование пользователя' : 'Добавление пользователя'}
       </Typography>
 
-      <Paper sx={{ p: 3, mt: 2 }} elevation={3}>
+      <Paper sx={{ p: 3, mt: 2 }} elevation={1}>
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <TextField

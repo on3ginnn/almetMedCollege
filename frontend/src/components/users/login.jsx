@@ -39,7 +39,7 @@ export const LoginForm = () => {
   return (
     <Container maxWidth="xs">
       <Paper
-        elevation={3}
+        elevation={1}
         sx={{
           p: 4,
           mt: 8,

@@ -5,6 +5,10 @@ import MajorAPI from '../api/majorAPI';
 import UserAPI from '../api/userAPI';
 import ClassRoomAPI from '../api/classroomAPI';
 import dayjs from 'dayjs';
+import 'dayjs/locale/ru'; // Русский язык
+
+dayjs.locale('ru'); // Установить локаль по умолчанию
+
 
 export const useScheduleStore = create((set, get) => ({
     schedule: null,

@@ -104,6 +104,12 @@ const demoTheme = createTheme({
       xl: 1536,
     },
   },
+  // palette:{
+  //   mode,
+  //   background:{
+  //     default: mode === 'light' ? '#f5f5f5' : "#212121",
+  //   }
+  // }
 });
 
 function AccountSidebarPreview(props) {
@@ -203,11 +209,12 @@ function MainContent(props) {
         homeUrl: '/',
       }}
       router={router}
-      theme={theme}
+      theme={demoTheme}
       window={demoWindow}
       authentication={authentication}
       // authentication={React.useMemo(() => navigate('/login'))}
       session={session}
+      localeText={{ accountSignInLabel: 'Войти', accountSignOutLabel: "Выйти" }}
     >
       <DashboardLayout sx={{
         py: "30px",
