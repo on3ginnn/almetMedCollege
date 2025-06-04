@@ -9,6 +9,7 @@ import group.urls
 import news.urls
 import schedule.urls
 import major.urls
+import applicant.urls
 
 
 urlpatterns = [
@@ -20,6 +21,7 @@ urlpatterns = [
     django.urls.path("news/", django.urls.include(news.urls)),
     django.urls.path("schedule/", django.urls.include(schedule.urls)),
     django.urls.path("major/", django.urls.include(major.urls)),
+    django.urls.path("applicants/", django.urls.include(applicant.urls)),
     django.urls.path("admin/", django.contrib.admin.site.urls),
 ]
 

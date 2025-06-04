@@ -45,11 +45,6 @@ let NAVIGATION = [
     title: 'Главная',
     icon: <DashboardIcon />,
   },
-  // {
-  //   segment: 'login',
-  //   title: 'Войти',
-  //   icon: <LoginIcon />,
-  // },
   {
     segment: 'news',
     title: 'Новости',
@@ -58,6 +53,11 @@ let NAVIGATION = [
   {
     segment: 'schedule',
     title: 'Расписание',
+    icon: <EventNoteIcon />,
+  },
+  {
+    segment: 'applicant',
+    title: 'Анкета на поступление',
     icon: <EventNoteIcon />,
   },
 ];
@@ -87,7 +87,11 @@ const adminNavigaion = [
     title: 'Добавить расписание',
     icon: <EditCalendarIcon />,
   },
-  
+  {
+    segment: 'applicant/all',
+    title: 'Анкеты на поступление',
+    icon: <EditCalendarIcon />,
+  },
 ]
 
 const demoTheme = createTheme({

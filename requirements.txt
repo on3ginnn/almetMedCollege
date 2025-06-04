@@ -9,3 +9,4 @@ wonderwords==2.2.0
 phonenumbers==8.13.54
 django-debug-toolbar==4.3.0
 psycopg2-binary==2.9.10
+python-docx==1.1.2

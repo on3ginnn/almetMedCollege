@@ -10,6 +10,8 @@ import { NewsList } from './components/news/news';
 import { NewsForm } from "./components/news/newsForm";
 import { ScheduleForm } from "./components/schedule/scheduleForm";
 import { Schedule } from "./components/schedule/schedule";
+import { ApplicantForm } from './components/applicant/applicantForm';
+import { Applicants } from './components/applicant/applicants';
 
 function App() {
   return (
@@ -31,6 +33,10 @@ function App() {
           <Route path='/schedule' element={<Schedule />} />
           <Route path="/schedule" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/schedule/create" element={<ScheduleForm />} />
+          </Route>
+          <Route path='/applicant' element={<ApplicantForm />} />
+          <Route path="/applicant" element={<ProtectedRoute allowedRoles={['admin']} />}>
+            <Route path="/applicant/all" element={<Applicants />} />
           </Route>
         </Route>
       </Routes>

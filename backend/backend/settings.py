@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "group.apps.GroupConfig",
     "schedule.apps.ScheduleConfig",
     "major.apps.MajorConfig",
+    "applicant.apps.ApplicantConfig",
 
 ]
 

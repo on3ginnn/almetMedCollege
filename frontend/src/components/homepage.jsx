@@ -90,7 +90,7 @@ export const HomePage = () => {
                 height: { xs: 220, sm: 300, md: 400 },
                 overflow: 'hidden',
                 backgroundImage: `url(${slide.image})`,
-                borderRadius: 2, overflow: "hidden",
+                borderRadius: 2,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 // boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
