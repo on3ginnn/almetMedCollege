@@ -32,9 +32,10 @@ class User(django.contrib.auth.models.AbstractUser):
     phone_number = phonenumber_field.modelfields.PhoneNumberField(
         "номер телефона",
         null=True,
+        blank=True,
     )
 
-    REQUIRED_FIELDS = ["first_name", "last_name", "phone_number", "role"]
+    # REQUIRED_FIELDS = []
 
     class Meta:
         verbose_name = "пользователь"

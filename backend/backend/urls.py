@@ -1,5 +1,6 @@
 import django.contrib.admin
 import django.urls
+import applicant.views
 import backend.views
 import django.conf
 
@@ -10,7 +11,6 @@ import news.urls
 import schedule.urls
 import major.urls
 import applicant.urls
-
 
 urlpatterns = [
     django.urls.path('login/', users.views.UserLoginAPIView.as_view(), name='login'),

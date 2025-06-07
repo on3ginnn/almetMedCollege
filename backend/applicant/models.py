@@ -1,29 +1,56 @@
 from django.db import models
 
 class Applicant(models.Model):
+    SPECIALTY_CHOICES = [
+        ('pharmacy', 'Фармация'),
+        ('nursing', 'Сестринское дело'),
+        ('midwifery', 'Акушерское дело'),
+        ('lab_diagnostics', 'Лабораторная диагностика'),
+        ('medical_treatment', 'Лечебное дело'),
+    ]
+
     full_name = models.CharField("ФИО", max_length=255)
     citizenship = models.CharField("Гражданство", max_length=100)
     nationality = models.CharField("Национальность", max_length=100)
     birth_date = models.DateField("Дата рождения")
     birth_place = models.CharField("Место рождения", max_length=255)
     address = models.TextField("Адрес места жительства")
-    certificate_series = models.CharField("Серия, № аттестата", max_length=50)
-    graduation_info = models.CharField("Дата окончания и наименование учебного заведения", max_length=255)
-    passport_info = models.CharField("Паспортные данные", max_length=255)
-    inn = models.CharField("ИНН", max_length=20)
-    snils = models.CharField("СНИЛС", max_length=20)
-    medical_policy = models.CharField("Медицинский полис (организация)", max_length=100)
+    certificate_series = models.CharField("Номер аттестата", max_length=14)
+
+    graduation_date = models.DateField("Дата окончания учебного заведения")
+    graduation_institution = models.CharField("Наименование учебного заведения", max_length=255)
+
+    passport_series = models.CharField("Серия паспорта", max_length=4)
+    passport_number = models.CharField("Номер паспорта", max_length=6)
+    passport_issued_by = models.CharField("Кем выдан", max_length=255)
+    passport_issued_date = models.DateField("Дата выдачи")
+
+    inn = models.CharField("ИНН", max_length=12)
+    snils = models.CharField("СНИЛС", max_length=11)
+    medical_policy = models.CharField("Медицинский полис", max_length=100)
     military_id = models.BooleanField("Приписное свидетельство (да/нет)")
     student_phone = models.CharField("Телефон студента", max_length=20)
+
     mother_name = models.CharField("ФИО мамы", max_length=255)
     mother_phone = models.CharField("Телефон мамы", max_length=20)
     mother_job = models.CharField("Место работы и должность мамы", max_length=255)
+    mother_passport_series = models.CharField("Серия паспорта", max_length=4)
+    mother_passport_number = models.CharField("Номер паспорта", max_length=6)
+    mother_passport_issued_by = models.CharField("Кем выдан", max_length=255)
+    mother_passport_issued_date = models.DateField("Дата выдачи")
+
     father_name = models.CharField("ФИО папы", max_length=255)
     father_phone = models.CharField("Телефон папы", max_length=20)
     father_job = models.CharField("Место работы и должность папы", max_length=255)
+    father_passport_series = models.CharField("Серия паспорта", max_length=4)
+    father_passport_number = models.CharField("Номер паспорта", max_length=6)
+    father_passport_issued_by = models.CharField("Кем выдан", max_length=255)
+    father_passport_issued_date = models.DateField("Дата выдачи")
+
     has_medical_contract = models.BooleanField("Наличие договора с мед. организацией")
-    medical_org_name = models.CharField("Наименование мед. организации", max_length=255, blank=True)
-    
+
+    specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES, default='nursing')
+
     grade_russian = models.FloatField("Русский язык")
     grade_biology = models.FloatField("Биология")
     grade_chemistry = models.FloatField("Химия")
