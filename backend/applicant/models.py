@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Applicant(models.Model):
     SPECIALTY_CHOICES = [
@@ -14,8 +15,12 @@ class Applicant(models.Model):
     nationality = models.CharField("Национальность", max_length=100)
     birth_date = models.DateField("Дата рождения")
     birth_place = models.CharField("Место рождения", max_length=255)
-    address = models.TextField("Адрес места жительства")
+    address = models.TextField("Адрес места жительства по паспорту")
+    address_actual = models.TextField("Фактический адрес места жительства")
+    passport_division_code = models.CharField("Код подразделения", max_length=6)
+    passport_registration_date = models.DateField("Дата регистрации прописки по паспорту")
     certificate_series = models.CharField("Номер аттестата", max_length=14)
+    certificate_issued_date = models.DateField("Дата выдачи аттестата")
 
     graduation_date = models.DateField("Дата окончания учебного заведения")
     graduation_institution = models.CharField("Наименование учебного заведения", max_length=255)
@@ -29,7 +34,8 @@ class Applicant(models.Model):
     snils = models.CharField("СНИЛС", max_length=11)
     medical_policy = models.CharField("Медицинский полис", max_length=100)
     military_id = models.BooleanField("Приписное свидетельство (да/нет)")
-    student_phone = models.CharField("Телефон студента", max_length=20)
+    student_phone = models.CharField("Телефон абитуриента", max_length=20)
+    student_email = models.EmailField("Email абитуриента", max_length=254)
 
     mother_name = models.CharField("ФИО мамы", max_length=255)
     mother_phone = models.CharField("Телефон мамы", max_length=20)
@@ -47,21 +53,39 @@ class Applicant(models.Model):
     father_passport_issued_by = models.CharField("Кем выдан", max_length=255)
     father_passport_issued_date = models.DateField("Дата выдачи")
 
-    has_medical_contract = models.BooleanField("Наличие договора с мед. организацией")
+    documents_delivered = models.BooleanField("Статус сдал документы", default=False)
 
-    specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES, default='nursing')
+    specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES)
 
-    grade_russian = models.FloatField("Русский язык")
-    grade_biology = models.FloatField("Биология")
-    grade_chemistry = models.FloatField("Химия")
-    grade_math = models.FloatField("Математика")
-    grade_foreign = models.FloatField("Иностранный язык")
-    grade_physics = models.FloatField("Физика")
+    grade_russian = models.IntegerField(
+        "Русский язык",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
+    grade_biology = models.IntegerField(
+        "Биология",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
+    grade_chemistry = models.IntegerField(
+        "Химия",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
+    grade_math = models.IntegerField(
+        "Математика",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
+    grade_language = models.IntegerField(
+        "Иностранный язык",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
+    grade_physics = models.IntegerField(
+        "Физика",
+        validators=[MinValueValidator(3, "Оценка должна быть не менее 3"), MaxValueValidator(5, "Оценка должна быть не более 5")]
+    )
     average_grade = models.FloatField("Средний балл")
 
-    documents_submitted = models.CharField("Подали документы", max_length=50, choices=[("оригинал", "Оригинал"), ("копия", "Копия")])
+    # documents_submitted = models.CharField("Подали документы", max_length=50, choices=[("оригинал", "Оригинал"), ("копия", "Копия")])
     admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=[("бюджет", "Бюджет"), ("коммерция", "Коммерция")])
-    via_gosuslugi = models.BooleanField("Подача заявления через Госуслуги")
+    # via_gosuslugi = models.BooleanField("Подача заявления через Госуслуги")
     needs_dormitory = models.BooleanField("Нуждается в общежитии")
 
     enrolled = models.BooleanField("Зачислен", default=False)

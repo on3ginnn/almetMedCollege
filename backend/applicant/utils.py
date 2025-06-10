@@ -4,6 +4,137 @@ from django.template.defaultfilters import date as _date
 import io
 from datetime import datetime
 from .models import Applicant
+import openpyxl
+from io import BytesIO
+from collections import defaultdict
+
+
+def generate_applicants_excel():
+    # Filter applicants with documents_delivered=True
+    applicants = Applicant.objects.filter(documents_delivered=True).order_by('specialty')
+    
+    # Group applicants by specialty
+    specialty_groups = defaultdict(list)
+    for applicant in applicants:
+        specialty_groups[applicant.specialty].append(applicant)
+    
+    # Create a new workbook
+    wb = openpyxl.Workbook()
+    # Remove the default sheet
+    wb.remove(wb.active)
+
+    # Define headers
+    headers = [
+        'Рег.номер', 'Специальность', 'Фамилия Имя Отчиство', 'Гражданство', 'Национальность',
+        'Дата рождения', 'Место рождения', 'Адрес местожительства', 'Серия, № аттестата',
+        'Дата окончания, наименование учебного заведения',
+        'Паспортные данные (серия, номер, кем и когда выдан)', 'ИНН',
+        'Страховое свидетельство (СНИЛС)', 'Медицинский полис (организация:ЧМ, АБ и т.д.)',
+        'Приписное свидетельство (да/нет)', '№ телефона студента', 'ФИО, № телефона мамы',
+        'Место работы мамы, должность', 'ФИО, № телефона папы', 'Место работы папы, должность',
+        'Наличие договора или ходатайства с медицинской организацией (наименование мед. орг.) да/нет',
+        'Русский язык', 'Биология', 'Химия', 'Математика', 'Иностранный язык', 'Физика',
+        'Средний балл аттестата', 'Оригинал/копия', 'Бюджет/коммерция',
+        'Подача заявления через госуслуги РФ да/нет', 'Нуждается в общежитии',
+        'Лица указанные в 7 статьи 71 Федерального закона "Об образовании в Российской Федерации", предоставляется преимущественное право зачисления',
+        'Лицам, указанным в части 5 статьи 71 Федерального закона, предоставляется право на зачисление на обучение по образовательным программам СПО в первоочередном порядке вне зависимости от результатов',
+        'СНИЛС', 'Средний балл аттестата', 'Оригинал/копия', 'Бюджет/коммерция',
+        'Преимущественное право', 'Первоочередное право'
+    ]
+
+    # Map specialties to human-readable names
+    specialty_map = dict(Applicant.SPECIALTY_CHOICES)
+
+    # Create a sheet for each specialty
+    for specialty_code, applicants in specialty_groups.items():
+        # Get human-readable specialty name
+        specialty_name = specialty_map.get(specialty_code, specialty_code)
+        # Sanitize sheet name (max 31 chars, no invalid chars)
+        sheet_name = specialty_name[:31].replace('/', '_').replace('\\', '_').replace('?', '').replace('*', '').replace('[', '').replace(']', '')
+        
+        # Create new sheet
+        ws = wb.create_sheet(title=sheet_name)
+        
+        # Append headers
+        ws.append(headers)
+
+        # Add data rows
+        for applicant in applicants:
+            # Format combined fields
+            graduation_info = (
+                f"{_date(applicant.graduation_date, 'd.m.Y')}, {applicant.graduation_institution}"
+                if applicant.graduation_date and applicant.graduation_institution else ''
+            )
+            passport_data = (
+                f"{applicant.passport_series} {applicant.passport_number}, "
+                f"{applicant.passport_issued_by}, {_date(applicant.passport_issued_date, 'd.m.Y')}"
+                if all([applicant.passport_series, applicant.passport_number, applicant.passport_issued_by, applicant.passport_issued_date])
+                else ''
+            )
+            mother_info = (
+                f"{applicant.mother_name}, {applicant.mother_phone}"
+                if applicant.mother_name and applicant.mother_phone else ''
+            )
+            father_info = (
+                f"{applicant.father_name}, {applicant.father_phone}"
+                if applicant.father_name and applicant.father_phone else ''
+            )
+
+            ws.append([
+                applicant.id,  # Рег.номер
+                specialty_name,  # Специальность
+                applicant.full_name,  # Фамилия Имя Отчиство
+                applicant.citizenship,  # Гражданство
+                applicant.nationality,  # Национальность
+                applicant.birth_date,  # Дата рождения
+                applicant.birth_place,  # Место рождения
+                applicant.address,  # Адрес местожительства
+                applicant.certificate_series,  # Серия, № аттестата
+                graduation_info,  # Дата окончания, наименование учебного заведения
+                passport_data,  # Паспортные данные
+                applicant.inn,  # ИНН
+                applicant.snils,  # СНИЛС
+                applicant.medical_policy,  # Медицинский полис
+                'Да' if applicant.military_id else 'Нет',  # Приписное свидетельство
+                applicant.student_phone,  # № телефона студента
+                mother_info,  # ФИО, № телефона мамы
+                applicant.mother_job,  # Место работы мамы, должность
+                father_info,  # ФИО, № телефона папы
+                applicant.father_job,  # Место работы папы, должность
+                '',  # Наличие договора или ходатайства (empty)
+                applicant.grade_russian,  # Русский язык
+                applicant.grade_biology,  # Биология
+                applicant.grade_chemistry,  # Химия
+                applicant.grade_math,  # Математика
+                applicant.grade_language,  # Иностранный язык
+                applicant.grade_physics,  # Физика
+                applicant.average_grade,  # Средний балл аттестата
+                '',  # Оригинал/копия (empty)
+                applicant.admission_type,  # Бюджет/коммерция
+                '',  # Подача через госуслуги (empty)
+                'Да' if applicant.needs_dormitory else 'Нет',  # Нуждается в общежитии
+                '',  # Лица по статье 7 (empty)
+                '',  # Лица по части 5 статьи 71 (empty)
+                applicant.snils,  # СНИЛС (duplicate)
+                applicant.average_grade,  # Средний балл аттестата (duplicate)
+                '',  # Оригинал/копия (duplicate, empty)
+                applicant.admission_type,  # Бюджет/коммерция (duplicate)
+                '',  # Преимущественное право (empty)
+                ''   # Первоочередное право (empty)
+            ])
+
+    # If no applicants, create a default sheet with headers
+    if not specialty_groups:
+        ws = wb.create_sheet(title="No Applicants")
+        ws.append(headers)
+        ws.append(['Нет абитуриентов с сданными документами'])
+
+    # Save to a BytesIO buffer for Django response
+    buffer = BytesIO()
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer
+
 
 def generate_application_docx(applicant: Applicant):
     template_path = 'static/docx/applicant.docx'

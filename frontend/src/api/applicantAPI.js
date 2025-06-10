@@ -6,7 +6,7 @@ export default class ApplicantAPI {
             const response = await apiClient.post('/applicants/', data);
             return response;
         } catch (error) {
-            throw error; // Let caller handle errors
+            throw error;
         }
     }
     static async getApplicantList() {
@@ -28,7 +28,35 @@ export default class ApplicantAPI {
     static async download(pk) {
         try {
             const response = await apiClient.get(`/applicants/${pk}/download/`, {
-                responseType: 'blob', // Handle binary file
+                responseType: 'blob',
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async enroll(pk) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/enroll/`, { enrolled: true });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async updateDocumentsDelivered(pk, delivered) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/update_documents_delivered/`, {
+                documents_delivered: delivered,
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async downloadExcel() {
+        try {
+            const response = await apiClient.get('/applicants/download_excel/', {
+                responseType: 'blob',
             });
             return response;
         } catch (error) {

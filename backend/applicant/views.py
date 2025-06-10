@@ -1,11 +1,14 @@
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from .models import Applicant
 import applicant.serializer
+from applicant.serializer import ApplicantSerializer
 from django.shortcuts import get_object_or_404
 from django.http import FileResponse, HttpResponse
-from .utils import generate_application_docx
+from .utils import generate_application_docx, generate_applicants_excel
+import openpyxl
 
 
 class ApplicantViewSet(viewsets.ModelViewSet):
@@ -32,6 +35,24 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         return Response({'status': 'зачислен'}, status=status.HTTP_200_OK)
 
 
+class UpdateDocumentsDeliveredView(APIView):
+    def patch(self, request, pk):
+        try:
+            applicant = Applicant.objects.get(pk=pk)
+            print(applicant)
+        except Applicant.DoesNotExist:
+            return Response({'error': 'Applicant not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        documents_delivered = request.data.get('documents_delivered')
+        if documents_delivered is None:
+            return Response({'error': 'documents_delivered field is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        applicant.documents_delivered = documents_delivered
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 def download_applicant_document(request, pk):
     applicant = Applicant.objects.get(pk=pk)
     buffer = generate_application_docx(applicant)
@@ -41,3 +62,17 @@ def download_applicant_document(request, pk):
     )
     response['Content-Disposition'] = f'attachment; filename="Заявление_{applicant.full_name}.docx"'
     return response
+
+
+class DownloadExcelView(APIView):
+    def get(self, request):
+        # Generate Excel file
+        buffer = generate_applicants_excel()
+        
+        # Create response
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            content=buffer.getvalue()
+        )
+        response['Content-Disposition'] = 'attachment; filename="applicants_delivered.xlsx"'
+        return response

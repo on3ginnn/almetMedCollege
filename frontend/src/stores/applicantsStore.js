@@ -18,7 +18,6 @@ export const useApplicantsStore = create((set) => ({
       const blob = response.data;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      // Sanitize filename to remove invalid characters
       const safeName = full_name.replace(/[/\\?%*:|"<>]/g, '_');
       a.href = url;
       a.download = `Заявление_${safeName}.docx`;
@@ -49,9 +48,34 @@ export const useApplicantsStore = create((set) => ({
   },
   enrollApplicant: async (id) => {
     try {
-      await apiClient.patch(`/api/applicants/${id}/enroll/`, { enrolled: true });
+      await ApplicantAPI.enroll(id);
     } catch (e) {
       console.error('Ошибка при зачислении:', e);
+      throw e;
+    }
+  },
+  updateDocumentsDelivered: async (id, delivered) => {
+    try {
+      await ApplicantAPI.updateDocumentsDelivered(id, delivered);
+    } catch (e) {
+      console.error('Ошибка при обновлении статуса документов:', e);
+      throw e;
+    }
+  },
+  downloadExcel: async () => {
+    try {
+      const response = await ApplicantAPI.downloadExcel();
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'applicants_delivered.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Ошибка при скачивании Excel:', e);
       throw e;
     }
   },

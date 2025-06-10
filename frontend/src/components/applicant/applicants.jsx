@@ -5,12 +5,13 @@ import {
   Typography,
   Button,
   Paper,
+  Checkbox,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { useApplicantsStore } from '../../stores/applicantsStore';
 
 export const Applicants = () => {
-  const { applicants, getApplicants, enrollApplicant, downloadDocx } = useApplicantsStore();
+  const { applicants, getApplicants, enrollApplicant, downloadDocx, updateDocumentsDelivered, downloadExcel } = useApplicantsStore();
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -30,6 +31,23 @@ export const Applicants = () => {
     }
   };
 
+  const handleDocumentsDeliveredChange = async (id, checked) => {
+    try {
+      await updateDocumentsDelivered(id, checked);
+      await getApplicants();
+    } catch (e) {
+      alert('Ошибка при обновлении статуса документов');
+    }
+  };
+
+  const handleDownloadExcel = async () => {
+    try {
+      await downloadExcel();
+    } catch (e) {
+      alert('Ошибка при скачивании таблицы');
+    }
+  };
+
   const filtered = applicants.filter((app) =>
     app.full_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -41,18 +59,31 @@ export const Applicants = () => {
     { field: 'citizenship', headerName: 'Гражданство', width: 120 },
     { field: 'student_phone', headerName: 'Телефон', width: 150 },
     {
+      field: 'documents_delivered',
+      headerName: 'Сдал документы',
+      width: 160,
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.row.documents_delivered}
+          onChange={(e) => handleDocumentsDeliveredChange(params.row.id, e.target.checked)}
+        />
+      ),
+    },
+    {
       field: 'enroll',
       headerName: 'Зачислить',
       width: 130,
       renderCell: (params) => (
-        <Button
-          variant="contained"
-          size="small"
-          disabled={params.row.enrolled}
-          onClick={() => handleEnroll(params.row.id)}
-        >
-          {params.row.enrolled ? 'Зачислен' : 'Зачислить'}
-        </Button>
+        params.row.documents_delivered && (
+          <Button
+            variant="contained"
+            size="small"
+            disabled={params.row.enrolled}
+            onClick={() => handleEnroll(params.row.id)}
+          >
+            {params.row.enrolled ? 'Зачислен' : 'Зачислить'}
+          </Button>
+        )
       ),
     },
     {
@@ -76,7 +107,7 @@ export const Applicants = () => {
       <Typography variant="h4" fontWeight="bold" gutterBottom>
         Заявки абитуриентов
       </Typography>
-      <Box mb={2}>
+      <Box mb={2} display="flex" gap={2}>
         <TextField
           label="Поиск по ФИО"
           variant="outlined"
@@ -84,6 +115,9 @@ export const Applicants = () => {
           onChange={handleSearchChange}
           fullWidth
         />
+        <Button variant="contained" onClick={handleDownloadExcel}>
+          Таблица с документами
+        </Button>
       </Box>
       <Paper style={{ height: 600, width: '100%' }}>
         <DataGrid
