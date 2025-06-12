@@ -14,7 +14,6 @@
         "is_active": true,
         "date_joined": "2025-01-29T11:21:34.628Z",
         "role": "admin",
-        "group": null,
         "groups": [
             3
         ],
@@ -36,7 +35,6 @@
         "is_active": true,
         "date_joined": "2025-01-29T11:23:17.020Z",
         "role": "student",
-        "group": 1,
         "groups": [
             1
         ],
@@ -58,7 +56,6 @@
         "is_active": true,
         "date_joined": "2025-01-29T11:37:20.391Z",
         "role": "teacher",
-        "group": null,
         "groups": [
             2
         ],

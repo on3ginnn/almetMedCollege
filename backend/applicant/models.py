@@ -22,7 +22,7 @@ class Applicant(models.Model):
     certificate_series = models.CharField("Номер аттестата", max_length=14)
     certificate_issued_date = models.DateField("Дата выдачи аттестата")
 
-    graduation_date = models.DateField("Дата окончания учебного заведения")
+    graduation_year = models.DateField("Год окончания учебного заведения")
     graduation_institution = models.CharField("Наименование учебного заведения", max_length=255)
 
     passport_series = models.CharField("Серия паспорта", max_length=4)

@@ -1,0 +1,226 @@
+Отлично, вот подробная и актуализированная **инструкция по хостингу проекта [almetMedCollege](https://github.com/on3ginnn/almetMedCollege)** на **VDS от TimeWeb** с учётом необходимости Node.js 16+ для сборки Vite (React).
+
+---
+
+## 🔧 0. Что у тебя уже есть
+
+* Сервер: **Ubuntu 22.04**, 1×3.3GHz CPU, 2 ГБ RAM, 30 ГБ NVMe
+* Репозиторий: [https://github.com/on3ginnn/almetMedCollege](https://github.com/on3ginnn/almetMedCollege)
+* Бэкенд: **Django + DRF**
+* Фронтенд: **React + Vite**
+* Цель: развернуть проект на домене, чтобы всё работало через HTTPS
+
+---
+
+## ✅ Шаг 1: Подключение к серверу
+
+```bash
+ssh root@IP_АДРЕС_ТВОЕГО_СЕРВЕРА
+```
+
+---
+
+## 🧱 Шаг 2: Установка базового ПО
+
+```bash
+apt update && apt upgrade -y
+apt install python3-pip python3-venv nginx git curl ufw -y
+```
+
+---
+
+## 🟢 Шаг 3: Установка Node.js 18 (для Vite)
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+apt install -y nodejs
+```
+
+Проверь:
+
+```bash
+node -v    # v18.x.x
+npm -v     # >=9.x
+```
+
+---
+
+## 📦 Шаг 4: Клонирование проекта
+
+```bash
+mkdir -p /srv/almetMedCollege && cd /srv/almetMedCollege
+git clone https://github.com/on3ginnn/almetMedCollege.git .
+```
+
+---
+
+## 🐍 Шаг 5: Настройка Django backend
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### Миграции и статические файлы
+
+```bash
+python manage.py migrate
+python manage.py collectstatic --noinput
+```
+
+### (Опционально) Загрузка фикстур
+
+Если ты хочешь загрузить данные из фикстур:
+
+```bash
+python manage.py loaddata ./users/fixtures/data.json
+```
+
+*(путь должен быть точным)*
+
+---
+
+## 🔥 Шаг 6: Настройка Gunicorn
+
+```bash
+pip install gunicorn
+nano /etc/systemd/system/gunicorn.service
+```
+
+Вставь:
+
+```ini
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/srv/almetMedCollege
+ExecStart=/srv/almetMedCollege/venv/bin/gunicorn almetMedCollege.wsgi:application --bind 127.0.0.1:8000
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Затем:
+
+```bash
+systemctl daemon-reexec
+systemctl daemon-reload
+systemctl enable --now gunicorn
+```
+
+Проверь:
+
+```bash
+systemctl status gunicorn
+```
+
+---
+
+## 🌐 Шаг 7: Сборка фронтенда (React + Vite)
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+Сборка появится в `frontend/dist/`
+
+---
+
+## 🚀 Шаг 8: Настройка Nginx
+
+```bash
+nano /etc/nginx/sites-available/almetmedcollege
+```
+
+Пример конфига:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.ru www.yourdomain.ru;
+
+    root /srv/almetMedCollege/frontend/dist;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:8000/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /static/ {
+        alias /srv/almetMedCollege/static/;
+    }
+
+    location /media/ {
+        alias /srv/almetMedCollege/media/;
+    }
+}
+```
+
+Затем:
+
+```bash
+ln -s /etc/nginx/sites-available/almetmedcollege /etc/nginx/sites-enabled/
+nginx -t && systemctl reload nginx
+```
+
+---
+
+## 🔐 Шаг 9: Привязка домена и HTTPS
+
+### 1. Укажи IP своего сервера в DNS (A-запись домена)
+
+### 2. Установи Let's Encrypt:
+
+```bash
+apt install certbot python3-certbot-nginx -y
+certbot --nginx -d yourdomain.ru -d www.yourdomain.ru
+```
+
+---
+
+## 🛡️ Шаг 10: Настройка фаервола
+
+```bash
+ufw allow OpenSSH
+ufw allow 'Nginx Full'
+ufw enable
+```
+
+---
+
+## ✅ Готово
+
+Теперь:
+
+* Фронтенд доступен по `/`
+* Django API — по `/api/`
+* Всё работает на HTTPS
+* Vite работает через Node.js 18
+* Один сервер = весь проект
+
+---
+
+## ❓ Хочешь дополнительно?
+
+Могу помочь с:
+
+* CI/CD (GitHub Actions, auto-deploy)
+* PostgreSQL
+* SMTP (почта)
+* Логированием (например, через `journalctl` или Sentry)
+
+Напиши, если нужно — адаптирую под твой стек.

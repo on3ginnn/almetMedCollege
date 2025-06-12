@@ -1,6 +1,5 @@
 import * as React from 'react';
-import axios from "axios";
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -11,9 +10,15 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Avatar from '@mui/material/Avatar';
 import Divider from '@mui/material/Divider';
-import { createTheme } from '@mui/material/styles';
+import { createTheme, useMediaQuery } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import NewspaperIcon from '@mui/icons-material/Newspaper';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import LoginIcon from '@mui/icons-material/Login';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import {
@@ -25,14 +30,6 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { customRouter } from './config/customRouter';
 import { useUserStore } from './stores/userStore';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import NewspaperIcon from '@mui/icons-material/Newspaper';
-import { theme } from './theme';
-import LoginIcon from '@mui/icons-material/Login';
-import GroupIcon from '@mui/icons-material/Group';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import PostAddIcon from '@mui/icons-material/PostAdd';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import almetMedLogo from './assets/img/almetMedLogo.png';
 
 let NAVIGATION = [
@@ -62,7 +59,7 @@ let NAVIGATION = [
   },
 ];
 
-const adminNavigaion = [
+const adminNavigation = [
   {
     kind: 'header',
     title: 'Админка',
@@ -92,7 +89,7 @@ const adminNavigaion = [
     title: 'Анкеты на поступление',
     icon: <EditCalendarIcon />,
   },
-]
+];
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -108,12 +105,6 @@ const demoTheme = createTheme({
       xl: 1536,
     },
   },
-  // palette:{
-  //   mode,
-  //   background:{
-  //     default: mode === 'light' ? '#f5f5f5' : "#212121",
-  //   }
-  // }
 });
 
 function AccountSidebarPreview(props) {
@@ -131,15 +122,8 @@ function AccountSidebarPreview(props) {
 }
 
 AccountSidebarPreview.propTypes = {
-  /**
-   * The handler used when the preview is expanded
-   */
   handleClick: PropTypes.func,
   mini: PropTypes.bool.isRequired,
-  /**
-   * The state of the Account popover
-   * @default false
-   */
   open: PropTypes.bool,
 };
 
@@ -147,83 +131,82 @@ function MainContent(props) {
   const { window } = props;
   const router = customRouter();
   const navigate = useNavigate();
-  const location = useLocation(); // Используем хук useLocation
+  const location = useLocation();
+  const isMobile = useMediaQuery('(max-width:600px)'); // Detect mobile screens (xs breakpoint)
   const demoWindow = window !== undefined ? window() : undefined;
   const [session, setSession] = useState(null);
-  const [error, setError] = useState(null); // Состояние для ошибок
+  const [error, setError] = useState(null);
   const { currentUser, getProfile, logoutUser } = useUserStore();
 
   const protectedNavigation = () => {
-    if (currentUser && currentUser.role === "admin"){
-      // NAVIGATION = [...NAVIGATION, ...adminNavigaion];
-      return [...NAVIGATION, ...adminNavigaion];
+    if (currentUser && currentUser.role === 'admin') {
+      return [...NAVIGATION, ...adminNavigation];
     }
     return NAVIGATION;
-  }
+  };
 
   useEffect(() => {
-    async function fetchProfile () {
-      console.log("Call fetchProfile in mainContent.jsx")
+    async function fetchProfile() {
+      console.log('Call fetchProfile in MainContent.jsx');
       try {
         await getProfile();
       } catch (err) {
-        setError(err.message); // Сохраняем сообщение об ошибке
+        setError(err.message);
       }
-    };
+    }
 
-    fetchProfile(); // Вызываем функцию получения профиля
-  // запрос на сервер для получения актуальных данных профиля будет происходить при каждом изменении пути url
-  }, [location.pathname]);
+    fetchProfile();
+  }, [location.pathname, getProfile]);
 
   useEffect(() => {
-    async function getSession () {
-
+    async function getSession() {
       setSession({
         user: {
           name: `${currentUser.last_name} ${currentUser.first_name}`,
           email: `${currentUser.phone_number}`,
           image: 'https://avatars.githubusercontent.com/u/19550456',
         },
-      }); // Сохраняем данные профиля в состояние
+      });
     }
 
-    currentUser ? getSession() : null; // Вызываем функцию получения профиля
+    if (currentUser) {
+      getSession();
+    }
   }, [currentUser]);
 
-  const authentication = React.useMemo(() => {
-    return {
-      signIn: () => {
-        navigate('/login');
-      },
-      signOut: async () => {
-        setSession(null);
-        await logoutUser();
-      },
-      signInButtonContent: 'Войти',
-      signOutButtonContent: 'Войти',
-    };
-  }, []);
-  
+  const authentication = React.useMemo(() => ({
+    signIn: () => {
+      navigate('/login');
+    },
+    signOut: async () => {
+      setSession(null);
+      await logoutUser();
+    },
+    signInButtonContent: 'Войти',
+    signOutButtonContent: 'Выйти',
+  }), [navigate, logoutUser]);
+
   return (
     <AppProvider
       navigation={protectedNavigation()}
       branding={{
-        logo: <img src={ almetMedLogo } alt="MUI logo" />,
-        title: 'Альметьевский медицинский колледж',
+        logo: <img src={almetMedLogo} alt="AMK Logo" />,
+        title: isMobile ? 'AMK' : 'Альметьевский медицинский колледж',
         homeUrl: '/',
       }}
       router={router}
       theme={demoTheme}
       window={demoWindow}
       authentication={authentication}
-      // authentication={React.useMemo(() => navigate('/login'))}
       session={session}
-      localeText={{ accountSignInLabel: 'Войти', accountSignOutLabel: "Выйти" }}
+      localeText={{ accountSignInLabel: 'Войти', accountSignOutLabel: 'Выйти' }}
     >
-      <DashboardLayout sx={{
-        py: "30px",
-        px: "15px",
-      }}>
+      <DashboardLayout
+        sx={{
+          py: '30px',
+          px: '15px',
+        }}
+      >
         <Outlet />
       </DashboardLayout>
     </AppProvider>
@@ -231,10 +214,6 @@ function MainContent(props) {
 }
 
 MainContent.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
   window: PropTypes.func,
 };
 

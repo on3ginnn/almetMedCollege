@@ -3,6 +3,7 @@ import ApplicantAPI from '../api/applicantAPI';
 
 export const useApplicantsStore = create((set) => ({
   applicants: [],
+  selectedApplicant: null,
   getApplicants: async () => {
     try {
       const response = await ApplicantAPI.getApplicantList();
@@ -10,6 +11,14 @@ export const useApplicantsStore = create((set) => ({
     } catch (e) {
       console.error('Ошибка при загрузке списка абитуриентов:', e);
       alert('Ошибка при загрузке данных');
+    }
+  },
+  getApplicantById: async (id) => {
+    try {
+      const response = await ApplicantAPI.get(id);
+      set({ selectedApplicant: response.data });
+    } catch (error) {
+      set({ error: 'Ошибка при загрузке данных абитуриента', loading: false });
     }
   },
   downloadDocx: async (id, full_name) => {
