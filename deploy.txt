@@ -161,11 +161,11 @@ server {
     }
 
     location /static/ {
-        alias /srv/almetMedCollege/static/;
+        alias /srv/almetMedCollege/backend/static/;
     }
 
     location /media/ {
-        alias /srv/almetMedCollege/media/;
+        alias /srv/almetMedCollege/backend/media/;
     }
 }
 ```
