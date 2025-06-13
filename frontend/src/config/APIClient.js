@@ -1,6 +1,6 @@
 import axios from 'axios';
 
 export const apiClient = axios.create({
-    baseURL:"https://demoalmetmed.ru/",
+    baseURL:"https://demoalmetmed.ru/api/",
     withCredentials: true,
 })
