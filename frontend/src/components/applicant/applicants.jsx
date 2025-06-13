@@ -8,6 +8,8 @@ import {
   Checkbox,
   useTheme,
   useMediaQuery,
+  Stack,
+  Tooltip,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { ruRU } from '@mui/x-data-grid/locales';
@@ -15,7 +17,14 @@ import { useApplicantsStore } from '../../stores/applicantsStore';
 import { Link } from 'react-router-dom';
 
 export const Applicants = () => {
-  const { applicants, getApplicants, enrollApplicant, downloadDocx, updateDocumentsDelivered, downloadExcel } = useApplicantsStore();
+  const {
+    applicants,
+    getApplicants,
+    enrollApplicant,
+    downloadDocx,
+    updateDocumentsDelivered,
+    downloadExcel,
+  } = useApplicantsStore();
   const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -107,6 +116,7 @@ export const Applicants = () => {
             sx={{
               fontSize: { xs: '0.75rem', sm: '0.875rem' },
               py: { xs: 0.5, sm: 0.25 },
+              borderRadius: 2,
             }}
           >
             {params.row.enrolled ? 'Зачислен' : 'Зачислить'}
@@ -127,6 +137,7 @@ export const Applicants = () => {
           sx={{
             fontSize: { xs: '0.75rem', sm: '0.875rem' },
             py: { xs: 0.5, sm: 0.25 },
+            borderRadius: 2,
           }}
         >
           Скачать
@@ -150,6 +161,7 @@ export const Applicants = () => {
         sx={{
           fontSize: { xs: '0.75rem', sm: '0.875rem' },
           py: { xs: 0.5, sm: 0.25 },
+          borderRadius: 2,
         }}
       >
         Перейти
@@ -162,10 +174,10 @@ export const Applicants = () => {
   return (
     <Box
       sx={{
-        p: { xs: 1, sm: 2, md: 3 },
+        p: { xs: 1, sm: 3 },
         width: '100%',
         minHeight: '100vh',
-        bgcolor: 'background.paper',
+        bgcolor: 'background.default',
         boxSizing: 'border-box',
       }}
     >
@@ -174,53 +186,44 @@ export const Applicants = () => {
         fontWeight="bold"
         gutterBottom
         sx={{
-          fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
+          fontSize: { xs: '1.5rem', sm: '2rem' },
           textAlign: { xs: 'center', sm: 'left' },
-          px: { xs: 1, sm: 0 },
+          mb: 2,
         }}
       >
         Заявки абитуриентов
       </Typography>
-      <Box
-        mb={{ xs: 1, sm: 1.5, md: 2 }}
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: { xs: 1, sm: 1.5, md: 2 },
-          px: { xs: 1, sm: 0 },
-        }}
+
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={2}
+        mb={3}
       >
         <TextField
           label="Поиск по ФИО"
           variant="outlined"
           value={searchQuery}
           onChange={handleSearchChange}
-          fullWidth
           size="small"
-          sx={{ flex: 1 }}
+          fullWidth
         />
         <Button
           variant="contained"
           color="success"
           onClick={handleDownloadExcel}
-          sx={{
-            fontSize: { xs: '0.9rem', sm: '1rem' },
-            py: { xs: 1, sm: 0.75 },
-            whiteSpace: 'normal',
-            textAlign: 'center',
-            minWidth: { xs: '100%', sm: 200 },
-            maxWidth: { xs: '100%', sm: 250 },
-          }}
+          sx={{ minWidth: { sm: 200 } }}
         >
           Скачать таблицу
         </Button>
-      </Box>
+      </Stack>
+
       <Paper
         sx={{
           height: { xs: 500, sm: 600, md: 700 },
           width: '100%',
-          overflowX: 'auto',
-          boxShadow: { xs: 'none', sm: '0 2px 8px rgba(0,0,0,0.1)' },
+          borderRadius: 2,
+          boxShadow: { xs: 'none', sm: 2 },
+          overflow: 'hidden',
         }}
       >
         <DataGrid
@@ -235,26 +238,20 @@ export const Applicants = () => {
           disableRowSelectionOnClick
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
           sx={{
-            width: '100%',
             '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.875rem' },
-              whiteSpace: 'normal',
-              lineHeight: '1.2',
-              p: { xs: 0.5, sm: 1 },
+              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              py: 0,
+              px: 2,
             },
             '& .MuiDataGrid-columnHeader': {
-              p: { xs: 0.5, sm: 1 },
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              fontSize: { xs: '0.8rem', sm: '0.85rem', md: '0.875rem' },
+              backgroundColor: theme.palette.grey[100],
               fontWeight: 'bold',
-            },
-            '& .MuiDataGrid-row': {
-              minHeight: { xs: 40, sm: 48, md: 52 },
+              fontSize: { xs: '0.8rem', sm: '0.875rem' },
             },
             '& .MuiDataGrid-footerContainer': {
               fontSize: { xs: '0.8rem', sm: '0.875rem' },
             },
+            border: 'none',
           }}
         />
       </Paper>
