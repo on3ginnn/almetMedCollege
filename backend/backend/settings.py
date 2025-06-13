@@ -100,6 +100,7 @@ if DEBUG:
 # разрешенные хосты имеющие доступ к бэкэнду
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "https://demoalmetmed.ru/",
 ]
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
 CORS_ALLOW_HEADERS = [
