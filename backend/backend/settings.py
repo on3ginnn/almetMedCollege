@@ -100,7 +100,7 @@ if DEBUG:
 # разрешенные хосты имеющие доступ к бэкэнду
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://demoalmetmed.ru/",
+    "https://demoalmetmed.ru",
 ]
 CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
 CORS_ALLOW_HEADERS = [
@@ -212,6 +212,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
