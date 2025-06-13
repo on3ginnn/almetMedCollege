@@ -486,6 +486,83 @@ export const ApplicantDetails = () => {
         </Accordion>
 
         <Divider sx={{ my: 3 }} />
+        
+        <Divider sx={{ my: 3 }} />
+
+        {/* Priority Enrollment */}
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="priority-enrollment-content"
+            id="priority-enrollment-header"
+          >
+            <GradeIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+            <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
+              Первоочередное зачисление
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails id="priority-enrollment-content">
+            <Card sx={{ mb: 2, borderRadius: 2, bgcolor: 'background.default' }}>
+              <CardContent>
+                <Grid container spacing={{ xs: 1.5, sm: 2 }}>
+                  <Grid item xs={12}>
+                    <Typography variant="body1">
+                      <strong>Категория:</strong> {
+                        {
+                          'heroes_rf': 'Герои Российской Федерации, лица, награжденные тремя орденами Мужества',
+                          'svo_participants': 'Участники боевых действий и служащие на территориях СВО и граничащих с ними, а также их дети',
+                          'covid_med_workers': 'Дети умерших от COVID-19 медработников',
+                          'none': 'Не отношусь ни к одной из категорий',
+                        }[selectedApplicant.priority_enrollment] || '-'
+                      }
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </AccordionDetails>
+        </Accordion>
+
+        <Divider sx={{ my: 3 }} />
+
+        {/* Preferential Enrollment */}
+        <Accordion defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="preferential-enrollment-content"
+            id="preferential-enrollment-header"
+          >
+            <GradeIcon sx={{ mr: 1, color: theme.palette.primary.main }} />
+            <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}>
+              Преимущественное право на зачисление
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails id="preferential-enrollment-content">
+            <Card sx={{ mb: 2, borderRadius: 2, bgcolor: 'background.default' }}>
+              <CardContent>
+                <Grid container spacing={{ xs: 1.5, sm: 2 }}>
+                  <Grid item xs={12}>
+                    <Typography variant="body1">
+                      <strong>Категория:</strong> {
+                        {
+                          'orphans': 'Дети-сироты и дети, оставшиеся без попечения родителей',
+                          'disabled': 'Дети-инвалиды, инвалиды 1-2 группы',
+                          'veterans': 'Ветераны и участники боевых действий',
+                          'low_income_disabled': 'Дети младше 20 лет из неполных малоимущих семей, если их родители — инвалиды I группы',
+                          'chernobyl': 'Люди, пострадавшие от аварии на Чернобыльской АЭС',
+                          'military_personnel': 'Военнослужащие и сотрудники силовых ведомств, а также их дети',
+                          'none': 'Не отношусь ни к одной из категорий',
+                        }[selectedApplicant.preferential_enrollment] || '-'
+                      }
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          </AccordionDetails>
+        </Accordion>
+
+        <Divider sx={{ my: 3 }} />
 
         {/* Back Button */}
         <Box sx={{ mt: 3, textAlign: 'right' }}>

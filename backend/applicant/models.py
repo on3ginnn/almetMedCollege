@@ -1,13 +1,33 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from datetime import datetime
 
 class Applicant(models.Model):
     SPECIALTY_CHOICES = [
-        ('pharmacy', 'Фармация'),
-        ('nursing', 'Сестринское дело'),
-        ('midwifery', 'Акушерское дело'),
-        ('lab_diagnostics', 'Лабораторная диагностика'),
-        ('medical_treatment', 'Лечебное дело'),
+        ('pharmacy_9', 'Фармация - на базе 9 класса'),
+        ('nursing_9', 'Сестринское дело - на базе 9 класса'),
+        ('nursing_11_part_time', 'Сестринское дело - очно-заочная форма, на базе 11 класса'),
+        ('midwifery_9', 'Акушерское дело - на базе 9 класса'),
+        ('lab_diagnostics_9', 'Лабораторная диагностика - на базе 9 класса'),
+        ('medical_treatment_9', 'Лечебное дело - на базе 9 класса'),
+        ('medical_treatment_11', 'Лечебное дело - на базе 11 класса'),
+    ]
+
+    PRIORITY_ENROLLMENT_CHOICES = [
+        ('heroes_rf', 'Герои Российской Федерации, лица, награжденные тремя орденами Мужества'),
+        ('svo_participants', 'Участники боевых действий и служащие на территориях СВО и граничащих с ними, а также их дети'),
+        ('covid_med_workers', 'Дети умерших от COVID-19 медработников'),
+        ('none', 'Не отношусь ни к одной из категорий'),
+    ]
+
+    PREFERENTIAL_ENROLLMENT_CHOICES = [
+        ('orphans', 'Дети-сироты и дети, оставшиеся без попечения родителей'),
+        ('disabled', 'Дети-инвалиды, инвалиды 1-2 группы'),
+        ('veterans', 'Ветераны и участники боевых действий'),
+        ('low_income_disabled', 'Дети младше 20 лет из неполных малоимущих семей, если их родители — инвалиды I группы'),
+        ('chernobyl', 'Люди, пострадавшие от аварии на Чернобыльской АЭС'),
+        ('military_personnel', 'Военнослужащие и сотрудники силовых ведомств, а также их дети'),
+        ('none', 'Не отношусь ни к одной из категорий'),
     ]
 
     full_name = models.CharField("ФИО", max_length=255)
@@ -22,7 +42,13 @@ class Applicant(models.Model):
     certificate_series = models.CharField("Номер аттестата", max_length=14)
     certificate_issued_date = models.DateField("Дата выдачи аттестата")
 
-    graduation_year = models.DateField("Год окончания учебного заведения")
+    graduation_year = models.PositiveIntegerField(
+        "Год окончания учебного заведения",
+        validators=[
+            MinValueValidator(1900, "Год должен быть не ранее 1900"),
+            MaxValueValidator(datetime.now().year, "Год не может быть в будущем")
+        ]
+    )
     graduation_institution = models.CharField("Наименование учебного заведения", max_length=255)
 
     passport_series = models.CharField("Серия паспорта", max_length=4)
@@ -33,7 +59,7 @@ class Applicant(models.Model):
     inn = models.CharField("ИНН", max_length=12)
     snils = models.CharField("СНИЛС", max_length=11)
     medical_policy = models.CharField("Медицинский полис", max_length=100)
-    military_id = models.BooleanField("Приписное свидетельство (да/нет)")
+    military_id = models.BooleanField("Приписное свидетельство (для юношей)")
     student_phone = models.CharField("Телефон абитуриента", max_length=20)
     student_email = models.EmailField("Email абитуриента", max_length=254)
 
@@ -83,10 +109,21 @@ class Applicant(models.Model):
     )
     average_grade = models.FloatField("Средний балл")
 
-    # documents_submitted = models.CharField("Подали документы", max_length=50, choices=[("оригинал", "Оригинал"), ("копия", "Копия")])
     admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=[("бюджет", "Бюджет"), ("коммерция", "Коммерция")])
-    # via_gosuslugi = models.BooleanField("Подача заявления через Госуслуги")
     needs_dormitory = models.BooleanField("Нуждается в общежитии")
+
+    priority_enrollment = models.CharField(
+        "Первоочередное зачисление",
+        max_length=50,
+        choices=PRIORITY_ENROLLMENT_CHOICES,
+        default='none'
+    )
+    preferential_enrollment = models.CharField(
+        "Преимущественное право на зачисление",
+        max_length=50,
+        choices=PREFERENTIAL_ENROLLMENT_CHOICES,
+        default='none'
+    )
 
     enrolled = models.BooleanField("Зачислен", default=False)
     submitted_at = models.DateTimeField("Дата подачи", auto_now_add=True)
