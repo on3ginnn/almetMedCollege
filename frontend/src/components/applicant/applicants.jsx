@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import {
   Box,
@@ -9,12 +10,11 @@ import {
   useTheme,
   useMediaQuery,
   Stack,
-  Tooltip,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { ruRU } from '@mui/x-data-grid/locales';
 import { useApplicantsStore } from '../../stores/applicantsStore';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const Applicants = () => {
   const {
@@ -28,6 +28,7 @@ export const Applicants = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const navigate = useNavigate();
 
   useEffect(() => {
     getApplicants();
@@ -69,43 +70,48 @@ export const Applicants = () => {
 
   const baseColumns = [
     {
+      field: 'rowNumber',
+      headerName: '№',
+      minWidth: 50,
+      flex: 0.3,
+      sortable: false,
+      renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+    },
+    {
       field: 'full_name',
       headerName: 'ФИО',
-      minWidth: 150,
-      flex: 1,
+      minWidth: isMobile ? 120 : 150,
+      flex: isMobile ? 1 : 1,
     },
     {
       field: 'average_grade',
       headerName: 'Средний балл',
-      minWidth: 120,
-      flex: 0.8,
+      minWidth: isMobile ? 100 : 120,
+      flex: isMobile ? 1 : 0.8,
       type: 'number',
       sortable: true,
     },
     {
-      field: 'student_phone',
-      headerName: 'Телефон',
-      minWidth: 120,
-      flex: 0.8,
-    },
-    {
       field: 'documents_delivered',
       headerName: 'Сдал документы',
-      minWidth: 120,
-      flex: 0.8,
+      minWidth: isMobile ? 100 : 120,
+      flex: isMobile ? 1 : 0.8,
       renderCell: (params) => (
         <Checkbox
           checked={params.row.documents_delivered}
           onChange={(e) => handleDocumentsDeliveredChange(params.row.id, e.target.checked)}
-          sx={{ transform: { xs: 'scale(1.2)', sm: 'scale(1)' } }}
+          sx={{
+            transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
+            p: { xs: 1, sm: 0.5 },
+          }}
         />
       ),
     },
     {
       field: 'enroll',
       headerName: 'Зачислить',
-      minWidth: 120,
-      flex: 0.8,
+      minWidth: isMobile ? 100 : 120,
+      flex: isMobile ? 1 : 0.8,
       renderCell: (params) => (
         params.row.documents_delivered && (
           <Button
@@ -115,7 +121,9 @@ export const Applicants = () => {
             onClick={() => handleEnroll(params.row.id)}
             sx={{
               fontSize: { xs: '0.75rem', sm: '0.875rem' },
-              py: { xs: 0.5, sm: 0.25 },
+              py: { xs: 1, sm: 0.25 },
+              px: { xs: 1.5, sm: 1 },
+              minHeight: { xs: 36, sm: 'auto' },
               borderRadius: 2,
             }}
           >
@@ -127,8 +135,8 @@ export const Applicants = () => {
     {
       field: 'download',
       headerName: 'Скачать',
-      minWidth: 120,
-      flex: 0.8,
+      minWidth: isMobile ? 100 : 120,
+      flex: isMobile ? 1 : 0.8,
       renderCell: (params) => (
         <Button
           variant="outlined"
@@ -136,7 +144,9 @@ export const Applicants = () => {
           onClick={() => downloadDocx(params.row.id, params.row.full_name)}
           sx={{
             fontSize: { xs: '0.75rem', sm: '0.875rem' },
-            py: { xs: 0.5, sm: 0.25 },
+            py: { xs: 1, sm: 0.25 },
+            px: { xs: 1.5, sm: 1 },
+            minHeight: { xs: 36, sm: 'auto' },
             borderRadius: 2,
           }}
         >
@@ -149,8 +159,8 @@ export const Applicants = () => {
   const detailsColumn = {
     field: 'details',
     headerName: 'Подробности',
-    minWidth: 120,
-    flex: 0.8,
+    minWidth: isMobile ? 100 : 120,
+    flex: isMobile ? 1 : 0.8,
     renderCell: (params) => (
       <Button
         component={Link}
@@ -160,7 +170,9 @@ export const Applicants = () => {
         size="small"
         sx={{
           fontSize: { xs: '0.75rem', sm: '0.875rem' },
-          py: { xs: 0.5, sm: 0.25 },
+          py: { xs: 1, sm: 0.25 },
+          px: { xs: 1.5, sm: 1 },
+          minHeight: { xs: 36, sm: 'auto' },
           borderRadius: 2,
         }}
       >
@@ -169,12 +181,14 @@ export const Applicants = () => {
     ),
   };
 
-  const columns = isMobile ? [baseColumns[0], detailsColumn] : [...baseColumns, detailsColumn];
+  const columns = isMobile
+    ? [baseColumns[0], baseColumns[1], baseColumns[2]] // Row number, Full name, Details
+    : [...baseColumns];
 
   return (
     <Box
       sx={{
-        p: { xs: 1, sm: 3 },
+        p: { xs: 2, sm: 3 },
         width: '100%',
         minHeight: '100vh',
         bgcolor: 'background.default',
@@ -188,7 +202,8 @@ export const Applicants = () => {
         sx={{
           fontSize: { xs: '1.5rem', sm: '2rem' },
           textAlign: { xs: 'center', sm: 'left' },
-          mb: 2,
+          mb: { xs: 2, sm: 3 },
+          color: theme.palette.text.primary,
         }}
       >
         Заявки абитуриентов
@@ -196,8 +211,9 @@ export const Applicants = () => {
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
-        spacing={2}
-        mb={3}
+        spacing={{ xs: 1.5, sm: 2 }}
+        mb={{ xs: 2, sm: 3 }}
+        alignItems={{ xs: 'stretch', sm: 'center' }}
       >
         <TextField
           label="Поиск по ФИО"
@@ -206,12 +222,27 @@ export const Applicants = () => {
           onChange={handleSearchChange}
           size="small"
           fullWidth
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: 2,
+              fontSize: { xs: '0.85rem', sm: '0.875rem' },
+            },
+            '& .MuiInputLabel-root': {
+              fontSize: { xs: '0.85rem', sm: '0.875rem' },
+            },
+          }}
         />
         <Button
           variant="contained"
           color="success"
           onClick={handleDownloadExcel}
-          sx={{ minWidth: { sm: 200 } }}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            fontSize: { xs: '0.85rem', sm: '0.875rem' },
+            py: { xs: 1, sm: 0.75 },
+            borderRadius: 2,
+            minHeight: { xs: 40, sm: 'auto' },
+          }}
         >
           Скачать таблицу
         </Button>
@@ -219,39 +250,55 @@ export const Applicants = () => {
 
       <Paper
         sx={{
-          height: { xs: 500, sm: 600, md: 700 },
+          height: { xs: 450, sm: 600, md: 700 },
           width: '100%',
           borderRadius: 2,
-          boxShadow: { xs: 'none', sm: 2 },
+          boxShadow: { xs: 1, sm: 2 },
           overflow: 'hidden',
+          bgcolor: 'background.paper',
         }}
       >
         <DataGrid
           rows={filtered}
           columns={columns}
           getRowId={(row) => row.id}
+          onRowClick={(params) => navigate(`/applicant/${params.row.id}`)}
           pageSizeOptions={[10, 20, 50]}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
             sorting: { sortModel: [{ field: 'average_grade', sort: 'desc' }] },
           }}
-          disableRowSelectionOnClick
+          // disableRowSelectionOnClick
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
           sx={{
             '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.8rem', sm: '0.875rem' },
-              py: 0,
-              px: 2,
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              px: { xs: 1, sm: 2 },
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              alignItems: 'center',
             },
             '& .MuiDataGrid-columnHeader': {
               backgroundColor: theme.palette.grey[100],
               fontWeight: 'bold',
-              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              // py: { xs: 1, sm: 1.5 },
+              px: { xs: 1, sm: 2 },
+              borderBottom: `2px solid ${theme.palette.divider}`,
+            },
+            '& .MuiDataGrid-row:hover': {
+              bgcolor: theme.palette.action.hover,
             },
             '& .MuiDataGrid-footerContainer': {
-              fontSize: { xs: '0.8rem', sm: '0.875rem' },
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              py: { xs: 0.5, sm: 1 },
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              position: 'sticky',
+              top: 0,
+              zIndex: 1,
             },
             border: 'none',
+            '--DataGrid-rowHeight': { xs: 48, sm: 52 },
           }}
         />
       </Paper>

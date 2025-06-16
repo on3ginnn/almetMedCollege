@@ -25,6 +25,14 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async delete(pk) {
+        try {
+            const response = await apiClient.delete(`/applicants/${pk}/`);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async download(pk) {
         try {
             const response = await apiClient.get(`/applicants/${pk}/download/`, {

@@ -33,25 +33,25 @@ import { useUserStore } from './stores/userStore';
 import almetMedLogo from './assets/img/almetMedLogo.png';
 
 let NAVIGATION = [
-  {
-    kind: 'header',
-    title: 'Разделы',
-  },
-  {
-    segment: '',
-    title: 'Главная',
-    icon: <DashboardIcon />,
-  },
-  {
-    segment: 'news',
-    title: 'Новости',
-    icon: <NewspaperIcon />,
-  },
-  {
-    segment: 'schedule',
-    title: 'Расписание',
-    icon: <EventNoteIcon />,
-  },
+  // {
+  //   kind: 'header',
+  //   title: 'Разделы',
+  // },
+  // {
+  //   segment: '',
+  //   title: 'Главная',
+  //   icon: <DashboardIcon />,
+  // },
+  // {
+  //   segment: 'news',
+  //   title: 'Новости',
+  //   icon: <NewspaperIcon />,
+  // },
+  // {
+  //   segment: 'schedule',
+  //   title: 'Расписание',
+  //   icon: <EventNoteIcon />,
+  // },
   {
     segment: 'applicant',
     title: 'Анкета на поступление',
@@ -64,26 +64,26 @@ const adminNavigation = [
     kind: 'header',
     title: 'Админка',
   },
-  {
-    segment: 'user/all',
-    title: 'Все пользователи',
-    icon: <GroupIcon />,
-  },
-  {
-    segment: 'user/create',
-    title: 'Добавить пользователя',
-    icon: <PersonAddIcon />,
-  },
-  {
-    segment: 'news/create',
-    title: 'Добавить новости',
-    icon: <PostAddIcon />,
-  },
-  {
-    segment: 'schedule/create',
-    title: 'Добавить расписание',
-    icon: <EditCalendarIcon />,
-  },
+  // {
+  //   segment: 'user/all',
+  //   title: 'Все пользователи',
+  //   icon: <GroupIcon />,
+  // },
+  // {
+  //   segment: 'user/create',
+  //   title: 'Добавить пользователя',
+  //   icon: <PersonAddIcon />,
+  // },
+  // {
+  //   segment: 'news/create',
+  //   title: 'Добавить новости',
+  //   icon: <PostAddIcon />,
+  // },
+  // {
+  //   segment: 'schedule/create',
+  //   title: 'Добавить расписание',
+  //   icon: <EditCalendarIcon />,
+  // },
   {
     segment: 'applicant/all',
     title: 'Анкеты на поступление',
@@ -164,7 +164,7 @@ function MainContent(props) {
         user: {
           name: `${currentUser.last_name} ${currentUser.first_name}`,
           email: `${currentUser.phone_number}`,
-          image: 'https://avatars.githubusercontent.com/u/19550456',
+          image: 'https://cdn-icons-png.freepik.com/512/16737/16737347.png?ga=GA1.1.965542116.1750058216',
         },
       });
     }

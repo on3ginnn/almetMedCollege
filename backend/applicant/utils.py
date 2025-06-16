@@ -27,10 +27,9 @@ def generate_applicants_excel():
         'Страховое свидетельство (СНИЛС)', 'Медицинский полис (организация:ЧМ, АБ и т.д.)',
         'Приписное свидетельство (да/нет)', '№ телефона студента', 'ФИО, № телефона мамы',
         'Место работы мамы, должность', 'ФИО, № телефона папы', 'Место работы папы, должность',
-        'Наличие договора или ходатайства с медицинской организацией (наименование мед. орг.) да/нет',
         'Русский язык', 'Биология', 'Химия', 'Математика', 'Иностранный язык', 'Физика',
-        'Средний балл аттестата', 'Оригинал/копия', 'Бюджет/коммерция',
-        'Подача заявления через госуслуги РФ да/нет', 'Нуждается в общежитии',
+        'Средний балл аттестата', 'Бюджет/коммерция',
+         'Нуждается в общежитии',
         'Первоочередное зачисление', 'Преимущественное право на зачисление'
     ]
 
@@ -67,7 +66,7 @@ def generate_applicants_excel():
             )
 
             ws.append([
-                applicant.id,
+                '',
                 specialty_name,
                 applicant.full_name,
                 applicant.citizenship,
@@ -87,7 +86,6 @@ def generate_applicants_excel():
                 applicant.mother_job,
                 father_info,
                 applicant.father_job,
-                '',
                 applicant.grade_russian,
                 applicant.grade_biology,
                 applicant.grade_chemistry,
@@ -95,9 +93,7 @@ def generate_applicants_excel():
                 applicant.grade_language,
                 applicant.grade_physics,
                 applicant.average_grade,
-                '',
                 applicant.admission_type,
-                '',
                 'Да' if applicant.needs_dormitory else 'Нет',
                 priority_enrollment_map.get(applicant.priority_enrollment, ''),
                 preferential_enrollment_map.get(applicant.preferential_enrollment, '')
