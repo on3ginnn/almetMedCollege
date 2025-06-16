@@ -21,6 +21,14 @@ export const useApplicantsStore = create((set) => ({
       set({ error: 'Ошибка при загрузке данных абитуриента', loading: false });
     }
   },
+  deleteApplicantById: async (id) => {
+    try {
+      const response = await ApplicantAPI.delete(id);
+      set({ selectedApplicant: null });
+    } catch (error) {
+      set({ error: 'Ошибка при удалении данных абитуриента', loading: false });
+    }
+  },
   downloadDocx: async (id, full_name) => {
     try {
       const response = await ApplicantAPI.download(id);

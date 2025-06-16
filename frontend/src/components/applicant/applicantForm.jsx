@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   TextField,
-  Grid,
   Typography,
   FormControl,
   FormControlLabel,
@@ -12,215 +11,37 @@ import {
   MenuItem,
   InputLabel,
   FormHelperText,
+  Paper,
+  Divider,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import InputMask from 'react-input-mask';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
-import { format } from 'date-fns'; // Import date-fns for formatting
-
-// Validation schema
-const schema = yup.object().shape({
-  full_name: yup.string().required('ФИО обязательно').max(255),
-  citizenship: yup.string().required('Гражданство обязательно').max(100),
-  nationality: yup.string().max(100),
-  birth_date: yup
-    .date()
-    .required('Дата рождения обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  birth_place: yup.string().max(255),
-  address: yup.string().required('Адрес по паспорту обязателен').max(255, 'Максимум 255 символов'),
-  address_actual: yup.string().required('Фактический адрес обязателен').max(255, 'Максимум 255 символов'),
-  passport_division_code: yup
-    .string()
-    .matches(/^\d{6}$/, 'Код подразделения должен быть 6 цифр')
-    .required('Код подразделения обязателен'),
-  passport_registration_date: yup
-    .date()
-    .required('Дата регистрации обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  certificate_series: yup
-    .string()
-    .required('Серия аттестата обязательна')
-    .max(14),
-  certificate_issued_date: yup
-    .date()
-    .required('Дата выдачи аттестата обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  graduation_year: yup
-    .number()
-    .required('Год окончания обязателен')
-    .min(1900, 'Год не ранее 1900')
-    .max(new Date().getFullYear(), 'Год не может быть в будущем')
-    .typeError('Введите число'),
-  graduation_institution: yup
-    .string()
-    .required('Учебное заведение обязательно')
-    .max(255),
-  passport_series: yup
-    .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта обязательна'),
-  passport_number: yup
-    .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта обязателен'),
-  passport_issued_by: yup.string().required('Кем выдан паспорт обязателен').max(255),
-  passport_issued_date: yup
-    .date()
-    .required('Дата выдачи паспорта обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  inn: yup
-    .string()
-    .matches(/^\d{12}$/, 'ИНН — 12 цифр')
-    .required('ИНН обязателен'),
-  snils: yup
-    .string()
-    .matches(/^\d{3}-\d{3}-\d{3}-\d{2}$/, 'СНИЛС формата XXX-XXX-XXX-XX')
-    .required('СНИЛС обязателен')
-    .transform((value) => value.replace(/-/g, '')), // Clean hyphens for backend
-  medical_policy: yup.string().required('Мед. полис обязателен').max(100),
-  military_id: yup.boolean(),
-  student_phone: yup
-    .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон обязателен'),
-  student_email: yup
-    .string()
-    .email('Введите корректный email')
-    .required('Email обязателен'),
-  mother_name: yup.string().required('ФИО матери обязательно').max(255),
-  mother_phone: yup
-    .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон матери обязателен'),
-  mother_job: yup.string().required('Место работы матери обязательно').max(255),
-  mother_passport_series: yup
-    .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта матери обязательна'),
-  mother_passport_number: yup
-    .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта матери обязателен'),
-  mother_passport_issued_by: yup
-    .string()
-    .required('Кем выдан паспорт матери обязателен')
-    .max(255),
-  mother_passport_issued_date: yup
-    .date()
-    .required('Дата выдачи паспорта матери обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  father_name: yup.string().required('ФИО отца обязательно').max(255),
-  father_phone: yup
-    .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон отца обязателен'),
-  father_job: yup.string().required('Место работы отца обязательно').max(255),
-  father_passport_series: yup
-    .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта отца обязательна'),
-  father_passport_number: yup
-    .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта отца обязателен'),
-  father_passport_issued_by: yup
-    .string()
-    .required('Кем выдан паспорт отца обязателен')
-    .max(255),
-  father_passport_issued_date: yup
-    .date()
-    .required('Дата выдачи паспорта отца обязательна')
-    .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  documents_delivered: yup.boolean(),
-  specialty: yup
-    .string()
-    .required('Специальность обязательна')
-    .oneOf(
-      [
-        'pharmacy_9',
-        'nursing_9',
-        'nursing_11_part_time',
-        'midwifery_9',
-        'lab_diagnostics_9',
-        'medical_treatment_9',
-        'medical_treatment_11',
-      ],
-      'Выберите корректную специальность'
-    ),
-  grade_russian: yup
-    .number()
-    .required('Оценка по русскому обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_biology: yup
-    .number()
-    .required('Оценка по биологии обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_chemistry: yup
-    .number()
-    .required('Оценка по химии обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_math: yup
-    .number()
-    .required('Оценка по математике обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_language: yup
-    .number()
-    .required('Оценка по языку обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_physics: yup
-    .number()
-    .required('Оценка по физике обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  average_grade: yup
-    .number()
-    .required('Средний балл обязателен')
-    .min(3.0, 'Средний балл от 3.0')
-    .max(5.0, 'Средний балл до 5.0')
-    .typeError('Введите средний бал в формате 4,8'),
-  admission_type: yup
-    .string()
-    .required('Тип поступления обязателен')
-    .oneOf(['бюджет', 'коммерция']),
-  needs_dormitory: yup.boolean(),
-  priority_enrollment: yup
-    .string()
-    .required('Категория обязательна')
-    .oneOf(['heroes_rf', 'svo_participants', 'covid_med_workers', 'none']),
-  preferential_enrollment: yup
-    .string()
-    .required('Категория обязательна')
-    .oneOf([
-      'orphans',
-      'disabled',
-      'veterans',
-      'low_income_disabled',
-      'chernobyl',
-      'military_personnel',
-      'none',
-    ]),
-});
+import { format } from 'date-fns';
+import { useTheme } from '@mui/material/styles';
+import { schema } from '../../validation/applicant/applicantValidation'
+import { GroupTitle } from './applicantFormTags/applicantGroupTitle'
+import { SelectField } from './applicantFormTags/applicantSelectField';
+import { FormCheckbox } from './applicantFormTags/applicantCheckbox';
+import { FormTextField } from './applicantFormTags/applicantTextField';
+import { FormTextFieldMask } from './applicantFormTags/applicantTextFieldMask';
 
 export const ApplicantForm = () => {
   const { submitApplicant } = useApplicantsStore();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [openSuccessModal, setOpenSuccessModal] = React.useState(false);
 
   const {
     control,
@@ -284,10 +105,12 @@ export const ApplicantForm = () => {
   });
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
     try {
-      // Format date fields to YYYY-MM-DD
       const formattedData = {
         ...data,
+        snils: data.snils.replace(/-/g, ''), // Transform SNILS here
+        passport_division_code: data.passport_division_code.replace(/-/g, ''), // Transform SNILS here
         birth_date: data.birth_date ? format(new Date(data.birth_date), 'yyyy-MM-dd') : null,
         passport_registration_date: data.passport_registration_date
           ? format(new Date(data.passport_registration_date), 'yyyy-MM-dd')
@@ -304,1018 +127,733 @@ export const ApplicantForm = () => {
         father_passport_issued_date: data.father_passport_issued_date
           ? format(new Date(data.father_passport_issued_date), 'yyyy-MM-dd')
           : null,
-        // SNILS is already cleaned by yup transform
       };
 
       await submitApplicant(formattedData);
-      toast.success('Анкета успешно отправлена!', { autoClose: 3000 });
+      toast.success('Анкета успешно отправлена!', { autoClose: 5000 });
+      setOpenSuccessModal(true);
       reset();
-      setTimeout(() => navigate('/'), 3000);
+      setTimeout(() => window.location.href = 'https://almetmed.ru/', 5000);
     } catch (error) {
       const errorMessage =
         error.response?.data?.detail || 'Ошибка при отправке анкеты';
-      console.error('Submission error:', errorMessage, error);
-      toast.error(`Ошибка: ${errorMessage}`, { autoClose: 5000 });
+        console.error('Submission error:', errorMessage, error);
+        toast.error(`Ошибка: ${errorMessage}`, { autoClose: 5000 });
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+  const inputSize = { xs: 'small', sm: 'medium' };
+
+    // Options for Select fields
+  const specialtyOptions = [
+    { value: 'pharmacy_9', label: 'Фармация - на базе 9 класса' },
+    { value: 'nursing_9', label: 'Сестринское дело - на базе 9 класса' },
+    { value: 'nursing_11_part_time', label: 'Сестринское дело - очно-заочная, на базе 11 класса' },
+    { value: 'midwifery_9', label: 'Акушерское дело - на базе 9 класса' },
+    { value: 'lab_diagnostics_9', label: 'Лабораторная диагностика - на базе 9 класса' },
+    { value: 'medical_treatment_9', label: 'Лечебное дело - на базе 9 класса' },
+    { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
+  ];
+
+  const admissionTypeOptions = [
+    { value: 'бюджет', label: 'Бюджет' },
+    { value: 'коммерция', label: 'Коммерция' },
+  ];
+
+  const priorityEnrollmentOptions = [
+    { value: 'heroes_rf', label: 'Герои РФ, награжденные тремя орденами Мужества' },
+    { value: 'svo_participants', label: 'Участники СВО и их дети' },
+    { value: 'covid_med_workers', label: 'Дети умерших от COVID-19 медработников' },
+    { value: 'none', label: 'Не отношусь' },
+  ];
+
+  const preferentialEnrollmentOptions = [
+    { value: 'orphans', label: 'Дети-сироты' },
+    { value: 'disabled', label: 'Дети-инвалиды, инвалиды 1-2 группы' },
+    { value: 'veterans', label: 'Ветераны боевых действий' },
+    { value: 'low_income_disabled', label: 'Дети из малоимущих семей с родителями-инвалидами' },
+    { value: 'chernobyl', label: 'Пострадавшие от Чернобыля' },
+    { value: 'military_personnel', label: 'Военнослужащие и их дети' },
+    { value: 'none', label: 'Не отношусь' },
+  ];
+
+  const handleModalClose = () => {
+    setOpenSuccessModal(false);
+    window.location.href = 'https://almetmed.ru/';
   };
 
   return (
     <Box
       sx={{
-        p: { xs: 2, sm: 3 },
-        maxWidth: { xs: '100%', sm: 800, md: 1200 },
-        margin: '0 auto',
-        bgcolor: 'background.paper',
-        borderRadius: 2,
-        boxShadow: 1,
+        p: { xs: 1, sm: 3 },
+        // bgcolor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+        minHeight: '100vh',
       }}
     >
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        gutterBottom
+      <Paper
+        elevation={0}
         sx={{
-          fontSize: { xs: '1.5rem', sm: '2rem' },
-          textAlign: { xs: 'center', sm: 'left' },
+          maxWidth: { xs: '100%', sm: 1200 },
+          margin: '0 auto',
+          p: { xs: 0, sm: 3 },
+          borderRadius: 2,
+          bgcolor: 'background.paper',
+          // boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+          transition: 'box-shadow 0.2s',
+          // '&:hover': { boxShadow: '0 4px 16px rgba(0,0,0,0.12)' },
         }}
       >
-        Анкета на поступление
-      </Typography>
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <Grid container spacing={{ xs: 1.5, sm: 2 }}>
-          {/* Admission Details */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Детали поступления
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{
+            fontSize: { xs: '1.5rem', sm: '2rem' },
+            color: theme.palette.text.primary,
+          }}
+        >
+          Анкета на поступление
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} >
+          <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
+            {/* Admission Details */}
+            <GroupTitle title='Детали поступления' />
+            <SelectField
               name="specialty"
+              label="Специальность"
+              options={specialtyOptions}
+              gridSize={{ xs: 6, md: 3 }}
               control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.specialty}>
-                  <InputLabel>Специальность</InputLabel>
-                  <Select
-                    {...field}
-                    label="Специальность"
-                    size="medium"
-                  >
-                    <MenuItem value="pharmacy_9">Фармация - на базе 9 класса</MenuItem>
-                    <MenuItem value="nursing_9">Сестринское дело - на базе 9 класса</MenuItem>
-                    <MenuItem value="nursing_11_part_time">
-                      Сестринское дело - очно-заочная, на базе 11 класса
-                    </MenuItem>
-                    <MenuItem value="midwifery_9">Акушерское дело - на базе 9 класса</MenuItem>
-                    <MenuItem value="lab_diagnostics_9">
-                      Лабораторная диагностика - на базе 9 класса
-                    </MenuItem>
-                    <MenuItem value="medical_treatment_9">
-                      Лечебное дело - на базе 9 класса
-                    </MenuItem>
-                    <MenuItem value="medical_treatment_11">
-                      Лечебное дело - на базе 11 класса
-                    </MenuItem>
-                  </Select>
-                  <FormHelperText>{errors.specialty?.message}</FormHelperText>
-                </FormControl>
-              )}
+              formControlError={!!errors.specialty}
+              formHelperText={errors.specialty?.message}
+              inputSize={inputSize}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="priority_enrollment"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.priority_enrollment}>
-                  <InputLabel>Первоочередное зачисление</InputLabel>
-                  <Select
-                    {...field}
-                    label="Первоочередное зачисление"
-                    size="small"
-                  >
-                    <MenuItem value="heroes_rf">
-                      Герои РФ, награжденные тремя орденами Мужества
-                    </MenuItem>
-                    <MenuItem value="svo_participants">
-                      Участники СВО и их дети
-                    </MenuItem>
-                    <MenuItem value="covid_med_workers">
-                      Дети умерших от COVID-19 медработников
-                    </MenuItem>
-                    <MenuItem value="none">Не отношусь</MenuItem>
-                  </Select>
-                  <FormHelperText>{errors.priority_enrollment?.message}</FormHelperText>
-                </FormControl>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="preferential_enrollment"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.preferential_enrollment}>
-                  <InputLabel>Преимущественное право</InputLabel>
-                  <Select
-                    {...field}
-                    label="Преимущественное право"
-                    size="small"
-                  >
-                    <MenuItem value="orphans">Дети-сироты</MenuItem>
-                    <MenuItem value="disabled">Дети-инвалиды, инвалиды 1-2 группы</MenuItem>
-                    <MenuItem value="veterans">Ветераны боевых действий</MenuItem>
-                    <MenuItem value="low_income_disabled">
-                      Дети из малоимущих семей с родителями-инвалидами
-                    </MenuItem>
-                    <MenuItem value="chernobyl">Пострадавшие от Чернобыля</MenuItem>
-                    <MenuItem value="military_personnel">
-                      Военнослужащие и их дети
-                    </MenuItem>
-                    <MenuItem value="none">Не отношусь</MenuItem>
-                  </Select>
-                  <FormHelperText>{errors.preferential_enrollment?.message}</FormHelperText>
-                </FormControl>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <SelectField
               name="admission_type"
+              label="Бюджет/коммерция"
+              options={admissionTypeOptions}
+              gridSize={{ xs: 6, md: 3 }}
               control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.admission_type}>
-                  <InputLabel>Бюджет/коммерция</InputLabel>
-                  <Select
-                    {...field}
-                    label="Бюджет/коммерция"
-                    size="small"
-                  >
-                    <MenuItem value="бюджет">Бюджет</MenuItem>
-                    <MenuItem value="коммерция">Коммерция</MenuItem>
-                  </Select>
-                  <FormHelperText>{errors.admission_type?.message}</FormHelperText>
-                </FormControl>
-              )}
+              formControlError={!!errors.admission_type}
+              formHelperText={errors.admission_type?.message}
+              inputSize={inputSize}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <SelectField
+              name="priority_enrollment"
+              label="Первоочередное зачисление"
+              options={priorityEnrollmentOptions}
+              gridSize={{ xs: 6, md: 3 }}
+              control={control}
+              formControlError={!!errors.priority_enrollment}
+              formHelperText={errors.priority_enrollment?.message}
+              inputSize={inputSize}
+            />
+            <SelectField
+              name="preferential_enrollment"
+              label="Преимущественное право"
+              options={preferentialEnrollmentOptions}
+              gridSize={{ xs: 6, md: 3 }}
+              control={control}
+              formControlError={!!errors.preferential_enrollment}
+              formHelperText={errors.preferential_enrollment?.message}
+              inputSize={inputSize}
+            />
+            <FormCheckbox 
               name="needs_dormitory"
+              label="Нуждается в общежитии"
+              gridSize={{ xs: 6}}
               control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={<Checkbox {...field} checked={field.value} />}
-                  label="Нуждается в общежитии"
-                  sx={{ '& .MuiFormControlLabel-label': { fontSize: { xs: '0.9rem', sm: '1rem' } } }}
-                />
-              )}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <FormCheckbox 
               name="documents_delivered"
+              label="Документы сданы"
+              gridSize={{ xs: 6}}
               control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={<Checkbox {...field} checked={field.value} />}
-                  label="Документы сданы"
-                  sx={{ '& .MuiFormControlLabel-label': { fontSize: { xs: '0.9rem', sm: '1rem' } } }}
-                />
-              )}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <FormCheckbox 
               name="military_id"
+              label="Приписное свидетельство (для юношей)"
+              gridSize={{ xs: 6}}
               control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={<Checkbox {...field} checked={field.value} />}
-                  label="Приписное свидетельство (для юношей)"
-                  sx={{ '& .MuiFormControlLabel-label': { fontSize: { xs: '0.9rem', sm: '1rem' } } }}
-                />
-              )}
             />
-          </Grid>
 
-          {/* Applicant Personal Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Личные данные абитуриента
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
+            {/* Personal Info */}
+            <GroupTitle title='Личные данные абитуриента' />
+            <FormTextField 
               name="full_name"
+              label="ФИО"
+              gridSize={{ xs: 6, md: 3 }}
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="ФИО"
-                  size="small"
-                  error={!!errors.full_name}
-                  helperText={errors.full_name?.message}
-                />
-              )}
+              textFieldError={!!errors.full_name}
+              textFieldHelperText={errors.full_name?.message}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <FormTextField 
               name="citizenship"
+              label="Гражданство"
+              gridSize={{ xs: 3, md: 1.5 }}
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Гражданство"
-                  size="small"
-                  error={!!errors.citizenship}
-                  helperText={errors.citizenship?.message}
-                />
-              )}
+              textFieldError={!!errors.citizenship}
+              textFieldHelperText={errors.citizenship?.message}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
+            <FormTextField 
               name="nationality"
+              label="Национальность"
+              gridSize={{ xs: 3, md: 1.5 }}
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Национальность"
-                  size="small"
-                  error={!!errors.nationality}
-                  helperText={errors.nationality?.message}
-                />
-              )}
+              textFieldError={!!errors.nationality}
+              textFieldHelperText={errors.nationality?.message}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="birth_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата рождения"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.birth_date}
-                  helperText={errors.birth_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="birth_place"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Место рождения"
-                  size="small"
-                  error={!!errors.birth_place}
-                  helperText={errors.birth_place?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="address"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Адрес по паспорту"
-                  multiline
-                  rows={2}
-                  size="small"
-                  error={!!errors.address}
-                  helperText={errors.address?.message}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Passport Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Паспортные данные
-            </Typography>
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="passport_series"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Серия паспорта"
-                      size="small"
-                      error={!!errors.passport_series}
-                      helperText={errors.passport_series?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="passport_number"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Номер паспорта"
-                      size="small"
-                      error={!!errors.passport_number}
-                      helperText={errors.passport_number?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="passport_division_code"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Код подразделения"
-                      size="small"
-                      error={!!errors.passport_division_code}
-                      helperText={errors.passport_division_code?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="passport_issued_by"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Кем выдан"
-                  size="small"
-                  error={!!errors.passport_issued_by}
-                  helperText={errors.passport_issued_by?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="passport_issued_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата выдачи"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.passport_issued_date}
-                  helperText={errors.passport_issued_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="passport_registration_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата регистрации"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.passport_registration_date}
-                  helperText={errors.passport_registration_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="address_actual"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Фактический адрес"
-                  multiline
-                  rows={2}
-                  size="small"
-                  error={!!errors.address_actual}
-                  helperText={errors.address_actual?.message}
-                />
-              )}
-            />
-          </Grid>
-          
-          {/* Education Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Образование
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="certificate_series"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="**************" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Номер аттестата"
-                      size="small"
-                      error={!!errors.certificate_series}
-                      helperText={errors.certificate_series?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="certificate_issued_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата выдачи аттестата"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.certificate_issued_date}
-                  helperText={errors.certificate_issued_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="graduation_year"
-              control={control}
-              render={({ field }) => (
-                <FormControl fullWidth error={!!errors.graduation_year}>
-                  <InputLabel>Год окончания</InputLabel>
-                  <Select
-                    {...field}
-                    label="Год окончания"
-                    size="small"
-                    value={field.value ?? ''}
-                    MenuProps={{
-                      PaperProps: {
-                        style: {
-                          maxHeight: 200, // Set max height to ~6-8 items
-                        },
-                      },
-                    }}
-                  >
-                    <MenuItem value="" disabled>
-                      Выберите
-                    </MenuItem>
-                    {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).map((year) => (
-                      <MenuItem key={year} value={year}>{year}</MenuItem>
-                    ))}
-                  </Select>
-                  <FormHelperText>{errors.graduation_year?.message}</FormHelperText>
-                </FormControl>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="graduation_institution"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Учебное заведение"
-                  size="small"
-                  error={!!errors.graduation_institution}
-                  helperText={errors.graduation_institution?.message}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Contact Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Контактные данные
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="student_phone"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="+7 (999) 999-9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Телефон"
-                      size="small"
-                      error={!!errors.student_phone}
-                      helperText={errors.student_phone?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="student_email"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Email"
-                  type="email"
-                  size="small"
-                  error={!!errors.student_email}
-                  helperText={errors.student_email?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="inn"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999999999999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="ИНН"
-                      size="small"
-                      error={!!errors.inn}
-                      helperText={errors.inn?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="snils"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999-999-999-99" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="СНИЛС"
-                      size="small"
-                      error={!!errors.snils}
-                      helperText={errors.snils?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="medical_policy"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Медицинский полис"
-                  size="small"
-                  error={!!errors.medical_policy}
-                  helperText={errors.medical_policy?.message}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Mother's Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Данные матери
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="mother_name"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="ФИО матери"
-                  size="small"
-                  error={!!errors.mother_name}
-                  helperText={errors.mother_name?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="mother_phone"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="+7 (999) 999-9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Телефон матери"
-                      size="small"
-                      error={!!errors.mother_phone}
-                      helperText={errors.mother_phone?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="mother_job"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Место работы матери"
-                  size="small"
-                  error={!!errors.mother_job}
-                  helperText={errors.mother_job?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="mother_passport_series"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Серия паспорта"
-                      size="small"
-                      error={!!errors.mother_passport_series}
-                      helperText={errors.mother_passport_series?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="mother_passport_number"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Номер паспорта"
-                      size="small"
-                      error={!!errors.mother_passport_number}
-                      helperText={errors.mother_passport_number?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="mother_passport_issued_by"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Кем выдан"
-                  size="small"
-                  error={!!errors.mother_passport_issued_by}
-                  helperText={errors.mother_passport_issued_by?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="mother_passport_issued_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата выдачи"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.mother_passport_issued_date}
-                  helperText={errors.mother_passport_issued_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Father's Info */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Данные отца
-            </Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="father_name"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="ФИО отца"
-                  size="small"
-                  error={!!errors.father_name}
-                  helperText={errors.father_name?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Controller
-              name="father_phone"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="+7 (999) 999-9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Телефон отца"
-                      size="small"
-                      error={!!errors.father_phone}
-                      helperText={errors.father_phone?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Controller
-              name="father_job"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Место работы отца"
-                  size="small"
-                  error={!!errors.father_job}
-                  helperText={errors.father_job?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="father_passport_series"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="9999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Серия паспорта"
-                      size="small"
-                      error={!!errors.father_passport_series}
-                      helperText={errors.father_passport_series?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} sm={3}>
-            <Controller
-              name="father_passport_number"
-              control={control}
-              render={({ field }) => (
-                <InputMask mask="999999" {...field}>
-                  {(inputProps) => (
-                    <TextField
-                      {...inputProps}
-                      fullWidth
-                      label="Номер паспорта"
-                      size="small"
-                      error={!!errors.father_passport_number}
-                      helperText={errors.father_passport_number?.message}
-                    />
-                  )}
-                </InputMask>
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="father_passport_issued_by"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Кем выдан"
-                  size="small"
-                  error={!!errors.father_passport_issued_by}
-                  helperText={errors.father_passport_issued_by?.message}
-                />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="father_passport_issued_date"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  type="date"
-                  label="Дата выдачи"
-                  InputLabelProps={{ shrink: true }}
-                  size="small"
-                  error={!!errors.father_passport_issued_date}
-                  helperText={errors.father_passport_issued_date?.message}
-                  sx={{ minWidth: { xs: '100%', sm: 'auto' } }}
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Grades */}
-          <Grid item xs={12}>
-            <Typography
-              variant="h6"
-              gutterBottom
-              sx={{ fontSize: { xs: '1.1rem', sm: '1.25rem' } }}
-            >
-              Оценки
-            </Typography>
-          </Grid>
-          {[
-            { name: 'grade_russian', label: 'Русский язык' },
-            { name: 'grade_biology', label: 'Биология' },
-            { name: 'grade_chemistry', label: 'Химия' },
-            { name: 'grade_math', label: 'Математика' },
-            { name: 'grade_language', label: 'Иностранный язык' },
-            { name: 'grade_physics', label: 'Физика' },
-          ].map((grade) => (
-            <Grid item xs={12} sm={2} key={grade.name}>
+            <Grid size={{ xs: 6, sm: 2 }}>
               <Controller
-                name={grade.name}
+                name="birth_date"
                 control={control}
                 render={({ field }) => (
-                  <FormControl fullWidth error={!!errors[grade.name]}>
-                    <InputLabel>{grade.label}</InputLabel>
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата рождения"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.birth_date}
+                    helperText={errors.birth_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <FormTextField 
+              name="birth_place"
+              label="Место рождения"
+              gridSize={{ xs: 6, md: 4 }}
+              control={control}
+              textFieldError={!!errors.birth_place}
+              textFieldHelperText={errors.birth_place?.message}
+            />
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name="address_actual"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Фактический адрес"
+                    multiline
+                    rows={2}
+                    size={inputSize.sm}
+                    error={!!errors.address_actual}
+                    helperText={errors.address_actual?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* Passport Info */}
+            <GroupTitle title='Паспортные данные' />
+            <FormTextFieldMask 
+              name="passport_series"
+              label="Серия паспорта"
+              mask="9999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.passport_series}
+              textFieldHelperText={errors.passport_series?.message}
+            />
+            <FormTextFieldMask 
+              name="passport_number"
+              label="Номер паспорта"
+              mask="999999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.passport_number}
+              textFieldHelperText={errors.passport_number?.message}
+            />
+            <FormTextFieldMask 
+              name="passport_division_code"
+              label="Код подразделения"
+              mask="999-999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.passport_division_code}
+              textFieldHelperText={errors.passport_division_code?.message}
+            />
+            <Grid size={{ xs: 3, sm: 2 }}>
+              <Controller
+                name="passport_issued_date"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата выдачи"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.passport_issued_date}
+                    helperText={errors.passport_issued_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <FormTextField
+              name="passport_issued_by"
+              label="Кем выдан"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.passport_issued_by}
+              textFieldHelperText={errors.passport_issued_by?.message}
+            />
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <Controller
+                name="passport_registration_date"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата регистрации прописки"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.passport_registration_date}
+                    helperText={errors.passport_registration_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name="address"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Адрес по паспорту"
+                    multiline
+                    rows={2}
+                    size={inputSize.sm}
+                    error={!!errors.address}
+                    helperText={errors.address?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            {/* Education Info */}
+            <GroupTitle title='Образование' />
+            <FormTextFieldMask 
+              name="certificate_series"
+              label="Номер аттестата"
+              mask="**************"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.certificate_series}
+              textFieldHelperText={errors.certificate_series?.message}
+            />
+            <Grid size={{ xs: 3, sm: 2 }}>
+              <Controller
+                name="certificate_issued_date"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата выдачи аттестата"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.certificate_issued_date}
+                    helperText={errors.certificate_issued_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <Controller
+                name="graduation_year"
+                control={control}
+                render={({ field }) => (
+                  <FormControl fullWidth error={!!errors.graduation_year}>
+                    <InputLabel>Год окончания</InputLabel>
                     <Select
                       {...field}
-                      label={grade.label}
-                      size="small"
-                      value={field.value ?? ''} // Ensure null displays as empty
+                      label="Год окончания"
+                      size={inputSize.sm}
+                      value={field.value ?? ''}
+                      sx={{ borderRadius: 2 }}
+                      MenuProps={{
+                        PaperProps: { style: { maxHeight: 200 } },
+                      }}
                     >
                       <MenuItem value="" disabled>
                         Выберите
                       </MenuItem>
-                      <MenuItem value={3}>3</MenuItem>
-                      <MenuItem value={4}>4</MenuItem>
-                      <MenuItem value={5}>5</MenuItem>
+                      {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).map((year) => (
+                        <MenuItem key={year} value={year}>
+                          {year}
+                        </MenuItem>
+                      ))}
                     </Select>
-                    <FormHelperText>{errors[grade.name]?.message}</FormHelperText>
+                    <FormHelperText>{errors.graduation_year?.message}</FormHelperText>
                   </FormControl>
                 )}
               />
             </Grid>
-          ))}
-          <Grid item xs={12} sm={3}>
-            <Controller
-              name="average_grade"
+            <FormTextField
+              name="graduation_institution"
+              label="Учебное заведение"
+              gridSize={{ xs: 6, md: 6 }}
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Средний балл"
-                  type="number"
-                  inputProps={{ step: 0.1, min: 3.0, max: 5.0 }}
-                  size="small"
-                  error={!!errors.average_grade}
-                  helperText={errors.average_grade?.message}
-                />
-              )}
+              textFieldError={!!errors.graduation_institution}
+              textFieldHelperText={errors.graduation_institution?.message}
             />
-          </Grid>
+            {/* Contact Info */}
+            <GroupTitle title='Контактные данные' />
+            <FormTextFieldMask 
+              name="student_phone"
+              label="Телефон"
+              mask="+7 (999) 999-9999"
+              gridSize={{ xs: 6, md: 1.5 }}
+              control={control}
+              textFieldError={!!errors.student_phone}
+              textFieldHelperText={errors.student_phone?.message}
+            />
+            <Grid size={{ xs: 6, sm: 1.5 }}>
+              <Controller
+                name="student_email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Email"
+                    type="email"
+                    size={inputSize.sm}
+                    error={!!errors.student_email}
+                    helperText={errors.student_email?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <FormTextFieldMask 
+              name="inn"
+              label="ИНН"
+              mask="999999999999"
+              gridSize={{ xs: 6, md: 1.5 }}
+              control={control}
+              textFieldError={!!errors.inn}
+              textFieldHelperText={errors.inn?.message}
+            />
+            <FormTextFieldMask
+              name="snils"
+              label="СНИЛС"
+              mask="999-999-999-99"
+              gridSize={{ xs: 6, md: 1.5 }}
+              control={control}
+              textFieldError={!!errors.snils}
+              textFieldHelperText={errors.snils?.message}
+              // transform={(value) => value.replace(/-/g, '')}
+            />
+            <FormTextField
+              name="medical_policy"
+              label="Медицинский полис"
+              gridSize={{ xs: 6, md: 6 }}
+              control={control}
+              textFieldError={!!errors.medical_policy}
+              textFieldHelperText={errors.medical_policy?.message}
+            />
 
-          {/* Submit Button */}
-          <Grid item xs={12} sx={{ mt: { xs: 2, sm: 3 } }}>
+            {/* Mother's Info */}
+            <GroupTitle title='Данные матери' />
+            <FormTextField
+              name="mother_name"
+              label="ФИО матери"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.mother_name}
+              textFieldHelperText={errors.mother_name?.message}
+            />
+            <FormTextFieldMask 
+              name="mother_phone"
+              label="Телефон матери"
+              mask="+7 (999) 999-9999"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.mother_phone}
+              textFieldHelperText={errors.mother_phone?.message}
+            />
+            <FormTextField
+              name="mother_job"
+              label="Место работы матери и должность"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.mother_job}
+              textFieldHelperText={errors.mother_job?.message}
+            />
+            <FormTextFieldMask 
+              name="mother_passport_series"
+              label="Серия паспорта"
+              mask="9999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.mother_passport_series}
+              textFieldHelperText={errors.mother_passport_series?.message}
+            />
+            <FormTextFieldMask 
+              name="mother_passport_number"
+              label="Номер паспорта"
+              mask="999999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.mother_passport_series}
+              textFieldHelperText={errors.mother_passport_series?.message}
+            />
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <Controller
+                name="mother_passport_issued_date"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата выдачи"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.mother_passport_issued_date}
+                    helperText={errors.mother_passport_issued_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <FormTextField
+              name="mother_passport_issued_by"
+              label="Кем выдан"
+              gridSize={{ xs: 6, md: 6 }}
+              control={control}
+              textFieldError={!!errors.mother_passport_issued_by}
+              textFieldHelperText={errors.mother_passport_issued_by?.message}
+            />
+
+            {/* Father's Info */}
+            <GroupTitle title='Данные отца' />
+            <FormTextField
+              name="father_name"
+              label="ФИО отца"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.father_name}
+              textFieldHelperText={errors.father_name?.message}
+            />
+            <FormTextFieldMask 
+              name="father_phone"
+              label="Телефон отца"
+              mask="+7 (999) 999-9999"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.father_phone}
+              textFieldHelperText={errors.father_phone?.message}
+            />
+            <FormTextField
+              name="father_job"
+              label="Место работы отца и должность"
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              textFieldError={!!errors.father_job}
+              textFieldHelperText={errors.father_job?.message}
+            />
+            <FormTextFieldMask 
+              name="father_passport_series"
+              label="Серия паспорта"
+              mask="9999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.father_passport_series}
+              textFieldHelperText={errors.father_passport_series?.message}
+            />
+            <FormTextFieldMask 
+              name="father_passport_number"
+              label="Номер паспорта"
+              mask="999999"
+              gridSize={{ xs: 3, md: 2 }}
+              control={control}
+              textFieldError={!!errors.father_passport_number}
+              textFieldHelperText={errors.father_passport_number?.message}
+            />
+            <Grid size={{ xs: 6, sm: 2 }}>
+              <Controller
+                name="father_passport_issued_date"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    type="date"
+                    label="Дата выдачи"
+                    InputLabelProps={{ shrink: true }}
+                    size={inputSize.sm}
+                    error={!!errors.father_passport_issued_date}
+                    helperText={errors.father_passport_issued_date?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+            <FormTextField
+              name="father_passport_issued_by"
+              label="Кем выдан"
+              gridSize={{ xs: 6, md: 6 }}
+              control={control}
+              textFieldError={!!errors.father_passport_issued_by}
+              textFieldHelperText={errors.father_passport_issued_by?.message}
+            />
+
+            {/* Grades */}
+            <GroupTitle title='Оценки' />
+            {[
+              { name: 'grade_russian', label: 'Русский язык' },
+              { name: 'grade_biology', label: 'Биология' },
+              { name: 'grade_chemistry', label: 'Химия' },
+              { name: 'grade_math', label: 'Математика' },
+              { name: 'grade_language', label: 'Иностранный язык' },
+              { name: 'grade_physics', label: 'Физика' },
+            ].map((grade) => (
+              <Grid size={{ xs: 3, sm: 1 }} key={grade.name}>
+                <Controller
+                  name={grade.name}
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={!!errors[grade.name]}>
+                      <InputLabel>{grade.label}</InputLabel>
+                      <Select
+                        {...field}
+                        label={grade.label}
+                        size={inputSize.sm}
+                        value={field.value ?? ''}
+                        sx={{ borderRadius: 2 }}
+                      >
+                        <MenuItem value="" disabled>
+                          Выберите
+                        </MenuItem>
+                        <MenuItem value={3}>3</MenuItem>
+                        <MenuItem value={4}>4</MenuItem>
+                        <MenuItem value={5}>5</MenuItem>
+                      </Select>
+                      <FormHelperText>{errors[grade.name]?.message}</FormHelperText>
+                    </FormControl>
+                  )}
+                />
+              </Grid>
+            ))}
+            <Grid size={{ xs: 6 }}>
+              <Controller
+                name="average_grade"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Средний балл"
+                    type="number"
+                    inputProps={{ step: 0.1, min: 3.0, max: 5.0 }}
+                    size={inputSize.sm}
+                    error={!!errors.average_grade}
+                    helperText={errors.average_grade?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                  />
+                )}
+              />
+            </Grid>
+
+            {/* Submit Button */}
+            
+            <Grid size={{ xs: 12 }} sx={{ mt: { xs: 3, sm: 4 } }}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                fullWidth
+                disabled={isSubmitting}
+                sx={{
+                  borderRadius: 2,
+                  py: { xs: 1.5, sm: 2 },
+                  fontSize: { xs: '0.9rem', sm: '1rem' },
+                  boxShadow: '0 2px 6px rgba(25, 75, 210, 0.2)',
+                  '&:hover': {
+                    bgcolor: theme.palette.primary.dark,
+                    boxShadow: '0 4px 12px rgba(25, 75, 210, 0.3)',
+                  },
+                  '&:disabled': {
+                    bgcolor: theme.palette.action.disabledBackground,
+                    color: theme.palette.action.disabled,
+                  },
+                  transition: 'all 0.2s',
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                    Отправка...
+                  </>
+                ) : (
+                  'Отправить заявку'
+                )}
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <ToastContainer position="top-right" autoClose={5000} />
+
+        {/* Success Modal */}
+        <Dialog
+          open={openSuccessModal}
+          onClose={handleModalClose}
+          aria-labelledby="success-dialog-title"
+          aria-describedby="success-dialog-description"
+          sx={{
+            '& .MuiDialog-paper': {
+              borderRadius: 2,
+              p: { xs: 2, sm: 3 },
+              maxWidth: { xs: '90%', sm: 500 },
+            },
+          }}
+        >
+          <DialogTitle id="success-dialog-title" sx={{ fontSize: { xs: '1.2rem', sm: '1.5rem' } }}>
+            Успешная отправка
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText
+              id="success-dialog-description"
+              sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, color: theme.palette.text.primary }}
+            >
+              Анкета успешно отправлена! Вам необходимо подойти с документами в приемную комиссию колледжа.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
             <Button
-              type="submit"
+              onClick={handleModalClose}
               variant="contained"
-              fullWidth
+              color="primary"
               sx={{
-                py: { xs: 1.5, sm: 1 },
-                fontSize: { xs: '1rem', sm: '1.1rem' },
+                borderRadius: 2,
+                px: { xs: 2, sm: 3 },
+                fontSize: { xs: '0.9rem', sm: '1rem' },
               }}
             >
-              Отправить заявку
+              Вернуться на сайт
             </Button>
-          </Grid>
-        </Grid>
-      </Box>
-      <ToastContainer position="top-right" />
+          </DialogActions>
+        </Dialog>
+      </Paper>
     </Box>
   );
 };

@@ -1,4 +1,3 @@
-// Redesigned ApplicantDetails.jsx with all model fields included
 import React, { useEffect } from 'react';
 import {
   Accordion,
@@ -30,6 +29,8 @@ import {
   Grade as GradeIcon,
   FamilyRestroom as FamilyRestroomIcon,
   HomeWork as HomeWorkIcon,
+  Download as DownloadIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
@@ -67,9 +68,26 @@ export const ApplicantDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { selectedApplicant, getApplicantById, loading, error } = useApplicantsStore();
+  const { selectedApplicant, getApplicantById, loading, error, downloadDocx, deleteApplicantById } = useApplicantsStore();
 
   useEffect(() => { getApplicantById(id); }, [id, getApplicantById]);
+
+  const handleDownloadDocx = async () => {
+    try {
+      await downloadDocx(id, selectedApplicant.full_name);
+    } catch (e) {
+      alert('Ошибка при скачивании документа');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteApplicantById(id);
+      navigate('/applicant/all');
+    } catch (e) {
+      alert('Ошибка при удалении абитуриента');
+    }
+  };
 
   if (loading) return <Box sx={{ textAlign: 'center', py: 5 }}><CircularProgress /><Typography variant="h6" mt={2}>Загрузка...</Typography></Box>;
   if (error || !selectedApplicant) return <Box sx={{ textAlign: 'center', py: 5 }}><Typography variant="h6" color="error">{error || 'Абитуриент не найден'}</Typography><Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/applicant/all')}>Назад</Button></Box>;
@@ -80,10 +98,30 @@ export const ApplicantDetails = () => {
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 1 }}>
       <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Toolbar>
-          <Tooltip title="Назад к списку"><IconButton onClick={() => navigate('/applicant/all')} sx={{ mr: 1 }}><ArrowBackIcon /></IconButton></Tooltip>
+          <Tooltip title="Назад к списку">
+            <IconButton onClick={() => navigate('/applicant/all')} sx={{ mr: 1 }}>
+              <ArrowBackIcon />
+            </IconButton>
+          </Tooltip>
           <Typography variant="h6" fontWeight="bold">{selectedApplicant.full_name}</Typography>
           <Box flexGrow={1} />
-          <Tooltip title="Редактирование отключено"><span><IconButton disabled><EditIcon /></IconButton></span></Tooltip>
+          <Tooltip title="Скачать документ">
+            <IconButton onClick={handleDownloadDocx} sx={{ mr: 1 }}>
+              <DownloadIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Удалить абитуриента">
+            <IconButton onClick={handleDelete} sx={{ mr: 1 }}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Редактирование отключено">
+            <span>
+              <IconButton disabled>
+                <EditIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 
@@ -142,7 +180,7 @@ export const ApplicantDetails = () => {
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные матери">
           <InfoRow label="ФИО" value={selectedApplicant.mother_name} />
           <InfoRow label="Телефон" value={selectedApplicant.mother_phone} />
-          <InfoRow label="Место работы" value={selectedApplicant.mother_job} />
+          <InfoRow label="Мesto работы" value={selectedApplicant.mother_job} />
           <InfoRow label="Серия паспорта" value={selectedApplicant.mother_passport_series} />
           <InfoRow label="Номер паспорта" value={selectedApplicant.mother_passport_number} />
           <InfoRow label="Кем выдан" value={selectedApplicant.mother_passport_issued_by} />
