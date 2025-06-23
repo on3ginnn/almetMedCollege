@@ -51,7 +51,18 @@ export default class ApplicantAPI {
             throw error;
         }
     }
-    static async updateDocumentsDelivered(pk, delivered) {
+    static async updateDocumentsSubmitted(pk, value) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/document/`, {
+                documents_submitted: value,
+            });
+            console.log(response.status)
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async updateDocumentsStatus(pk, delivered) {
         try {
             const response = await apiClient.patch(`/applicants/${pk}/update_documents_delivered/`, {
                 documents_delivered: delivered,

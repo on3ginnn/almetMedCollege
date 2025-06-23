@@ -17,10 +17,18 @@ BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "ABOBA")
 
 DEBUG = env_var_load("DJANGO_DEBUG", False)
+print(DEBUG)
+print(os.getenv("DJANGO_ALLOWED_HOSTS", ""))
+# ALLOWED_HOSTS = list(
+#     map(str.strip, os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")),
+# )
+ALLOWED_HOSTS = [
+    "localhost",
+    "demoalmetmed.ru",
+    "127.0.0.1",
+]
 
-ALLOWED_HOSTS = list(
-    map(str.strip, os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")),
-)
+print(f"ALLOWED_HOSTS = {ALLOWED_HOSTS}")
 
 """
 логирование sql запросов в консоль

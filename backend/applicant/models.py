@@ -4,13 +4,11 @@ from datetime import datetime
 
 class Applicant(models.Model):
     SPECIALTY_CHOICES = [
-        ('pharmacy_9', 'Фармация - на базе 9 класса'),
-        ('nursing_9', 'Сестринское дело - на базе 9 класса'),
-        ('nursing_11_part_time', 'Сестринское дело - очно-заочная форма, на базе 11 класса'),
-        ('midwifery_9', 'Акушерское дело - на базе 9 класса'),
-        ('lab_diagnostics_9', 'Лабораторная диагностика - на базе 9 класса'),
-        ('medical_treatment_9', 'Лечебное дело - на базе 9 класса'),
-        ('medical_treatment_11', 'Лечебное дело - на базе 11 класса'),
+        ('pharmacy', 'Фармация'),
+        ('nursing', 'Сестринское дело'),
+        ('midwifery', 'Акушерское дело'),
+        ('lab_diagnostics', 'Лабораторная диагностика'),
+        ('medical_treatment', 'Лечебное дело'),
     ]
 
     PRIORITY_ENROLLMENT_CHOICES = [
@@ -29,7 +27,19 @@ class Applicant(models.Model):
         ('military_personnel', 'Военнослужащие и сотрудники силовых ведомств, а также их дети'),
         ('none', 'Не отношусь ни к одной из категорий'),
     ]
+    STUDY_FORM_CHOICES = [
+        ('очная', 'Очная форма обучения'),
+        ('очно-заочная', 'Очно-заочная (вечерняя) форма обучения'),
+    ]
 
+    DOCUMENTS_TYPE_CHOICES = [
+        ('оригинал', 'Оригинал'),
+        ('копия', 'Копия'),
+    ]
+    ADMISSION_TYPE_CHOICES = [
+        ("бюджет", "Финансируемые из средств бюджета Республики Татарстан"),
+        ("коммерция", "На места с полным возмещением затрат")
+    ]
     full_name = models.CharField("ФИО", max_length=255)
     citizenship = models.CharField("Гражданство", max_length=100)
     nationality = models.CharField("Национальность", max_length=100)
@@ -109,9 +119,23 @@ class Applicant(models.Model):
     )
     average_grade = models.FloatField("Средний балл")
 
-    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=[("бюджет", "Бюджет"), ("коммерция", "Коммерция")])
+    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES)
     needs_dormitory = models.BooleanField("Нуждается в общежитии")
-
+    documents_submitted = models.CharField(
+        "Тип поданных документов",
+        max_length=10,
+        choices=[("оригинал", "Оригинал"), ("копия", "Копия")],
+        null=True,
+        blank=True,
+    )
+    study_form = models.CharField(
+        "Форма обучения",
+        max_length=20,
+        choices=[
+            ("очная", "Очная форма обучения"),
+            ("очно-заочная", "Очно-заочная (вечерняя) форма обучения")
+        ],
+    )
     priority_enrollment = models.CharField(
         "Первоочередное зачисление",
         max_length=50,

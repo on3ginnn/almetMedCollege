@@ -39,7 +39,9 @@ const displayBoolean = (value) => (value ? 'Да' : 'Нет');
 
 const InfoRow = ({ label, value }) => (
   <Grid item xs={12} sm={6} md={4}>
-    <Typography variant="body1"><strong>{label}:</strong> {value || '-'}</Typography>
+    <Typography variant="body1">
+      <strong>{label}:</strong> {value || '-'}
+    </Typography>
   </Grid>
 );
 
@@ -64,13 +66,21 @@ const Section = ({ icon, title, children }) => {
   );
 };
 
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  return `${day}.${month}.${year}`;
+}
+
 export const ApplicantDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
   const { selectedApplicant, getApplicantById, loading, error, downloadDocx, deleteApplicantById } = useApplicantsStore();
 
-  useEffect(() => { getApplicantById(id); }, [id, getApplicantById]);
+  useEffect(() => {
+    getApplicantById(id);
+  }, [id, getApplicantById]);
 
   const handleDownloadDocx = async () => {
     try {
@@ -89,10 +99,69 @@ export const ApplicantDetails = () => {
     }
   };
 
-  if (loading) return <Box sx={{ textAlign: 'center', py: 5 }}><CircularProgress /><Typography variant="h6" mt={2}>Загрузка...</Typography></Box>;
-  if (error || !selectedApplicant) return <Box sx={{ textAlign: 'center', py: 5 }}><Typography variant="h6" color="error">{error || 'Абитуриент не найден'}</Typography><Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/applicant/all')}>Назад</Button></Box>;
+  if (loading)
+    return (
+      <Box sx={{ textAlign: 'center', py: 5 }}>
+        <CircularProgress />
+        <Typography variant="h6" mt={2}>
+          Загрузка...
+        </Typography>
+      </Box>
+    );
+  if (error || !selectedApplicant)
+    return (
+      <Box sx={{ textAlign: 'center', py: 5 }}>
+        <Typography variant="h6" color="error">
+          {error || 'Абитуриент не найден'}
+        </Typography>
+        <Button variant="contained" sx={{ mt: 2 }} onClick={() => navigate('/applicant/all')}>
+          Назад
+        </Button>
+      </Box>
+    );
 
   const categoryText = (map, key) => map[key] || '-';
+
+  // Choice mappings from Django model
+  const specialtyMap = {
+    pharmacy: 'Фармация',
+    nursing: 'Сестринское дело',
+    midwifery: 'Акушерское дело',
+    lab_diagnostics: 'Лабораторная диагностика',
+    medical_treatment: 'Лечебное дело',
+  };
+
+  const admissionTypeMap = {
+    бюджет: 'Финансируемые из средств бюджета Республики Татарстан',
+    коммерция: 'На места с полным возмещением затрат',
+  };
+
+  const priorityEnrollmentMap = {
+    heroes_rf: 'Герои Российской Федерации, лица, награжденные тремя орденами Мужества',
+    svo_participants: 'Участники боевых действий и служащие на территориях СВО и граничащих с ними, а также их дети',
+    covid_med_workers: 'Дети умерших от COVID-19 медработников',
+    none: 'Не отношусь ни к одной из категорий',
+  };
+
+  const preferentialEnrollmentMap = {
+    orphans: 'Дети-сироты и дети, оставшиеся без попечения родителей',
+    disabled: 'Дети-инвалиды, инвалиды 1-2 группы',
+    veterans: 'Ветераны и участники боевых действий',
+    low_income_disabled: 'Дети младше 20 лет из неполных малоимущих семей, если их родители — инвалиды I группы',
+    chernobyl: 'Люди, пострадавшие от аварии на Чернобыльской АЭС',
+    military_personnel: 'Военнослужащие и сотрудники силовых ведомств, а также их дети',
+    none: 'Не отношусь ни к одной из категорий',
+  };
+
+  const studyFormMap = {
+    очная: 'Очная форма обучения',
+    'очно-заочная': 'Очно-заочная (вечерняя) форма обучения',
+  };
+
+  const documentsSubmittedMap = {
+    оригинал: 'Оригинал',
+    копия: 'Копия',
+  };
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 1 }}>
@@ -103,7 +172,9 @@ export const ApplicantDetails = () => {
               <ArrowBackIcon />
             </IconButton>
           </Tooltip>
-          <Typography variant="h6" fontWeight="bold">{selectedApplicant.full_name}</Typography>
+          <Typography variant="h6" fontWeight="bold">
+            {selectedApplicant.full_name}
+          </Typography>
           <Box flexGrow={1} />
           <Tooltip title="Скачать документ">
             <IconButton onClick={handleDownloadDocx} sx={{ mr: 1 }}>
@@ -127,18 +198,19 @@ export const ApplicantDetails = () => {
 
       <Box mt={4}>
         <Section icon={<HomeWorkIcon color="primary" />} title="Детали поступления">
-          <InfoRow label="Специальность" value={selectedApplicant.specialty} />
-          <InfoRow label="Тип поступления" value={selectedApplicant.admission_type} />
+          <InfoRow label="Специальность" value={categoryText(specialtyMap, selectedApplicant.specialty)} />
+          <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} />
+          <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
           <InfoRow label="Нуждается в общежитии" value={displayBoolean(selectedApplicant.needs_dormitory)} />
           <InfoRow label="Документы сданы" value={displayBoolean(selectedApplicant.documents_delivered)} />
-          <InfoRow label="Мед. договор" value={displayBoolean(selectedApplicant.has_medical_contract)} />
-          <InfoRow label="Приписное" value={displayBoolean(selectedApplicant.military_id)} />
+          <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} />
+          <InfoRow label="Приписное свидетельсвто" value={displayBoolean(selectedApplicant.military_id)} />
         </Section>
 
         <Section icon={<PersonIcon color="primary" />} title="Личные данные">
           <InfoRow label="Гражданство" value={selectedApplicant.citizenship} />
           <InfoRow label="Национальность" value={selectedApplicant.nationality} />
-          <InfoRow label="Дата рождения" value={selectedApplicant.birth_date} />
+          <InfoRow label="Дата рождения" value={formatDate(selectedApplicant.birth_date)} />
           <InfoRow label="Место рождения" value={selectedApplicant.birth_place} />
           <InfoRow label="Адрес по паспорту" value={selectedApplicant.address} />
           <InfoRow label="Фактический адрес" value={selectedApplicant.address_actual} />
@@ -153,16 +225,19 @@ export const ApplicantDetails = () => {
         </Section>
 
         <Section icon={<BadgeIcon color="primary" />} title="Паспортные данные">
-          <InfoRow label="Серия и номер" value={`${selectedApplicant.passport_series || ''} ${selectedApplicant.passport_number || ''}`} />
+          <InfoRow
+            label="Серия и номер"
+            value={`${selectedApplicant.passport_series || ''} ${selectedApplicant.passport_number || ''}`}
+          />
           <InfoRow label="Кем выдан" value={selectedApplicant.passport_issued_by} />
-          <InfoRow label="Дата выдачи" value={selectedApplicant.passport_issued_date} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.passport_issued_date)} />
           <InfoRow label="Код подразделения" value={selectedApplicant.passport_division_code} />
           <InfoRow label="Дата регистрации" value={selectedApplicant.passport_registration_date} />
         </Section>
 
         <Section icon={<SchoolIcon color="secondary" />} title="Образование">
           <InfoRow label="Аттестат" value={selectedApplicant.certificate_series} />
-          <InfoRow label="Дата выдачи" value={selectedApplicant.certificate_issued_date} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.certificate_issued_date)} />
           <InfoRow label="Учебное заведение" value={selectedApplicant.graduation_institution} />
           <InfoRow label="Год окончания" value={selectedApplicant.graduation_year} />
         </Section>
@@ -180,11 +255,11 @@ export const ApplicantDetails = () => {
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные матери">
           <InfoRow label="ФИО" value={selectedApplicant.mother_name} />
           <InfoRow label="Телефон" value={selectedApplicant.mother_phone} />
-          <InfoRow label="Мesto работы" value={selectedApplicant.mother_job} />
+          <InfoRow label="Место работы" value={selectedApplicant.mother_job} />
           <InfoRow label="Серия паспорта" value={selectedApplicant.mother_passport_series} />
           <InfoRow label="Номер паспорта" value={selectedApplicant.mother_passport_number} />
           <InfoRow label="Кем выдан" value={selectedApplicant.mother_passport_issued_by} />
-          <InfoRow label="Дата выдачи" value={selectedApplicant.mother_passport_issued_date} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.mother_passport_issued_date)} />
         </Section>
 
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные отца">
@@ -194,40 +269,25 @@ export const ApplicantDetails = () => {
           <InfoRow label="Серия паспорта" value={selectedApplicant.father_passport_series} />
           <InfoRow label="Номер паспорта" value={selectedApplicant.father_passport_number} />
           <InfoRow label="Кем выдан" value={selectedApplicant.father_passport_issued_by} />
-          <InfoRow label="Дата выдачи" value={selectedApplicant.father_passport_issued_date} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.father_passport_issued_date)} />
         </Section>
 
         <Section icon={<GradeIcon color="primary" />} title="Первоочередное зачисление">
-          <InfoRow
-            label="Категория"
-            value={categoryText({
-              'heroes_rf': 'Герои РФ и награждённые орденами',
-              'svo_participants': 'СВО и их дети',
-              'covid_med_workers': 'Дети умерших от COVID-19 медработников',
-              'none': 'Не отношусь ни к одной категории'
-            }, selectedApplicant.priority_enrollment)}
-          />
+          <InfoRow label="Категория" value={categoryText(priorityEnrollmentMap, selectedApplicant.priority_enrollment)} />
         </Section>
 
         <Section icon={<GradeIcon color="primary" />} title="Преимущественное право на зачисление">
           <InfoRow
             label="Категория"
-            value={categoryText({
-              'orphans': 'Сироты',
-              'disabled': 'Инвалиды',
-              'veterans': 'Ветераны',
-              'low_income_disabled': 'Малоимущие семьи с инвалидами',
-              'chernobyl': 'Пострадавшие от Чернобыля',
-              'military_personnel': 'Военные и их дети',
-              'none': 'Не отношусь ни к одной категории'
-            }, selectedApplicant.preferential_enrollment)}
+            value={categoryText(preferentialEnrollmentMap, selectedApplicant.preferential_enrollment)}
           />
         </Section>
 
         <Divider sx={{ my: 4 }} />
         <Box sx={{ textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            Подано: {new Date(selectedApplicant.submitted_at).toLocaleString('ru-RU')}, Зачислен: {displayBoolean(selectedApplicant.enrolled)}
+            Подано: {new Date(selectedApplicant.submitted_at).toLocaleString('ru-RU')}, Зачислен:{' '}
+            {displayBoolean(selectedApplicant.enrolled)}
           </Typography>
         </Box>
       </Box>

@@ -29,7 +29,7 @@ def generate_applicants_excel():
         'Место работы мамы, должность', 'ФИО, № телефона папы', 'Место работы папы, должность',
         'Русский язык', 'Биология', 'Химия', 'Математика', 'Иностранный язык', 'Физика',
         'Средний балл аттестата', 'Бюджет/коммерция',
-         'Нуждается в общежитии',
+        'Нуждается в общежитии', 'Тип поданных документов', 'Форма обучения',
         'Первоочередное зачисление', 'Преимущественное право на зачисление'
     ]
 
@@ -95,6 +95,8 @@ def generate_applicants_excel():
                 applicant.average_grade,
                 applicant.admission_type,
                 'Да' if applicant.needs_dormitory else 'Нет',
+                applicant.documents_submitted,
+                dict(Applicant.STUDY_FORM_CHOICES).get(applicant.study_form, ''),
                 priority_enrollment_map.get(applicant.priority_enrollment, ''),
                 preferential_enrollment_map.get(applicant.preferential_enrollment, '')
             ])
@@ -122,23 +124,13 @@ def generate_application_docx(applicant: Applicant):
 
     # Map specialty to human-readable form and determine base
     specialty_map = {
-        'pharmacy_9': 'Фармация',
-        'nursing_9': 'Сестринское дело',
-        'nursing_11_part_time': 'Сестринское дело',
-        'midwifery_9': 'Акушерское дело',
-        'lab_diagnostics_9': 'Лабораторная диагностика',
-        'medical_treatment_9': 'Лечебное дело',
-        'medical_treatment_11': 'Лечебное дело',
+        'pharmacy': 'Фармация',
+        'nursing': 'Сестринское дело',
+        'midwifery': 'Акушерское дело',
+        'lab_diagnostics': 'Лабораторная диагностика',
+        'medical_treatment': 'Лечебное дело',
     }
     specialty = specialty_map.get(applicant.specialty, '')
-
-    # Determine specialty placement (9th or 11th grade base)
-    specialty_base = ''  # For 9th-grade base (Section I)
-    specialty_part_time = ''  # For 11th-grade base (Section II)
-    if applicant.specialty.endswith('_9'):
-        specialty_base = specialty
-    elif applicant.specialty.endswith('_11') or applicant.specialty == 'nursing_11_part_time':
-        specialty_part_time = specialty
 
     # Clean SNILS
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
@@ -158,8 +150,7 @@ def generate_application_docx(applicant: Applicant):
     )
 
     # Determine social benefits
-    social_benefits = 'Нет' if applicant.priority_enrollment == 'none' and applicant.preferential_enrollment == 'none' else 'Да'
-
+    benefits_enrollment =  'Нет' if applicant.priority_enrollment == 'none' and applicant.preferential_enrollment == 'none' else 'Да'
     # Context for template rendering
     context = {
         'registration_number': '',
@@ -184,9 +175,9 @@ def generate_application_docx(applicant: Applicant):
         'student_phone': applicant.student_phone or '',
         'email': applicant.student_email or '',
         'specialty': specialty,
-        'specialty_base': specialty_base,
-        'specialty_part_time': specialty_part_time,
-        'admission_type': applicant.admission_type or '',
+        'study_form_verbose': dict(Applicant.STUDY_FORM_CHOICES).get(applicant.study_form, ''),
+        'documents_submitted': applicant.documents_submitted or '',
+        'admission_type': dict(Applicant.ADMISSION_TYPE_CHOICES).get(applicant.admission_type, ''),
         'graduation_year': str(applicant.graduation_year) if applicant.graduation_year else '',
         'education_type': 'общеобразовательное учреждение (школа)',
         'graduation_institution': applicant.graduation_institution or '',
@@ -199,7 +190,7 @@ def generate_application_docx(applicant: Applicant):
         'grade_math': str(applicant.grade_math) if applicant.grade_math else '',
         'grade_language': str(applicant.grade_language) if applicant.grade_language else '',
         'grade_physics': str(applicant.grade_physics) if applicant.grade_physics else '',
-        'social_benefits': social_benefits,
+        'benefits_enrollment': benefits_enrollment,
         'needs_dormitory': 'нуждаюсь' if applicant.needs_dormitory else 'не нуждаюсь',
         'mother_fio': applicant.mother_name or '',
         'mother_job': applicant.mother_job or '',
