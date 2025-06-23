@@ -29,8 +29,8 @@ import { useNavigate } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
 import { format } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
-import { schema } from '../../validation/applicant/applicantValidation'
-import { GroupTitle } from './applicantFormTags/applicantGroupTitle'
+import { schema } from '../../validation/applicant/applicantValidation';
+import { GroupTitle } from './applicantFormTags/applicantGroupTitle';
 import { SelectField } from './applicantFormTags/applicantSelectField';
 import { FormCheckbox } from './applicantFormTags/applicantCheckbox';
 import { FormTextField } from './applicantFormTags/applicantTextField';
@@ -89,6 +89,7 @@ export const ApplicantForm = () => {
       father_passport_issued_by: '',
       father_passport_issued_date: '',
       documents_delivered: false,
+      documents_submitted: null,
       specialty: '',
       grade_russian: null,
       grade_biology: null,
@@ -107,10 +108,48 @@ export const ApplicantForm = () => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
+      // Map specialty to backend specialty and study_form
+      let backendSpecialty = '';
+      let studyForm = '';
+      switch (data.specialty) {
+        case 'pharmacy_9':
+          backendSpecialty = 'pharmacy';
+          studyForm = 'очная';
+          break;
+        case 'nursing_9':
+          backendSpecialty = 'nursing';
+          studyForm = 'очная';
+          break;
+        case 'nursing_11_part_time':
+          backendSpecialty = 'nursing';
+          studyForm = 'очно-заочная';
+          break;
+        case 'midwifery_9':
+          backendSpecialty = 'midwifery';
+          studyForm = 'очная';
+          break;
+        case 'lab_diagnostics_9':
+          backendSpecialty = 'lab_diagnostics';
+          studyForm = 'очная';
+          break;
+        case 'medical_treatment_9':
+          backendSpecialty = 'medical_treatment';
+          studyForm = 'очная';
+          break;
+        case 'medical_treatment_11':
+          backendSpecialty = 'medical_treatment';
+          studyForm = 'очно-заочная';
+          break;
+        default:
+          throw new Error('Invalid specialty selected');
+      }
+
       const formattedData = {
         ...data,
-        snils: data.snils.replace(/-/g, ''), // Transform SNILS here
-        passport_division_code: data.passport_division_code.replace(/-/g, ''), // Transform SNILS here
+        specialty: backendSpecialty,
+        study_form: studyForm,
+        snils: data.snils.replace(/-/g, ''),
+        passport_division_code: data.passport_division_code.replace(/-/g, ''),
         birth_date: data.birth_date ? format(new Date(data.birth_date), 'yyyy-MM-dd') : null,
         passport_registration_date: data.passport_registration_date
           ? format(new Date(data.passport_registration_date), 'yyyy-MM-dd')
@@ -118,7 +157,7 @@ export const ApplicantForm = () => {
         certificate_issued_date: data.certificate_issued_date
           ? format(new Date(data.certificate_issued_date), 'yyyy-MM-dd')
           : null,
-        passport_issued_date: data.passport_issued_date
+        passport_issued_date: data.passport_issued_date 
           ? format(new Date(data.passport_issued_date), 'yyyy-MM-dd')
           : null,
         mother_passport_issued_date: data.mother_passport_issued_date
@@ -137,15 +176,15 @@ export const ApplicantForm = () => {
     } catch (error) {
       const errorMessage =
         error.response?.data?.detail || 'Ошибка при отправке анкеты';
-        console.error('Submission error:', errorMessage, error);
-        toast.error(`Ошибка: ${errorMessage}`, { autoClose: 5000 });
+      console.error('Submission error:', errorMessage, error);
+      toast.error(`Ошибка: ${errorMessage}`, { autoClose: 5000 });
     } finally {
       setIsSubmitting(false);
     }
   };
+
   const inputSize = { xs: 'small', sm: 'medium' };
 
-    // Options for Select fields
   const specialtyOptions = [
     { value: 'pharmacy_9', label: 'Фармация - на базе 9 класса' },
     { value: 'nursing_9', label: 'Сестринское дело - на базе 9 класса' },
@@ -177,11 +216,7 @@ export const ApplicantForm = () => {
     { value: 'military_personnel', label: 'Военнослужащие и их дети' },
     { value: 'none', label: 'Не отношусь' },
   ];
-  
-  const studyFormOptions = [
-    { value: 'очная', label: 'Очная форма обучения' },
-    { value: 'очно-заочная', label: 'Очно-заочная (вечерняя) форма обучения' },
-  ]
+
   const handleModalClose = () => {
     setOpenSuccessModal(false);
     window.location.href = 'https://almetmed.ru/';
@@ -191,7 +226,6 @@ export const ApplicantForm = () => {
     <Box
       sx={{
         p: { xs: 1, sm: 3 },
-        // bgcolor: theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
         minHeight: '100vh',
       }}
     >
@@ -203,9 +237,6 @@ export const ApplicantForm = () => {
           p: { xs: 0, sm: 3 },
           borderRadius: 2,
           bgcolor: 'background.paper',
-          // boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          transition: 'box-shadow 0.2s',
-          // '&:hover': { boxShadow: '0 4px 16px rgba(0,0,0,0.12)' },
         }}
       >
         <Typography
@@ -219,7 +250,7 @@ export const ApplicantForm = () => {
         >
           Анкета на поступление
         </Typography>
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} >
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
             {/* Admission Details */}
             <GroupTitle title='Детали поступления' />
@@ -261,16 +292,6 @@ export const ApplicantForm = () => {
               control={control}
               formControlError={!!errors.preferential_enrollment}
               formHelperText={errors.preferential_enrollment?.message}
-              inputSize={inputSize}
-            />
-            <SelectField
-              name="study_form"
-              label="Форма обучения"
-              options={studyFormOptions}
-              gridSize={{ xs: 6, md: 3 }}
-              control={control}
-              formControlError={!!errors.study_form}
-              formHelperText={errors.study_form?.message}
               inputSize={inputSize}
             />
             <FormCheckbox 
@@ -453,6 +474,7 @@ export const ApplicantForm = () => {
                 )}
               />
             </Grid>
+
             {/* Education Info */}
             <GroupTitle title='Образование' />
             <FormTextFieldMask 
@@ -522,6 +544,7 @@ export const ApplicantForm = () => {
               textFieldError={!!errors.graduation_institution}
               textFieldHelperText={errors.graduation_institution?.message}
             />
+
             {/* Contact Info */}
             <GroupTitle title='Контактные данные' />
             <FormTextFieldMask 
@@ -568,7 +591,6 @@ export const ApplicantForm = () => {
               control={control}
               textFieldError={!!errors.snils}
               textFieldHelperText={errors.snils?.message}
-              // transform={(value) => value.replace(/-/g, '')}
             />
             <FormTextField
               name="medical_policy"
@@ -621,8 +643,8 @@ export const ApplicantForm = () => {
               mask="999999"
               gridSize={{ xs: 3, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_passport_series}
-              textFieldHelperText={errors.mother_passport_series?.message}
+              textFieldError={!!errors.mother_passport_number}
+              textFieldHelperText={errors.mother_passport_number?.message}
             />
             <Grid size={{ xs: 6, sm: 2 }}>
               <Controller
@@ -776,14 +798,13 @@ export const ApplicantForm = () => {
                     size={inputSize.sm}
                     error={!!errors.average_grade}
                     helperText={errors.average_grade?.message}
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 }}}
                   />
                 )}
               />
             </Grid>
 
             {/* Submit Button */}
-            
             <Grid size={{ xs: 12 }} sx={{ mt: { xs: 3, sm: 4 } }}>
               <Button
                 type="submit"
@@ -795,10 +816,10 @@ export const ApplicantForm = () => {
                   borderRadius: 2,
                   py: { xs: 1.5, sm: 2 },
                   fontSize: { xs: '0.9rem', sm: '1rem' },
-                  boxShadow: '0 2px 6px rgba(25, 75, 210, 0.2)',
+                  boxShadow: '0 2px 6px rgba(25, 75, 205, 0.2)',
                   '&:hover': {
                     bgcolor: theme.palette.primary.dark,
-                    boxShadow: '0 4px 12px rgba(25, 75, 210, 0.3)',
+                    boxShadow: '0 4px 12px rgba(25, 75, 205, 0.3)',
                   },
                   '&:disabled': {
                     bgcolor: theme.palette.action.disabledBackground,
@@ -821,7 +842,6 @@ export const ApplicantForm = () => {
         </Box>
         <ToastContainer position="top-right" autoClose={5000} />
 
-        {/* Success Modal */}
         <Dialog
           open={openSuccessModal}
           onClose={handleModalClose}
@@ -841,7 +861,7 @@ export const ApplicantForm = () => {
           <DialogContent>
             <DialogContentText
               id="success-dialog-description"
-              sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, color: theme.palette.text.primary }}
+              sx={{ fontSize: { xs: '0.9rem', sm: '1rem' }, color: theme.palette.text.secondary }}
             >
               Анкета успешно отправлена! Вам необходимо подойти с документами в приемную комиссию колледжа.
             </DialogContentText>
@@ -854,7 +874,7 @@ export const ApplicantForm = () => {
               sx={{
                 borderRadius: 2,
                 px: { xs: 2, sm: 3 },
-                fontSize: { xs: '0.9rem', sm: '1rem' },
+                fontSize: { xs: '0.8rem', sm: '0.9rem' },
               }}
             >
               Вернуться на сайт
