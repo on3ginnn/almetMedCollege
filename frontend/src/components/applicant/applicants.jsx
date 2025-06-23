@@ -133,6 +133,7 @@ export const Applicants = () => {
       headerName: 'Сдал документы',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
+      sortable: false,
       renderCell: (params) => (
         <Checkbox
           checked={params.row.documents_delivered}
@@ -149,6 +150,7 @@ export const Applicants = () => {
       headerName: 'Тип документа',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
+      sortable: false,
       renderCell: (params) =>
         params.row.documents_delivered ? (
           <Select
@@ -186,6 +188,7 @@ export const Applicants = () => {
       headerName: 'Зачислить',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
+      sortable: false,
       renderCell: (params) =>
         params.row.documents_delivered && (
           <Button
@@ -212,6 +215,7 @@ export const Applicants = () => {
       headerName: 'Скачать',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
+      sortable: false,
       renderCell: (params) => (
         <Button
           variant="outlined"
