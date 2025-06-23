@@ -13,5 +13,4 @@ urlpatterns = [
     path('', include(router.urls)),
     path('<int:pk>/download/', applicant.views.download_applicant_document, name='download_application'),
     path('<int:pk>/update_documents_delivered/', applicant.views.UpdateDocumentsDeliveredView.as_view(), name='update_documents_delivered'),
-
 ]

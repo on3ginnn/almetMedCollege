@@ -177,7 +177,11 @@ export const ApplicantForm = () => {
     { value: 'military_personnel', label: 'Военнослужащие и их дети' },
     { value: 'none', label: 'Не отношусь' },
   ];
-
+  
+  const studyFormOptions = [
+    { value: 'очная', label: 'Очная форма обучения' },
+    { value: 'очно-заочная', label: 'Очно-заочная (вечерняя) форма обучения' },
+  ]
   const handleModalClose = () => {
     setOpenSuccessModal(false);
     window.location.href = 'https://almetmed.ru/';
@@ -259,15 +263,19 @@ export const ApplicantForm = () => {
               formHelperText={errors.preferential_enrollment?.message}
               inputSize={inputSize}
             />
+            <SelectField
+              name="study_form"
+              label="Форма обучения"
+              options={studyFormOptions}
+              gridSize={{ xs: 6, md: 3 }}
+              control={control}
+              formControlError={!!errors.study_form}
+              formHelperText={errors.study_form?.message}
+              inputSize={inputSize}
+            />
             <FormCheckbox 
               name="needs_dormitory"
               label="Нуждается в общежитии"
-              gridSize={{ xs: 6}}
-              control={control}
-            />
-            <FormCheckbox 
-              name="documents_delivered"
-              label="Документы сданы"
               gridSize={{ xs: 6}}
               control={control}
             />

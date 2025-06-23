@@ -66,14 +66,25 @@ export const useApplicantsStore = create((set) => ({
   enrollApplicant: async (id) => {
     try {
       await ApplicantAPI.enroll(id);
+      await get().getApplicants(); // Refresh table
     } catch (e) {
       console.error('Ошибка при зачислении:', e);
       throw e;
     }
   },
-  updateDocumentsDelivered: async (id, delivered) => {
+  updateDocumentsSubmitted: async (id, value) => {
     try {
-      await ApplicantAPI.updateDocumentsDelivered(id, delivered);
+      await ApplicantAPI.updateDocumentsSubmitted(id, value);
+      // await get().getApplicants(); // Refresh table
+    } catch (e) {
+      console.error('Ошибка при обновлении типа документов:', e);
+      throw e;
+    }
+  },
+  updateDocumentsStatus: async (id, delivered) => {
+    try {
+      await ApplicantAPI.updateDocumentsStatus(id, delivered);
+      // await get().getApplicants(); // Refresh table
     } catch (e) {
       console.error('Ошибка при обновлении статуса документов:', e);
       throw e;
