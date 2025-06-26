@@ -107,4 +107,12 @@ export const useApplicantsStore = create((set) => ({
       throw e;
     }
   },
+  fetchRatings: async () => {
+    try {
+      const response = await ApplicantAPI.getRating();
+      set({ ratings: response.data });
+    } catch (e) {
+      console.error('Ошибка при получении рейтинга:', e);
+    }
+  },
 }));

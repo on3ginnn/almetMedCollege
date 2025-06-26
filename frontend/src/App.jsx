@@ -13,6 +13,7 @@ import { Schedule } from "./components/schedule/schedule";
 import { ApplicantForm } from './components/applicant/applicantForm';
 import { Applicants } from './components/applicant/applicants';
 import { ApplicantDetails } from './components/applicant/applicantDetails';
+import { Rating } from './components/applicant/applicantRating';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/schedule/create" element={<ScheduleForm />} />
           </Route>
           <Route path='/applicant' element={<ApplicantForm />} />
+          <Route path="/rating" element={<Rating />} />
           <Route path="/applicant" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/applicant/all" element={<Applicants />} />
             <Route path='/applicant/:id' element={<ApplicantDetails />} />
