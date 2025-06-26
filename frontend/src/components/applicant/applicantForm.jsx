@@ -794,7 +794,7 @@ export const ApplicantForm = () => {
                     fullWidth
                     label="Средний балл"
                     type="number"
-                    inputProps={{ step: 0.1, min: 3.0, max: 5.0 }}
+                    inputProps={{ step: 0.01, min: 3.00, max: 5.00 }}
                     size={inputSize.sm}
                     error={!!errors.average_grade}
                     helperText={errors.average_grade?.message}

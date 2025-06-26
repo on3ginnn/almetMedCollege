@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from .utils import generate_application_docx, generate_applicants_excel
 
+
 class ApplicantViewSet(viewsets.ModelViewSet):
     """
     Полный CRUD для заявок абитуриентов.
@@ -30,6 +31,31 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"], url_path="rating")
+    def rating(self, request):
+        """
+        GET /api/applicants/rating/
+        Возвращает рейтинг абитуриентов по среднему баллу.
+        До 50 человек на каждую специальность и тип поступления.
+        """
+        result = {
+            "бюджет": {},
+            "коммерция": {}
+        }
+
+        specialties = Applicant.objects.values_list("specialty", flat=True).distinct()
+
+        for specialty in specialties:
+            for admission_type in ["бюджет", "коммерция"]:
+                applicants = Applicant.objects.filter(
+                    specialty=specialty,
+                    admission_type=admission_type
+                ).order_by("-average_grade")[:50]
+                serialized = ApplicantSerializer(applicants, many=True).data
+                result[admission_type].setdefault(specialty, serialized)
+
+        return Response(result)
 
     @action(detail=True, methods=['patch'])
     def document(self, request, pk):

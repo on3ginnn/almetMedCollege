@@ -82,4 +82,13 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async getRating() {
+        try{
+            const response = await apiClient.get('/applicants/rating/');
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }

@@ -170,9 +170,9 @@ export const schema = yup.object().shape({
   average_grade: yup
     .number()
     .required('Средний балл обязателен')
-    .min(3.0, 'Средний балл от 3.0')
-    .max(5.0, 'Средний балл до 5.0')
-    .typeError('Введите средний бал в формате 4,8'),
+    .min(3.00, 'Средний балл от 3.00')
+    .max(5.00, 'Средний балл до 5.00')
+    .typeError('Введите средний бал в формате 4,85'),
   admission_type: yup
     .string()
     .required('Тип поступления обязателен')
