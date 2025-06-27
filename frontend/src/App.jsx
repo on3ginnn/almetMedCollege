@@ -41,6 +41,7 @@ function App() {
           <Route path="/applicant" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/applicant/all" element={<Applicants />} />
             <Route path='/applicant/:id' element={<ApplicantDetails />} />
+            <Route path="/applicant/edit/:id" element={<ApplicantForm isEditMode />} />
           </Route>
         </Route>
       </Routes>

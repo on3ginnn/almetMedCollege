@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Button,
@@ -25,7 +25,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
 import { format } from 'date-fns';
 import { useTheme } from '@mui/material/styles';
@@ -36,8 +36,14 @@ import { FormCheckbox } from './applicantFormTags/applicantCheckbox';
 import { FormTextField } from './applicantFormTags/applicantTextField';
 import { FormTextFieldMask } from './applicantFormTags/applicantTextFieldMask';
 
-export const ApplicantForm = () => {
-  const { submitApplicant } = useApplicantsStore();
+export const ApplicantForm = ({ isEditMode = false }) => {
+  const { id } = useParams();
+  const { 
+    submitApplicant,
+    updateApplicant,
+    getApplicantById,
+    selectedApplicant,
+  } = useApplicantsStore();
   const navigate = useNavigate();
   const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -74,30 +80,27 @@ export const ApplicantForm = () => {
       military_id: false,
       student_phone: '',
       student_email: '',
-      mother_name: '',
-      mother_phone: '',
-      mother_job: '',
-      mother_passport_series: '',
-      mother_passport_number: '',
-      mother_passport_issued_by: '',
-      mother_passport_issued_date: '',
-      father_name: '',
-      father_phone: '',
-      father_job: '',
-      father_passport_series: '',
-      father_passport_number: '',
-      father_passport_issued_by: '',
-      father_passport_issued_date: '',
+      representative1_name: '',
+      representative1_phone: '',
+      representative1_job: '',
+      representative1_passport_series: '',
+      representative1_passport_number: '',
+      representative1_passport_issued_by: '',
+      representative1_passport_issued_date: '',
+      representative2_name: '',
+      representative2_phone: '',
+      representative2_job: '',
+      representative2_passport_series: '',
+      representative2_passport_number: '',
+      representative2_passport_issued_by: '',
+      representative2_passport_issued_date: '',
       documents_delivered: false,
       documents_submitted: null,
       specialty: '',
+      education_base: '',
       grade_russian: null,
       grade_biology: null,
       grade_chemistry: null,
-      grade_math: null,
-      grade_language: null,
-      grade_physics: null,
-      average_grade: '',
       admission_type: 'бюджет',
       needs_dormitory: false,
       priority_enrollment: 'none',
@@ -105,40 +108,94 @@ export const ApplicantForm = () => {
     },
   });
 
+  useEffect(() => {
+    if (isEditMode && id) {
+      getApplicantById(id); // Fetch applicant data
+    }
+  }, [id, isEditMode, getApplicantById]);
+
+  useEffect(() => {
+    if (isEditMode && id && selectedApplicant) {
+      reset(applicantToFormData(selectedApplicant)); // Populate form with data
+    }
+  }, [id, isEditMode, selectedApplicant, reset]);
+
+  function applicantToFormData(applicant) {
+    const detectSpecialtyKey = () => {
+      const { specialty, study_form, education_base } = applicant;
+      if (specialty === 'nursing' && study_form === 'очно-заочная' && education_base === '11') return 'nursing_11_part_time';
+      if (specialty === 'medical_treatment' && study_form === 'очно-заочная' && education_base === '11') return 'medical_treatment_11';
+      return `${specialty}_${education_base}`;
+    };
+
+    return {
+      ...applicant,
+      snils: applicant.snils ? `${applicant.snils.slice(0, 3)}-${applicant.snils.slice(3, 6)}-${applicant.snils.slice(6, 9)}-${applicant.snils.slice(9)}` : '',
+      passport_division_code: applicant.passport_division_code ? `${applicant.passport_division_code.slice(0, 3)}-${applicant.passport_division_code.slice(3)}` : '',
+      birth_date: applicant.birth_date ? format(new Date(applicant.birth_date), 'yyyy-MM-dd') : '',
+      passport_registration_date: applicant.passport_registration_date ? format(new Date(applicant.passport_registration_date), 'yyyy-MM-dd') : '',
+      certificate_issued_date: applicant.certificate_issued_date ? format(new Date(applicant.certificate_issued_date), 'yyyy-MM-dd') : '',
+      passport_issued_date: applicant.passport_issued_date ? format(new Date(applicant.passport_issued_date), 'yyyy-MM-dd') : '',
+      representative1_passport_issued_date: applicant.representative1_passport_issued_date ? format(new Date(applicant.representative1_passport_issued_date), 'yyyy-MM-dd') : '',
+      representative2_passport_issued_date: applicant.representative2_passport_issued_date ? format(new Date(applicant.representative2_passport_issued_date), 'yyyy-MM-dd') : '',
+      specialty: detectSpecialtyKey(),
+      // grade_russian: applicant.grade_russian ?? null,
+      // grade_biology: applicant.grade_biology ?? null,
+      // grade_chemistry: applicant.grade_chemistry ?? null,
+    };
+  }
+
+  function formatSnils(snils) {
+    if (!snils) return '';
+    return `${snils.slice(0, 3)}-${snils.slice(3, 6)}-${snils.slice(6, 9)}-${snils.slice(9)}`;
+  }
+
+  function formatDivisionCode(code) {
+    if (!code) return '';
+    return `${code.slice(0, 3)}-${code.slice(3)}`;
+  }
+
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      // Map specialty to backend specialty and study_form
       let backendSpecialty = '';
       let studyForm = '';
+      let educationBase = '';
       switch (data.specialty) {
         case 'pharmacy_9':
           backendSpecialty = 'pharmacy';
           studyForm = 'очная';
+          educationBase = '9';
           break;
         case 'nursing_9':
           backendSpecialty = 'nursing';
           studyForm = 'очная';
+          educationBase = '9';
           break;
         case 'nursing_11_part_time':
           backendSpecialty = 'nursing';
           studyForm = 'очно-заочная';
+          educationBase = '11';
           break;
         case 'midwifery_9':
           backendSpecialty = 'midwifery';
           studyForm = 'очная';
+          educationBase = '9';
           break;
         case 'lab_diagnostics_9':
           backendSpecialty = 'lab_diagnostics';
           studyForm = 'очная';
+          educationBase = '9';
           break;
         case 'medical_treatment_9':
           backendSpecialty = 'medical_treatment';
           studyForm = 'очная';
+          educationBase = '9';
           break;
         case 'medical_treatment_11':
           backendSpecialty = 'medical_treatment';
           studyForm = 'очно-заочная';
+          educationBase = '11';
           break;
         default:
           throw new Error('Invalid specialty selected');
@@ -148,8 +205,20 @@ export const ApplicantForm = () => {
         ...data,
         specialty: backendSpecialty,
         study_form: studyForm,
-        snils: data.snils.replace(/-/g, ''),
-        passport_division_code: data.passport_division_code.replace(/-/g, ''),
+        education_base: educationBase,
+        snils: data.snils ? data.snils.replace(/-/g, '') : '',
+        passport_division_code: data.passport_division_code ? data.passport_division_code.replace(/-/g, '') : '',
+        passport_series: data.passport_series || '',
+        passport_number: data.passport_number || '',
+        inn: data.inn || '',
+        student_phone: data.student_phone || '',
+        student_email: data.student_email || '',
+        representative1_phone: data.representative1_phone || '',
+        representative1_passport_series: data.representative1_passport_series || '',
+        representative1_passport_number: data.representative1_passport_number || '',
+        representative2_phone: data.representative2_phone || '',
+        representative2_passport_series: data.representative2_passport_series || '',
+        representative2_passport_number: data.representative2_passport_number || '',
         birth_date: data.birth_date ? format(new Date(data.birth_date), 'yyyy-MM-dd') : null,
         passport_registration_date: data.passport_registration_date
           ? format(new Date(data.passport_registration_date), 'yyyy-MM-dd')
@@ -160,19 +229,25 @@ export const ApplicantForm = () => {
         passport_issued_date: data.passport_issued_date 
           ? format(new Date(data.passport_issued_date), 'yyyy-MM-dd')
           : null,
-        mother_passport_issued_date: data.mother_passport_issued_date
-          ? format(new Date(data.mother_passport_issued_date), 'yyyy-MM-dd')
+        representative1_passport_issued_date: data.representative1_passport_issued_date
+          ? format(new Date(data.representative1_passport_issued_date), 'yyyy-MM-dd')
           : null,
-        father_passport_issued_date: data.father_passport_issued_date
-          ? format(new Date(data.father_passport_issued_date), 'yyyy-MM-dd')
+        representative2_passport_issued_date: data.representative2_passport_issued_date
+          ? format(new Date(data.representative2_passport_issued_date), 'yyyy-MM-dd')
           : null,
       };
 
-      await submitApplicant(formattedData);
-      toast.success('Анкета успешно отправлена!', { autoClose: 5000 });
-      setOpenSuccessModal(true);
-      reset();
-      setTimeout(() => window.location.href = 'https://almetmed.ru/', 5000);
+      if (isEditMode && id) {
+        await updateApplicant(id, formattedData);
+        toast.success('Анкета успешно обновлена!', { autoClose: 5000 });
+        navigate(`/applicant/${id}`);
+      } else {
+        await submitApplicant(formattedData);
+        toast.success('Анкета успешно отправлена!', { autoClose: 5000 });
+        setOpenSuccessModal(true);
+        reset();
+        setTimeout(() => window.location.href = 'https://almetmed.ru/', 5000);
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.detail || 'Ошибка при отправке анкеты';
@@ -217,6 +292,14 @@ export const ApplicantForm = () => {
     { value: 'none', label: 'Не отношусь' },
   ];
 
+  const graduationYearOptions = () =>
+    Array.from({ length: 2025 - 1980 + 1 }, (_, i) => 1980 + i)
+      .sort((a, b) => b - a) // Sort in descending order
+      .map((year) => ({
+        value: year,
+        label: year.toString(),
+      }));
+
   const handleModalClose = () => {
     setOpenSuccessModal(false);
     window.location.href = 'https://almetmed.ru/';
@@ -248,7 +331,7 @@ export const ApplicantForm = () => {
             color: theme.palette.text.primary,
           }}
         >
-          Анкета на поступление
+          {isEditMode ? 'Редактирование анкеты' : 'Анкета на поступление'}
         </Typography>
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
@@ -505,37 +588,16 @@ export const ApplicantForm = () => {
                 )}
               />
             </Grid>
-            <Grid size={{ xs: 6, sm: 2 }}>
-              <Controller
-                name="graduation_year"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.graduation_year}>
-                    <InputLabel>Год окончания</InputLabel>
-                    <Select
-                      {...field}
-                      label="Год окончания"
-                      size={inputSize.sm}
-                      value={field.value ?? ''}
-                      sx={{ borderRadius: 2 }}
-                      MenuProps={{
-                        PaperProps: { style: { maxHeight: 200 } },
-                      }}
-                    >
-                      <MenuItem value="" disabled>
-                        Выберите
-                      </MenuItem>
-                      {Array.from({ length: 2025 - 2000 + 1 }, (_, i) => 2000 + i).map((year) => (
-                        <MenuItem key={year} value={year}>
-                          {year}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    <FormHelperText>{errors.graduation_year?.message}</FormHelperText>
-                  </FormControl>
-                )}
-              />
-            </Grid>
+            <SelectField
+              name="graduation_year"
+              label="Год окончания"
+              options={graduationYearOptions()}
+              gridSize={{ xs: 6, md: 2 }}
+              control={control}
+              formControlError={!!errors.graduation_year}
+              formHelperText={errors.graduation_year?.message}
+              inputSize={inputSize}
+            />
             <FormTextField
               name="graduation_institution"
               label="Учебное заведение"
@@ -601,54 +663,54 @@ export const ApplicantForm = () => {
               textFieldHelperText={errors.medical_policy?.message}
             />
 
-            {/* Mother's Info */}
-            <GroupTitle title='Данные матери' />
+            {/* Representative 1 Info */}
+            <GroupTitle title='Данные представителя 1 (мама/жена)' />
             <FormTextField
-              name="mother_name"
-              label="ФИО матери"
+              name="representative1_name"
+              label="ФИО представителя 1"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_name}
-              textFieldHelperText={errors.mother_name?.message}
+              textFieldError={!!errors.representative1_name}
+              textFieldHelperText={errors.representative1_name?.message}
             />
             <FormTextFieldMask 
-              name="mother_phone"
-              label="Телефон матери"
+              name="representative1_phone"
+              label="Телефон представителя 1"
               mask="+7 (999) 999-9999"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_phone}
-              textFieldHelperText={errors.mother_phone?.message}
+              textFieldError={!!errors.representative1_phone}
+              textFieldHelperText={errors.representative1_phone?.message}
             />
             <FormTextField
-              name="mother_job"
-              label="Место работы матери и должность"
+              name="representative1_job"
+              label="Место работы и должность представителя 1"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_job}
-              textFieldHelperText={errors.mother_job?.message}
+              textFieldError={!!errors.representative1_job}
+              textFieldHelperText={errors.representative1_job?.message}
             />
             <FormTextFieldMask 
-              name="mother_passport_series"
+              name="representative1_passport_series"
               label="Серия паспорта"
               mask="9999"
               gridSize={{ xs: 3, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_passport_series}
-              textFieldHelperText={errors.mother_passport_series?.message}
+              textFieldError={!!errors.representative1_passport_series}
+              textFieldHelperText={errors.representative1_passport_series?.message}
             />
             <FormTextFieldMask 
-              name="mother_passport_number"
+              name="representative1_passport_number"
               label="Номер паспорта"
               mask="999999"
               gridSize={{ xs: 3, md: 2 }}
               control={control}
-              textFieldError={!!errors.mother_passport_number}
-              textFieldHelperText={errors.mother_passport_number?.message}
+              textFieldError={!!errors.representative1_passport_number}
+              textFieldHelperText={errors.representative1_passport_number?.message}
             />
             <Grid size={{ xs: 6, sm: 2 }}>
               <Controller
-                name="mother_passport_issued_date"
+                name="representative1_passport_issued_date"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -658,70 +720,70 @@ export const ApplicantForm = () => {
                     label="Дата выдачи"
                     InputLabelProps={{ shrink: true }}
                     size={inputSize.sm}
-                    error={!!errors.mother_passport_issued_date}
-                    helperText={errors.mother_passport_issued_date?.message}
+                    error={!!errors.representative1_passport_issued_date}
+                    helperText={errors.representative1_passport_issued_date?.message}
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
             </Grid>
             <FormTextField
-              name="mother_passport_issued_by"
+              name="representative1_passport_issued_by"
               label="Кем выдан"
               gridSize={{ xs: 6, md: 6 }}
               control={control}
-              textFieldError={!!errors.mother_passport_issued_by}
-              textFieldHelperText={errors.mother_passport_issued_by?.message}
+              textFieldError={!!errors.representative1_passport_issued_by}
+              textFieldHelperText={errors.representative1_passport_issued_by?.message}
             />
 
-            {/* Father's Info */}
-            <GroupTitle title='Данные отца' />
+            {/* Representative 2 Info */}
+            <GroupTitle title='Данные представителя 2 (папа/муж)' />
             <FormTextField
-              name="father_name"
-              label="ФИО отца"
+              name="representative2_name"
+              label="ФИО представителя 2"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.father_name}
-              textFieldHelperText={errors.father_name?.message}
+              textFieldError={!!errors.representative2_name}
+              textFieldHelperText={errors.representative2_name?.message}
             />
             <FormTextFieldMask 
-              name="father_phone"
-              label="Телефон отца"
+              name="representative2_phone"
+              label="Телефон представителя 2"
               mask="+7 (999) 999-9999"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.father_phone}
-              textFieldHelperText={errors.father_phone?.message}
+              textFieldError={!!errors.representative2_phone}
+              textFieldHelperText={errors.representative2_phone?.message}
             />
             <FormTextField
-              name="father_job"
-              label="Место работы отца и должность"
+              name="representative2_job"
+              label="Место работы и должность представителя 2"
               gridSize={{ xs: 6, md: 2 }}
               control={control}
-              textFieldError={!!errors.father_job}
-              textFieldHelperText={errors.father_job?.message}
+              textFieldError={!!errors.representative2_job}
+              textFieldHelperText={errors.representative2_job?.message}
             />
             <FormTextFieldMask 
-              name="father_passport_series"
+              name="representative2_passport_series"
               label="Серия паспорта"
               mask="9999"
               gridSize={{ xs: 3, md: 2 }}
               control={control}
-              textFieldError={!!errors.father_passport_series}
-              textFieldHelperText={errors.father_passport_series?.message}
+              textFieldError={!!errors.representative2_passport_series}
+              textFieldHelperText={errors.representative2_passport_series?.message}
             />
             <FormTextFieldMask 
-              name="father_passport_number"
+              name="representative2_passport_number"
               label="Номер паспорта"
               mask="999999"
               gridSize={{ xs: 3, md: 2 }}
               control={control}
-              textFieldError={!!errors.father_passport_number}
-              textFieldHelperText={errors.father_passport_number?.message}
+              textFieldError={!!errors.representative2_passport_number}
+              textFieldHelperText={errors.representative2_passport_number?.message}
             />
             <Grid size={{ xs: 6, sm: 2 }}>
               <Controller
-                name="father_passport_issued_date"
+                name="representative2_passport_issued_date"
                 control={control}
                 render={({ field }) => (
                   <TextField
@@ -731,20 +793,20 @@ export const ApplicantForm = () => {
                     label="Дата выдачи"
                     InputLabelProps={{ shrink: true }}
                     size={inputSize.sm}
-                    error={!!errors.father_passport_issued_date}
-                    helperText={errors.father_passport_issued_date?.message}
+                    error={!!errors.representative2_passport_issued_date}
+                    helperText={errors.representative2_passport_issued_date?.message}
                     sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
                   />
                 )}
               />
             </Grid>
             <FormTextField
-              name="father_passport_issued_by"
+              name="representative2_passport_issued_by"
               label="Кем выдан"
               gridSize={{ xs: 6, md: 6 }}
               control={control}
-              textFieldError={!!errors.father_passport_issued_by}
-              textFieldHelperText={errors.father_passport_issued_by?.message}
+              textFieldError={!!errors.representative2_passport_issued_by}
+              textFieldHelperText={errors.representative2_passport_issued_by?.message}
             />
 
             {/* Grades */}
@@ -753,9 +815,6 @@ export const ApplicantForm = () => {
               { name: 'grade_russian', label: 'Русский язык' },
               { name: 'grade_biology', label: 'Биология' },
               { name: 'grade_chemistry', label: 'Химия' },
-              { name: 'grade_math', label: 'Математика' },
-              { name: 'grade_language', label: 'Иностранный язык' },
-              { name: 'grade_physics', label: 'Физика' },
             ].map((grade) => (
               <Grid size={{ xs: 3, sm: 1 }} key={grade.name}>
                 <Controller
@@ -784,25 +843,6 @@ export const ApplicantForm = () => {
                 />
               </Grid>
             ))}
-            <Grid size={{ xs: 6 }}>
-              <Controller
-                name="average_grade"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Средний балл"
-                    type="number"
-                    inputProps={{ step: 0.01, min: 3.00, max: 5.00 }}
-                    size={inputSize.sm}
-                    error={!!errors.average_grade}
-                    helperText={errors.average_grade?.message}
-                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 }}}
-                  />
-                )}
-              />
-            </Grid>
 
             {/* Submit Button */}
             <Grid size={{ xs: 12 }} sx={{ mt: { xs: 3, sm: 4 } }}>
@@ -833,6 +873,8 @@ export const ApplicantForm = () => {
                     <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
                     Отправка...
                   </>
+                ) : isEditMode ? (
+                  'Сохранить изменения'
                 ) : (
                   'Отправить заявку'
                 )}

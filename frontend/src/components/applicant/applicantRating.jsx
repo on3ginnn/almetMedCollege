@@ -16,10 +16,17 @@ export const Rating = () => {
 
   useEffect(() => {
     fetchRatings();
-  }, []);
-  console.log(ratings);
-  
+  }, [fetchRatings]);
+
   const types = ['бюджет', 'коммерция'];
+
+  const specialtyMap = {
+    pharmacy: 'Фармация',
+    nursing: 'Сестринское дело',
+    midwifery: 'Акушерское дело',
+    lab_diagnostics: 'Лабораторная диагностика',
+    medical_treatment: 'Лечебное дело',
+  };
 
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', py: 4, px: { xs: 2, sm: 3 } }}>
@@ -40,35 +47,40 @@ export const Rating = () => {
 
       {types.map((type, idx) => (
         <TabPanel key={type} value={tabIndex} index={idx}>
-          {Object.entries(ratings[type] || {}).map(([specialty, apps]) => (
-            <Box key={specialty} sx={{ mb: 4 }}>
-              <Typography variant="h6" fontWeight="medium" mb={2}>
-                {specialty} ({apps.length} заявок)
-              </Typography>
-
-              {apps.length > 0 ? (
-                <Grid container spacing={2}>
-                  {apps.map((a, i) => (
-                    <Grid item xs={12} sm={6} md={4} key={a.id}>
-                      <Card sx={{ borderRadius: 2, bgcolor: 'background.paper', boxShadow: 2 }}>
-                        <CardContent>
-                          <Typography variant="subtitle1" fontWeight="bold">
-                            #{i + 1}. {a.full_name}
-                          </Typography>
-                          <Typography variant="body2">Средний балл: {a.average_grade}</Typography>
-                          <Typography variant="body2">Телефон: {a.student_phone}</Typography>
-                        </CardContent>
-                      </Card>
-                    </Grid>
-                  ))}
-                </Grid>
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  Нет данных по данной специальности
+          {Object.entries(ratings[type] || {}).map(([specialtyKey, apps]) => {
+            const [specialty, educationBase] = specialtyKey.split('_');
+            const specialtyName = specialtyMap[specialty] || specialty;
+            const displayName = specialty === 'nursing' ? `${specialtyName} (${educationBase === '9' ? '9 классов' : '11 классов'})` : specialtyName;
+            return (
+              <Box key={specialtyKey} sx={{ mb: 4 }}>
+                <Typography variant="h6" fontWeight="medium" mb={2}>
+                  {displayName} ({apps.length} заявок)
                 </Typography>
-              )}
-            </Box>
-          ))}
+
+                {apps.length > 0 ? (
+                  <Grid container spacing={2}>
+                    {apps.map((a, i) => (
+                      <Grid item xs={12} sm={6} md={4} key={a.id}>
+                        <Card sx={{ borderRadius: 2, bgcolor: 'background.paper', boxShadow: 2 }}>
+                          <CardContent>
+                            <Typography variant="subtitle1" fontWeight="bold">
+                              #{i + 1}. {a.full_name}
+                            </Typography>
+                            <Typography variant="body2">Регистрационный номер: {a.registration_number || '-'}</Typography>
+                            <Typography variant="body2">Телефон: {a.student_phone || '-'}</Typography>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    ))}
+                  </Grid>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    Нет данных по данной специальности
+                  </Typography>
+                )}
+              </Box>
+            );
+          })}
         </TabPanel>
       ))}
     </Box>

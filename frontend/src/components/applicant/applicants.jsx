@@ -27,6 +27,7 @@ export const Applicants = () => {
     downloadDocx,
     updateDocumentsStatus,
     updateDocumentsSubmitted,
+    updateAdmissionType,
     downloadExcel,
   } = useApplicantsStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,7 +53,7 @@ export const Applicants = () => {
   const handleDocumentsStatusChange = async (id, checked) => {
     try {
       await updateDocumentsStatus(id, checked);
-        getApplicants();
+      getApplicants();
     } catch (e) {
       alert('Ошибка при обновлении статуса документов');
     }
@@ -61,9 +62,18 @@ export const Applicants = () => {
   const handleDocumentsSubmittedChange = async (id, value) => {
     try {
       await updateDocumentsSubmitted(id, value || null);
-        getApplicants();
+      getApplicants();
     } catch (e) {
       alert('Ошибка при обновлении типа документов');
+    }
+  };
+
+  const handleAdmissionTypeChange = async (id, value) => {
+    try {
+      await updateAdmissionType(id, value || null);
+      getApplicants();
+    } catch (e) {
+      alert('Ошибка при обновлении типа поступления');
     }
   };
 
@@ -121,14 +131,6 @@ export const Applicants = () => {
       flex: isMobile ? 1.5 : 1,
     },
     {
-      field: 'average_grade',
-      headerName: 'Средний балл',
-      minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
-      type: 'number',
-      sortable: true,
-    },
-    {
       field: 'documents_delivered',
       headerName: 'Сдал документы',
       minWidth: isMobile ? 100 : 120,
@@ -184,35 +186,41 @@ export const Applicants = () => {
         ) : null,
     },
     {
-      field: 'enroll',
-      headerName: 'Зачислить',
+      field: 'admission_type',
+      headerName: 'Бюджет/Коммерция',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
       sortable: false,
-      renderCell: (params) =>
-        params.row.documents_delivered && (
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            disabled={params.row.enrolled}
-            onClick={() => handleEnroll(params.row.id)}
-            sx={{
-              ...commonButtonStyles,
-              bgcolor: params.row.enrolled ? theme.palette.grey[400] : theme.palette.primary.main,
-              '&:disabled': {
-                bgcolor: theme.palette.grey[400],
-                color: theme.palette.text.disabled,
-              },
-            }}
-          >
-            {params.row.enrolled ? 'Зачислен' : 'Зачислить'}
-          </Button>
-        ),
+      renderCell: (params) => (
+        <Select
+          value={params.row.admission_type || ''}
+          onChange={(e) => handleAdmissionTypeChange(params.row.id, e.target.value)}
+          sx={{
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            minHeight: { xs: 36, sm: 'auto' },
+            maxWidth: 120,
+            borderRadius: 2,
+            '& .MuiSelect-select': {
+              py: { xs: 1, sm: 0.5 },
+              px: { xs: 1, sm: 0.5 },
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: theme.palette.grey[400],
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: theme.palette.primary.main,
+            },
+          }}
+        >
+          <MenuItem value="">-</MenuItem>
+          <MenuItem value="бюджет">Бюджет</MenuItem>
+          <MenuItem value="коммерция">Коммерция</MenuItem>
+        </Select>
+      ),
     },
     {
       field: 'download',
-      headerName: 'Скачать',
+      headerName: 'Заявление',
       minWidth: isMobile ? 100 : 120,
       flex: isMobile ? 1 : 0.8,
       sortable: false,
@@ -240,9 +248,9 @@ export const Applicants = () => {
 
   const detailsColumn = {
     field: 'details',
-    headerName: 'Подробности',
+    headerName: '',
     minWidth: isMobile ? 40 : 50,
-    flex: isMobile ? 1 : 0.6,
+    flex: isMobile ? 1 : 0.3,
     sortable: false,
     align: 'right',
     renderCell: (params) => (
@@ -345,6 +353,7 @@ export const Applicants = () => {
             sorting: { sortModel: [{ field: 'average_grade', sort: 'desc' }] },
           }}
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
+          disableColumnMenu
           sx={{
             '& .MuiDataGrid-cell': {
               fontSize: { xs: '0.75rem', sm: '0.875rem' },

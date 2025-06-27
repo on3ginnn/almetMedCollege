@@ -122,10 +122,9 @@ export const ApplicantDetails = () => {
 
   const categoryText = (map, key) => map[key] || '-';
 
-  // Choice mappings from Django model
   const specialtyMap = {
     pharmacy: 'Фармация',
-    nursing: 'Сестринское дело',
+    nursing: `Сестринское дело (${selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'})`,
     midwifery: 'Акушерское дело',
     lab_diagnostics: 'Лабораторная диагностика',
     medical_treatment: 'Лечебное дело',
@@ -163,6 +162,11 @@ export const ApplicantDetails = () => {
     копия: 'Копия',
   };
 
+  const getSubjectGrade = (subjectName) => {
+    const subject = selectedApplicant.subjects?.find(s => s.subject_name === subjectName);
+    return subject ? subject.grade : '-';
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto', p: 1 }}>
       <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -173,7 +177,7 @@ export const ApplicantDetails = () => {
             </IconButton>
           </Tooltip>
           <Typography variant="h6" fontWeight="bold">
-            {selectedApplicant.full_name}
+            {selectedApplicant.full_name || 'Без имени'}
           </Typography>
           <Box flexGrow={1} />
           <Tooltip title="Скачать документ">
@@ -186,28 +190,30 @@ export const ApplicantDetails = () => {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Редактирование отключено">
-            <span>
-              <IconButton disabled>
-                <EditIcon />
-              </IconButton>
-            </span>
+          <Tooltip title="Редактировать анкету">
+            <IconButton onClick={() => navigate(`/applicant/edit/${id}`)}>
+              <EditIcon />
+            </IconButton>
           </Tooltip>
+
         </Toolbar>
       </AppBar>
 
       <Box mt={4}>
         <Section icon={<HomeWorkIcon color="primary" />} title="Детали поступления">
+          <InfoRow label="Регистрационный номер" value={selectedApplicant.registration_number} />
           <InfoRow label="Специальность" value={categoryText(specialtyMap, selectedApplicant.specialty)} />
+          <InfoRow label="База образования" value={selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'} />
           <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} />
           <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
           <InfoRow label="Нуждается в общежитии" value={displayBoolean(selectedApplicant.needs_dormitory)} />
           <InfoRow label="Документы сданы" value={displayBoolean(selectedApplicant.documents_delivered)} />
           <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} />
-          <InfoRow label="Приписное свидетельсвто" value={displayBoolean(selectedApplicant.military_id)} />
+          <InfoRow label="Приписное свидетельство" value={displayBoolean(selectedApplicant.military_id)} />
         </Section>
 
         <Section icon={<PersonIcon color="primary" />} title="Личные данные">
+          <InfoRow label="ФИО" value={selectedApplicant.full_name} />
           <InfoRow label="Гражданство" value={selectedApplicant.citizenship} />
           <InfoRow label="Национальность" value={selectedApplicant.nationality} />
           <InfoRow label="Дата рождения" value={formatDate(selectedApplicant.birth_date)} />
@@ -232,7 +238,7 @@ export const ApplicantDetails = () => {
           <InfoRow label="Кем выдан" value={selectedApplicant.passport_issued_by} />
           <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.passport_issued_date)} />
           <InfoRow label="Код подразделения" value={selectedApplicant.passport_division_code} />
-          <InfoRow label="Дата регистрации" value={selectedApplicant.passport_registration_date} />
+          <InfoRow label="Дата регистрации" value={formatDate(selectedApplicant.passport_registration_date)} />
         </Section>
 
         <Section icon={<SchoolIcon color="secondary" />} title="Образование">
@@ -246,30 +252,26 @@ export const ApplicantDetails = () => {
           <InfoRow label="Русский язык" value={selectedApplicant.grade_russian} />
           <InfoRow label="Биология" value={selectedApplicant.grade_biology} />
           <InfoRow label="Химия" value={selectedApplicant.grade_chemistry} />
-          <InfoRow label="Математика" value={selectedApplicant.grade_math} />
-          <InfoRow label="Иностранный язык" value={selectedApplicant.grade_language} />
-          <InfoRow label="Физика" value={selectedApplicant.grade_physics} />
-          <InfoRow label="Средний балл" value={selectedApplicant.average_grade} />
         </Section>
 
-        <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные матери">
-          <InfoRow label="ФИО" value={selectedApplicant.mother_name} />
-          <InfoRow label="Телефон" value={selectedApplicant.mother_phone} />
-          <InfoRow label="Место работы" value={selectedApplicant.mother_job} />
-          <InfoRow label="Серия паспорта" value={selectedApplicant.mother_passport_series} />
-          <InfoRow label="Номер паспорта" value={selectedApplicant.mother_passport_number} />
-          <InfoRow label="Кем выдан" value={selectedApplicant.mother_passport_issued_by} />
-          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.mother_passport_issued_date)} />
+        <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 1 (мама/жена)">
+          <InfoRow label="ФИО" value={selectedApplicant.representative1_name} />
+          <InfoRow label="Телефон" value={selectedApplicant.representative1_phone} />
+          <InfoRow label="Место работы" value={selectedApplicant.representative1_job} />
+          <InfoRow label="Серия паспорта" value={selectedApplicant.representative1_passport_series} />
+          <InfoRow label="Номер паспорта" value={selectedApplicant.representative1_passport_number} />
+          <InfoRow label="Кем выдан" value={selectedApplicant.representative1_passport_issued_by} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.representative1_passport_issued_date)} />
         </Section>
 
-        <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные отца">
-          <InfoRow label="ФИО" value={selectedApplicant.father_name} />
-          <InfoRow label="Телефон" value={selectedApplicant.father_phone} />
-          <InfoRow label="Место работы" value={selectedApplicant.father_job} />
-          <InfoRow label="Серия паспорта" value={selectedApplicant.father_passport_series} />
-          <InfoRow label="Номер паспорта" value={selectedApplicant.father_passport_number} />
-          <InfoRow label="Кем выдан" value={selectedApplicant.father_passport_issued_by} />
-          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.father_passport_issued_date)} />
+        <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 2 (папа/муж)">
+          <InfoRow label="ФИО" value={selectedApplicant.representative2_name} />
+          <InfoRow label="Телефон" value={selectedApplicant.representative2_phone} />
+          <InfoRow label="Место работы" value={selectedApplicant.representative2_job} />
+          <InfoRow label="Серия паспорта" value={selectedApplicant.representative2_passport_series} />
+          <InfoRow label="Номер паспорта" value={selectedApplicant.representative2_passport_number} />
+          <InfoRow label="Кем выдан" value={selectedApplicant.representative2_passport_issued_by} />
+          <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.representative2_passport_issued_date)} />
         </Section>
 
         <Section icon={<GradeIcon color="primary" />} title="Первоочередное зачисление">

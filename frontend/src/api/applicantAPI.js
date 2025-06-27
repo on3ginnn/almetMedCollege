@@ -72,6 +72,16 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async updateAdmissionType(pk, value) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/admission_type/`, {
+                admission_type: value,
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async downloadExcel() {
         try {
             const response = await apiClient.get('/applicants/download_excel/', {
@@ -83,8 +93,17 @@ export default class ApplicantAPI {
         }
     }
     static async getRating() {
-        try{
+        try {
             const response = await apiClient.get('/applicants/rating/');
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async update(pk, data) {
+        try {
+            console.log(data);
+            const response = await apiClient.patch(`/applicants/${pk}/`, data);
             return response;
         } catch (error) {
             throw error;

@@ -3,11 +3,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Applicant
-from .serializer import ApplicantSerializer  # Fix import
+from .serializer import ApplicantSerializer
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from .utils import generate_application_docx, generate_applicants_excel
-
 
 class ApplicantViewSet(viewsets.ModelViewSet):
     """
@@ -68,6 +67,21 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         if documents_submitted not in [None, 'оригинал', 'копия']:
             return Response({'error': 'Invalid documents_submitted value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.documents_submitted = documents_submitted
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'])
+    def admission_type(self, request, pk):
+        """
+        PATCH /api/applicants/{id}/admission_type/
+        Обновить тип поступления (бюджет, коммерция, null).
+        """
+        applicant = get_object_or_404(Applicant, pk=pk)
+        admission_type = request.data.get('admission_type')
+        if admission_type not in [None, 'бюджет', 'коммерция']:
+            return Response({'error': 'Invalid admission_type value'}, status=status.HTTP_400_BAD_REQUEST)
+        applicant.admission_type = admission_type
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)
