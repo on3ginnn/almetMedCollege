@@ -4,6 +4,7 @@ import ApplicantAPI from '../api/applicantAPI';
 export const useApplicantsStore = create((set, get) => ({
   applicants: [],
   selectedApplicant: null,
+  rating: [],
   getApplicants: async () => {
     try {
       const response = await ApplicantAPI.getApplicantList();
@@ -116,12 +117,12 @@ export const useApplicantsStore = create((set, get) => ({
       throw e;
     }
   },
-  fetchRatings: async () => {
+  fetchRating: async (specialty, type) => {
     try {
-      const response = await ApplicantAPI.getRating();
-      set({ ratings: response.data });
+      const response = await ApplicantAPI.getRating(specialty, type);
+      set({ rating: response.data });
     } catch (e) {
-      console.error('Ошибка при получении рейтинга:', e);
+      console.error("Ошибка при загрузке рейтинга:", e);
     }
   },
   updateApplicant: async (id, data) => {

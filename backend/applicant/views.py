@@ -7,6 +7,8 @@ from .serializer import ApplicantSerializer
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from .utils import generate_application_docx, generate_applicants_excel
+from rest_framework import status
+
 
 class ApplicantViewSet(viewsets.ModelViewSet):
     """
@@ -32,29 +34,37 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"], url_path="rating")
-    def rating(self, request):
+    def rating_filtered(self, request):
         """
-        GET /api/applicants/rating/
-        Возвращает рейтинг абитуриентов по среднему баллу.
-        До 50 человек на каждую специальность и тип поступления.
+        GET /api/applicants/rating-filtered/?specialty=pharmacy&admission_type=бюджет
+        Возвращает отсортированный список абитуриентов:
+        - С documents_delivered=True
+        - Сначала первоочередные (по среднему баллу)
+        - Потом остальные (по среднему, наличию преимущественного права, дате подачи)
         """
-        result = {
-            "бюджет": {},
-            "коммерция": {}
-        }
+        specialty = request.query_params.get("specialty")
+        admission_type = request.query_params.get("admission_type")
 
-        specialties = Applicant.objects.values_list("specialty", flat=True).distinct()
+        if not specialty or not admission_type:
+            return Response({"error": "specialty and admission_type are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        for specialty in specialties:
-            for admission_type in ["бюджет", "коммерция"]:
-                applicants = Applicant.objects.filter(
-                    specialty=specialty,
-                    admission_type=admission_type
-                ).order_by("-average_grade")[:50]
-                serialized = ApplicantSerializer(applicants, many=True).data
-                result[admission_type].setdefault(specialty, serialized)
+        queryset = Applicant.objects.filter(
+            specialty=specialty,
+            admission_type=admission_type,
+            documents_delivered=True
+        )
 
-        return Response(result)
+        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
+        others = queryset.filter(priority_enrollment="none").order_by(
+            "-average_grade",
+            "-preferential_enrollment",
+            "submitted_at"
+        )
+
+        result = list(primary) + list(others)
+        serializer = ApplicantSerializer(result, many=True)
+        return Response(serializer.data)
+
 
     @action(detail=True, methods=['patch'])
     def document(self, request, pk):

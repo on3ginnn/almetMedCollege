@@ -113,7 +113,6 @@ class Applicant(models.Model):
         max_length=10,
         choices=DOCUMENTS_TYPE_CHOICES,
         default='none',
-        # blank=True
     )
     study_form = models.CharField(
         "Форма обучения",

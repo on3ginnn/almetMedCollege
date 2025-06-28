@@ -37,7 +37,7 @@ function App() {
             <Route path="/schedule/create" element={<ScheduleForm />} />
           </Route>
           <Route path='/applicant' element={<ApplicantForm />} />
-          <Route path="/rating" element={<Rating />} />
+          <Route path="/applicant/rating" element={<Rating />} />
           <Route path="/applicant" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/applicant/all" element={<Applicants />} />
             <Route path='/applicant/:id' element={<ApplicantDetails />} />

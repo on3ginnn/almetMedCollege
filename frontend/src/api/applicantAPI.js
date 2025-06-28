@@ -92,14 +92,17 @@ export default class ApplicantAPI {
             throw error;
         }
     }
-    static async getRating() {
-        try {
-            const response = await apiClient.get('/applicants/rating/');
-            return response;
-        } catch (error) {
-            throw error;
-        }
+    static async getRating(specialty, type) {
+    try {
+        const response = await apiClient.get(`/applicants/rating/`, {
+        params: { specialty, admission_type: type },
+        });
+        return response;
+    } catch (error) {
+        throw error;
     }
+    }
+
     static async update(pk, data) {
         try {
             console.log(data);
