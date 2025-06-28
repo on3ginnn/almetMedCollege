@@ -19,13 +19,10 @@ export const schema = yup.object().shape({
     .nullable(),
   birth_date: yup
     .date()
-    .transform((value, originalValue) => {
-      return originalValue === '' ? null : value;
-    })
     .typeError('Введите корректную дату')
     .max(new Date(), 'Дата не может быть в будущем')
-    .nullable(),
-  birth_place: yup
+    .required('Дата рождения обязательна'),
+    birth_place: yup
     .string()
     .max(255, 'Максимум 255 символов')
     .nullable(),
@@ -36,7 +33,7 @@ export const schema = yup.object().shape({
   address_actual: yup
     .string()
     .max(255, 'Максимум 255 символов')
-    .nullable(),
+    .required("Фактический адресс обязателен"),
   passport_division_code: yup
     .string()
     .transform((value, originalValue) => {
@@ -120,13 +117,8 @@ export const schema = yup.object().shape({
     }),
   snils: yup
     .string()
-    .transform((value, originalValue) => {
-      return originalValue === '' ? '' : value;
-    })
-    .test('is-valid-snils', 'СНИЛС формата XXX-XXX-XXX-XX', function (value) {
-      if (!value) return true; // Allow empty string
-      return /^\d{3}-\d{3}-\d{3}-\d{2}$/.test(value);
-    }),
+    .matches(/^\d{3}-\d{3}-\d{3}-\d{2}$/, 'СНИЛС формата XXX-XXX-XXX-XX')
+    .required('СНИЛС обязателен'),
   medical_policy: yup
     .string()
     .max(100, 'Максимум 100 символов')
@@ -288,10 +280,17 @@ export const schema = yup.object().shape({
     })
     .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
     .nullable(),
+  average_grade: yup
+    .number()
+    .required('Средний балл обязателен')
+    .min(3.00, 'Средний балл от 3.00')
+    .max(5.00, 'Средний балл до 5.00')
+    .typeError('Введите средний бал в формате 4,85'),
   admission_type: yup
     .string()
-    .oneOf(['бюджет', 'коммерция'], 'Выберите тип поступления')
+    .oneOf(['бюджет', 'коммерция', 'none'], 'Выберите тип поступления')
     .required('Тип поступления обязателен'),
+    // .nullable(),
   needs_dormitory: yup
     .boolean()
     .nullable(),

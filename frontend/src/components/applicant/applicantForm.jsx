@@ -95,13 +95,13 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       representative2_passport_issued_by: '',
       representative2_passport_issued_date: '',
       documents_delivered: false,
-      documents_submitted: null,
+      documents_submitted: 'none',
       specialty: '',
       education_base: '',
       grade_russian: null,
       grade_biology: null,
       grade_chemistry: null,
-      admission_type: 'бюджет',
+      admission_type: 'none',
       needs_dormitory: false,
       priority_enrollment: 'none',
       preferential_enrollment: 'none',
@@ -273,6 +273,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   const admissionTypeOptions = [
     { value: 'бюджет', label: 'Бюджет' },
     { value: 'коммерция', label: 'Коммерция' },
+    { value: 'none', label: 'Не указывать' },
   ];
 
   const priorityEnrollmentOptions = [
@@ -339,7 +340,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
             <GroupTitle title='Детали поступления' />
             <SelectField
               name="specialty"
-              label="Специальность"
+              label="Специальность*"
               options={specialtyOptions}
               gridSize={{ xs: 6, md: 3 }}
               control={control}
@@ -394,7 +395,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
             <GroupTitle title='Личные данные абитуриента' />
             <FormTextField 
               name="full_name"
-              label="ФИО"
+              label="ФИО*"
               gridSize={{ xs: 6, md: 3 }}
               control={control}
               textFieldError={!!errors.full_name}
@@ -425,7 +426,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
                     {...field}
                     fullWidth
                     type="date"
-                    label="Дата рождения"
+                    label="Дата рождения*"
                     InputLabelProps={{ shrink: true }}
                     size={inputSize.sm}
                     error={!!errors.birth_date}
@@ -451,7 +452,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
                   <TextField
                     {...field}
                     fullWidth
-                    label="Фактический адрес"
+                    label="Фактический адрес*"
                     multiline
                     rows={2}
                     size={inputSize.sm}
@@ -647,7 +648,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
             />
             <FormTextFieldMask
               name="snils"
-              label="СНИЛС"
+              label="СНИЛС*"
               mask="999-999-999-99"
               gridSize={{ xs: 6, md: 1.5 }}
               control={control}
@@ -843,6 +844,26 @@ export const ApplicantForm = ({ isEditMode = false }) => {
                 />
               </Grid>
             ))}
+
+            <Grid size={{ xs: 3 }}>
+              <Controller
+                name="average_grade"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Средний балл"
+                    type="number"
+                    inputProps={{ step: 0.01, min: 3.00, max: 5.00 }}
+                    size={inputSize.sm}
+                    error={!!errors.average_grade}
+                    helperText={errors.average_grade?.message}
+                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 }}}
+                  />
+                )}
+              />
+            </Grid>
 
             {/* Submit Button */}
             <Grid size={{ xs: 12 }} sx={{ mt: { xs: 3, sm: 4 } }}>

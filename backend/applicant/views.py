@@ -60,11 +60,11 @@ class ApplicantViewSet(viewsets.ModelViewSet):
     def document(self, request, pk):
         """
         PATCH /api/applicants/{id}/document/
-        Обновить тип документов (оригинал, копия, null).
+        Обновить тип документов (оригинал, копия, не указано).
         """
         applicant = get_object_or_404(Applicant, pk=pk)
         documents_submitted = request.data.get('documents_submitted')
-        if documents_submitted not in [None, 'оригинал', 'копия']:
+        if documents_submitted not in ['none', 'оригинал', 'копия']:
             return Response({'error': 'Invalid documents_submitted value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.documents_submitted = documents_submitted
         applicant.save()
@@ -75,11 +75,11 @@ class ApplicantViewSet(viewsets.ModelViewSet):
     def admission_type(self, request, pk):
         """
         PATCH /api/applicants/{id}/admission_type/
-        Обновить тип поступления (бюджет, коммерция, null).
+        Обновить тип поступления (бюджет, коммерция, не указано).
         """
         applicant = get_object_or_404(Applicant, pk=pk)
         admission_type = request.data.get('admission_type')
-        if admission_type not in [None, 'бюджет', 'коммерция']:
+        if admission_type not in ['none', 'бюджет', 'коммерция']:
             return Response({'error': 'Invalid admission_type value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.admission_type = admission_type
         applicant.save()

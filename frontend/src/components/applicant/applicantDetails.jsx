@@ -10,13 +10,14 @@ import {
   CardContent,
   CircularProgress,
   Divider,
-  Grid,
+  Select,
   IconButton,
   Stack,
   Toolbar,
   Tooltip,
   Typography,
   useTheme,
+  MenuItem,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -34,17 +35,60 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
+import Grid from '@mui/material/Grid2';
 
 const displayBoolean = (value) => (value ? 'Да' : 'Нет');
 
+// const InfoRow = ({ label, value }) => (
+//   <Grid item xs={12} sm={6} md={4}>
+//     <Typography variant="body1">
+//       <strong>{label}:</strong> {value || '-'}
+//     </Typography>
+//   </Grid>
+// );
 const InfoRow = ({ label, value }) => (
-  <Grid item xs={12} sm={6} md={4}>
-    <Typography variant="body1">
-      <strong>{label}:</strong> {value || '-'}
-    </Typography>
-  </Grid>
+  <tr style={{
+      padding: '10px 16px',
+      verticalAlign: 'top',
+      borderBottom: '1px solidrgb(243, 243, 243)',
+    }}>
+    <td style={{
+      fontWeight: 600,
+      padding: '10px 16px',
+      verticalAlign: 'top',
+      width: '40%',
+      whiteSpace: 'nowrap',
+    }}>
+      {label}
+    </td>
+    <td style={{ padding: '10px 16px', verticalAlign: 'top' }}>
+      {value || <span style={{ color: '#999' }}>—</span>}
+    </td>
+  </tr>
 );
 
+// const Section = ({ icon, title, children }) => {
+//   const theme = useTheme();
+//   return (
+//     <Accordion defaultExpanded sx={{ borderRadius: 2, overflow: 'hidden', boxShadow: 1, mb: 3 }}>
+//       <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{ bgcolor: theme.palette.grey[100], px: 2 }}>
+//         <Stack direction="row" spacing={1} alignItems="center">
+//           {icon}
+//           <Typography variant="h6" fontWeight="bold">{title}</Typography>
+//         </Stack>
+//       </AccordionSummary>
+//       <AccordionDetails sx={{ bgcolor: theme.palette.background.paper }}>
+//         <Card sx={{ borderRadius: 2, boxShadow: 0 }}>
+//           <CardContent>
+//             <Grid container spacing={2}>{children}</Grid>
+//           </CardContent>
+//         </Card>
+//       </AccordionDetails>
+//     </Accordion>
+//   );
+// };
+
+// Section рендерит таблицу
 const Section = ({ icon, title, children }) => {
   const theme = useTheme();
   return (
@@ -56,15 +100,16 @@ const Section = ({ icon, title, children }) => {
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ bgcolor: theme.palette.background.paper }}>
-        <Card sx={{ borderRadius: 2, boxShadow: 0 }}>
-          <CardContent>
-            <Grid container spacing={2}>{children}</Grid>
-          </CardContent>
-        </Card>
+        <Box sx={{ width: '100%', overflowX: 'auto', px: { xs: 1, sm: 2, md: 3 } }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <tbody>{children}</tbody>
+          </table>
+        </Box>
       </AccordionDetails>
     </Accordion>
   );
 };
+
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -76,7 +121,7 @@ export const ApplicantDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { selectedApplicant, getApplicantById, loading, error, downloadDocx, deleteApplicantById } = useApplicantsStore();
+  const { selectedApplicant, getApplicantById, loading, error, downloadDocx, deleteApplicantById, updateDocumentsSubmitted, getApplicants, updateAdmissionType } = useApplicantsStore();
 
   useEffect(() => {
     getApplicantById(id);
@@ -133,6 +178,7 @@ export const ApplicantDetails = () => {
   const admissionTypeMap = {
     бюджет: 'Финансируемые из средств бюджета Республики Татарстан',
     коммерция: 'На места с полным возмещением затрат',
+    none: "Не указано"
   };
 
   const priorityEnrollmentMap = {
@@ -160,15 +206,39 @@ export const ApplicantDetails = () => {
   const documentsSubmittedMap = {
     оригинал: 'Оригинал',
     копия: 'Копия',
+    none: "Не указано"
   };
-
+  const handleDocumentsSubmittedChange = async (id, value) => {
+    try {
+      await updateDocumentsSubmitted(id, value || null);
+      getApplicantById(id);
+    } catch (e) {
+      alert('Ошибка при обновлении типа документов');
+    }
+  };
+  const handleAdmissionTypeChange = async (id, value) => {
+    try {
+      await updateAdmissionType(id, value || null);
+      getApplicantById(id);
+    } catch (e) {
+      alert('Ошибка при обновлении типа поступления');
+    }
+  };
   const getSubjectGrade = (subjectName) => {
     const subject = selectedApplicant.subjects?.find(s => s.subject_name === subjectName);
     return subject ? subject.grade : '-';
   };
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: 'auto', p: 1 }}>
+    <Box 
+      sx={{
+        px: { xs: 1, sm: 2, md: 3 },
+        py: 3,
+        width: '100%',
+        maxWidth: 1200,
+        mx: 'auto',
+      }}
+    >
       <AppBar position="static" color="default" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Toolbar>
           <Tooltip title="Назад к списку">
@@ -204,11 +274,65 @@ export const ApplicantDetails = () => {
           <InfoRow label="Регистрационный номер" value={selectedApplicant.registration_number} />
           <InfoRow label="Специальность" value={categoryText(specialtyMap, selectedApplicant.specialty)} />
           <InfoRow label="База образования" value={selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'} />
-          <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} />
+          {/* <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} /> */}
+          <InfoRow label="Тип поступления" value={
+            <Select
+          value={selectedApplicant.admission_type || ''}
+          onChange={(e) => handleAdmissionTypeChange(selectedApplicant.id, e.target.value)}
+          sx={{
+            fontSize: { xs: '0.75rem', sm: '0.875rem' },
+            minHeight: { xs: 36, sm: 'auto' },
+            maxWidth: 120,
+            borderRadius: 2,
+            '& .MuiSelect-select': {
+              py: { xs: 1, sm: 0.5 },
+              px: { xs: 1, sm: 0.5 },
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: theme.palette.grey[400],
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: theme.palette.primary.main,
+            },
+          }}
+        >
+          <MenuItem value="none">Не указано</MenuItem>
+          <MenuItem value="бюджет">Бюджет</MenuItem>
+          <MenuItem value="коммерция">Коммерция</MenuItem>
+        </Select>
+            } />
           <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
           <InfoRow label="Нуждается в общежитии" value={displayBoolean(selectedApplicant.needs_dormitory)} />
           <InfoRow label="Документы сданы" value={displayBoolean(selectedApplicant.documents_delivered)} />
-          <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} />
+          {/* <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} /> */}
+          <InfoRow label="Тип поданных документов" value={<Select
+            value={selectedApplicant.documents_submitted || ''}
+            onChange={(e) => handleDocumentsSubmittedChange(selectedApplicant.id, e.target.value)}
+            disabled={!selectedApplicant.documents_submitted}
+            sx={{
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              minHeight: { xs: 36, sm: 'auto' },
+              maxWidth: 120,
+              borderRadius: 2,
+              '& .MuiSelect-select': {
+                py: { xs: 1, sm: 0.5 },
+                px: { xs: 1, sm: 0.5 },
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[400],
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.main,
+              },
+              '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[300],
+              },
+            }}
+          >
+            <MenuItem value="none">Не указано</MenuItem>
+            <MenuItem value="оригинал">Оригинал</MenuItem>
+            <MenuItem value="копия">Копия</MenuItem>
+          </Select>} />
           <InfoRow label="Приписное свидетельство" value={displayBoolean(selectedApplicant.military_id)} />
         </Section>
 
@@ -233,8 +357,13 @@ export const ApplicantDetails = () => {
         <Section icon={<BadgeIcon color="primary" />} title="Паспортные данные">
           <InfoRow
             label="Серия и номер"
-            value={`${selectedApplicant.passport_series || ''} ${selectedApplicant.passport_number || ''}`}
+            value={
+              selectedApplicant.passport_series || selectedApplicant.passport_number
+                ? `${selectedApplicant.passport_series || ''} ${selectedApplicant.passport_number || ''}`
+                : null
+            }
           />
+
           <InfoRow label="Кем выдан" value={selectedApplicant.passport_issued_by} />
           <InfoRow label="Дата выдачи" value={formatDate(selectedApplicant.passport_issued_date)} />
           <InfoRow label="Код подразделения" value={selectedApplicant.passport_division_code} />

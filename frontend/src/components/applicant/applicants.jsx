@@ -179,7 +179,7 @@ export const Applicants = () => {
               },
             }}
           >
-            <MenuItem value="">-</MenuItem>
+            <MenuItem value="none">Не указано</MenuItem>
             <MenuItem value="оригинал">Оригинал</MenuItem>
             <MenuItem value="копия">Копия</MenuItem>
           </Select>
@@ -212,7 +212,7 @@ export const Applicants = () => {
             },
           }}
         >
-          <MenuItem value="">-</MenuItem>
+          <MenuItem value="none">Не указано</MenuItem>
           <MenuItem value="бюджет">Бюджет</MenuItem>
           <MenuItem value="коммерция">Коммерция</MenuItem>
         </Select>

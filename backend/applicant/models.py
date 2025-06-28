@@ -42,21 +42,23 @@ class Applicant(models.Model):
     DOCUMENTS_TYPE_CHOICES = [
         ('оригинал', 'Оригинал'),
         ('копия', 'Копия'),
+        ('none', 'Не выбранно'),
     ]
     
     ADMISSION_TYPE_CHOICES = [
         ("бюджет", "Финансируемые из средств бюджета Республики Татарстан"),
-        ("коммерция", "На места с полным возмещением затрат")
+        ("коммерция", "На места с полным возмещением затрат"),
+        ('none', 'Не выбранно'),
     ]
 
     registration_number = models.CharField("Регистрационный номер", max_length=10, blank=True, default="")
     full_name = models.CharField("ФИО", max_length=255)
     citizenship = models.CharField("Гражданство", max_length=100, blank=True)
     nationality = models.CharField("Национальность", max_length=100, blank=True)
-    birth_date = models.DateField("Дата рождения", null=True, blank=True)
+    birth_date = models.DateField("Дата рождения")
     birth_place = models.CharField("Место рождения", max_length=255, blank=True)
     address = models.TextField("Адрес места жительства по паспорту", blank=True)
-    address_actual = models.TextField("Фактический адрес места жительства", blank=True)
+    address_actual = models.TextField("Фактический адрес места жительства")
     certificate_series = models.CharField("Номер аттестата", max_length=14, blank=True)
     certificate_issued_date = models.DateField("Дата выдачи аттестата", null=True, blank=True)
 
@@ -79,7 +81,7 @@ class Applicant(models.Model):
     passport_registration_date = models.DateField("Дата регистрации прописки по паспорту", null=True, blank=True)
 
     inn = models.CharField("ИНН", max_length=12, blank=True)
-    snils = models.CharField("СНИЛС", max_length=11, blank=True)
+    snils = models.CharField("СНИЛС", max_length=11)
     medical_policy = models.CharField("Медицинский полис", max_length=100, blank=True)
     military_id = models.BooleanField("Приписное свидетельство (для юношей)", default=False)
     student_phone = models.CharField("Телефон абитуриента", max_length=20, blank=True)
@@ -104,32 +106,32 @@ class Applicant(models.Model):
     documents_delivered = models.BooleanField("Статус сдал документы", default=False)
     specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES)
     education_base = models.CharField("База образования", max_length=2, choices=EDUCATION_BASE_CHOICES)
-    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES)
+    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES, default="none")
     needs_dormitory = models.BooleanField("Нуждается в общежитии", default=False)
     documents_submitted = models.CharField(
         "Тип поданных документов",
         max_length=10,
         choices=DOCUMENTS_TYPE_CHOICES,
-        null=True,
-        blank=True,
+        default='none',
+        # blank=True
     )
     study_form = models.CharField(
         "Форма обучения",
         max_length=20,
         choices=STUDY_FORM_CHOICES,
-        blank=True
+        blank=True,
     )
     priority_enrollment = models.CharField(
         "Первоочередное зачисление",
         max_length=50,
         choices=PRIORITY_ENROLLMENT_CHOICES,
-        default='none'
+        default='none',
     )
     preferential_enrollment = models.CharField(
         "Преимущественное право на зачисление",
         max_length=50,
         choices=PREFERENTIAL_ENROLLMENT_CHOICES,
-        default='none'
+        default='none',
     )
     grade_russian = models.IntegerField(
         "Оценка по русскому языку",
@@ -157,6 +159,13 @@ class Applicant(models.Model):
         ],
         blank=True,
         null=True,
+    )
+    average_grade = models.FloatField(
+        "Заявленный средний балл",
+            validators=[
+                MinValueValidator(3.00, message="Средний балл не может быть ниже 3.00"),
+                MaxValueValidator(5.00, message="Средний балл не может быть выше 5.00"),
+            ]
     )
     enrolled = models.BooleanField("Зачислен", default=False)
     submitted_at = models.DateTimeField("Дата подачи", auto_now_add=True)
