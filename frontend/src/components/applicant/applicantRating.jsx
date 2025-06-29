@@ -48,7 +48,7 @@ export const Rating = () => {
   return (
     <Box
       sx={{
-        p: { xs: 2, sm: 3 },
+        p: { xs: 0, sm: 3 },
         // bgcolor: theme.palette.background.default,
         minHeight: '100vh',
       }}
@@ -115,7 +115,7 @@ export const Rating = () => {
               p: { xs: 2, sm: 3 },
               borderRadius: 2,
               bgcolor: 'background.paper',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              boxShadow: { xs: '0 0 0 rgba(0,0,0,0.06)', sm: '0 2px 8px rgba(0,0,0,0.06)'}
             }}
           >
             <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -164,7 +164,7 @@ export const Rating = () => {
               width: '100%',
               borderRadius: 2,
               bgcolor: 'background.paper',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              boxShadow: '0 0 0 rgba(0,0,0,0.06)'
             }}
           >
             {isLoading ? (
@@ -177,9 +177,9 @@ export const Rating = () => {
             ) : rating.length === 0 ? (
               <Typography color="text.secondary">Нет данных по выбранной специальности.</Typography>
             ) : (
-              <Box sx={{ overflowX: 'auto' }}>
+              <Box sx={{ overflowX: 'auto', boxShadow: { xs: '0 0 0 rgba(0,0,0,0.06)', sm: '0 2px 8px rgba(0,0,0,0.06)'} }}>
                 <Table>
-                  <TableHead sx={{ backgroundColor: theme.palette.grey[50], borderBottom: `1px solid ${theme.palette.divider}` }}>
+                  <TableHead  sx={{ display: { xs: "none", sm: "table-header-group" }, backgroundColor: theme.palette.grey[50], borderBottom: `1px solid ${theme.palette.divider}` }}>
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>№</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>ФИО</TableCell>
@@ -198,35 +198,58 @@ export const Rating = () => {
                           '&:hover': {
                             backgroundColor: theme.palette.action.hover,
                           },
-                          // backgroundColor:
-                          //   a.priority_enrollment !== 'none'
-                          //     ? theme.palette.action.selected
-                          //     : 'transparent',
                         }}
                       >
-                        <TableCell>{i + 1}</TableCell>
-                        <TableCell>
+                        {/* Desktop Layout */}
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{i + 1}</TableCell>
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           <Typography fontWeight="medium">{a.full_name}</Typography>
                         </TableCell>
-                        <TableCell>{a.average_grade?.toFixed(2) || '—'}</TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                          {a.average_grade?.toFixed(2) || '—'}
+                        </TableCell>
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.priority_enrollment !== 'none' && (
                             <Tooltip title="Первоочередное зачисление">
                               <StarIcon fontSize="small" color="primary" />
                             </Tooltip>
                           )}
                         </TableCell>
-                        <TableCell>
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.preferential_enrollment !== 'none' && (
                             <Tooltip title="Преимущественное право">
                               <VerifiedIcon fontSize="small" color="success" />
                             </Tooltip>
                           )}
                         </TableCell>
-                      </TableRow>
 
+                        {/* Mobile Layout */}
+                        <TableCell sx={{ display: { xs: 'table-cell', sm: 'none' }, p: 1 }} colSpan={5}>
+                          <Stack spacing={0.5}>
+                            <Typography variant="body2" fontWeight="bold">
+                              {i + 1}. {a.full_name}
+                            </Typography>
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <Typography variant="caption" color="text.secondary">
+                                Ср. балл: {a.average_grade?.toFixed(2) || '—'}
+                              </Typography>
+                              {a.priority_enrollment !== 'none' && (
+                                <Tooltip title="Первоочередное зачисление">
+                                  <StarIcon fontSize="small" color="primary" />
+                                </Tooltip>
+                              )}
+                              {a.preferential_enrollment !== 'none' && (
+                                <Tooltip title="Преимущественное право">
+                                  <VerifiedIcon fontSize="small" color="success" />
+                                </Tooltip>
+                              )}
+                            </Stack>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
                     ))}
                   </TableBody>
+
                 </Table>
               </Box>
             )}

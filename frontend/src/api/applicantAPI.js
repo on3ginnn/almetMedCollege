@@ -43,6 +43,16 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async downloadTitul(pk) {
+        try {
+            const response = await apiClient.get(`/applicants/${pk}/download/titul/`, {
+                responseType: 'blob',
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async enroll(pk) {
         try {
             const response = await apiClient.patch(`/applicants/${pk}/enroll/`, { enrolled: true });
@@ -112,5 +122,14 @@ export default class ApplicantAPI {
             throw error;
         }
     }
-
+    static async updateNumber(pk, number) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/number/`, {
+                registration_number: number,
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

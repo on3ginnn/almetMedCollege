@@ -6,7 +6,7 @@ from .models import Applicant
 from .serializer import ApplicantSerializer
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from .utils import generate_application_docx, generate_applicants_excel
+from .utils import generate_application_docx, generate_applicants_excel, generate_application_titul
 from rest_framework import status
 
 
@@ -95,6 +95,18 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=["patch"], url_path="number")
+    def number(self, request, pk=None):
+        applicant = self.get_object()
+        new_number = request.data.get("registration_number", "").strip()
+        # if not new_number:
+        #     return Response({"error": "Регистрационный номер не может быть пустым"}, status=status.HTTP_400_BAD_REQUEST)
+
+        applicant.registration_number = new_number
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UpdateDocumentsDeliveredView(APIView):
     def patch(self, request, pk):
@@ -119,6 +131,22 @@ def download_applicant_document(request, pk):
     )
     response['Content-Disposition'] = f'attachment; filename="Заявление_{applicant.full_name}.docx"'
     return response
+
+def download_applicant_titul(request, pk):
+    try:
+        applicant = Applicant.objects.get(pk=pk)
+        buffer = generate_application_titul(applicant)
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            content=buffer.getvalue(),
+        )
+        response['Content-Disposition'] = f'attachment; filename="Титульник_{applicant.full_name}.docx"'
+        return response
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return HttpResponse(f"Ошибка: {str(e)}", status=500)
+
 
 class DownloadExcelView(APIView):
     def get(self, request):

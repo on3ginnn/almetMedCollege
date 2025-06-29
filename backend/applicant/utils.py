@@ -25,7 +25,7 @@ def generate_applicants_excel():
         'Дата рождения', 'Место рождения', 'Адрес местожительства', 'Фактический адрес',
         'Серия, № аттестата', 'Дата выдачи аттестата', 'Год окончания, наименование учебного заведения',
         'Паспортные данные (серия, номер, кем и когда выдан)', 'Код подразделения', 'Дата регистрации прописки',
-        'ИНН', 'СНИЛС', 'Медицинский полис', 'Приписное свидетельство (да/нет)', 'Телефон абитуриента', 'Email',
+        'ИНН', 'СНИЛС', 'Медицинский полис', 'Приписное свидетельство', 'Договор с мед.организацией', 'Телефон абитуриента', 'Email',
         'ФИО, № телефона представителя 1', 'Место работы, должность представителя 1', 'Паспортные данные представителя 1',
         'ФИО, № телефона представителя 2', 'Место работы, должность представителя 2', 'Паспортные данные представителя 2',
         'Русский язык', 'Биология', 'Химия', 'Бюджет/коммерция',
@@ -103,6 +103,7 @@ def generate_applicants_excel():
                 applicant.snils or '',
                 applicant.medical_policy or '',
                 'Да' if applicant.military_id else 'Нет',
+                'Да' if applicant.medical_contract else 'Нет',
                 applicant.student_phone or '',
                 applicant.student_email or '',
                 representative1_info,
@@ -164,14 +165,18 @@ def generate_application_docx(applicant: Applicant):
         f'выдан: {applicant.representative1_passport_issued_by}, {_date(applicant.representative1_passport_issued_date, "d.m.Y")}'
         if all([applicant.representative1_passport_series, applicant.representative1_passport_number, 
                 applicant.representative1_passport_issued_by, applicant.representative1_passport_issued_date])
-        else ''
+        else '''______________________________________________
+_________________________________________________________________________________________
+'''
     )
     representative2_passport = (
         f'Серия: {applicant.representative2_passport_series} № {applicant.representative2_passport_number}, '
         f'выдан: {applicant.representative2_passport_issued_by}, {_date(applicant.representative2_passport_issued_date, "d.m.Y")}'
         if all([applicant.representative2_passport_series, applicant.representative2_passport_number, 
                 applicant.representative2_passport_issued_by, applicant.representative2_passport_issued_date])
-        else ''
+        else '''______________________________________________
+_________________________________________________________________________________________
+'''
     )
 
     # Determine social benefits
@@ -183,49 +188,55 @@ def generate_application_docx(applicant: Applicant):
 
     # Context for template rendering
     context = {
-        'registration_number': applicant.registration_number or '',
+        'registration_number': applicant.registration_number or '_____________________',
         'last_name': last_name,
         'first_name': first_name,
-        'father_name': father_name,
+        'father_name': father_name or '__________________',
         'birth_date': _date(applicant.birth_date, 'd.m.Y') if applicant.birth_date else '',
-        'birth_place': applicant.birth_place or '',
-        'citizenship': applicant.citizenship or '',
-        'passport_series': applicant.passport_series or '',
-        'passport_number': applicant.passport_number or '',
-        'passport_issued_date': _date(applicant.passport_issued_date, 'd.m.Y') if applicant.passport_issued_date else '',
-        'passport_issued_by': applicant.passport_issued_by or '',
-        'passport_division_code': applicant.passport_division_code or '',
-        'address': applicant.address or '',
+        'birth_place': applicant.birth_place or '''_______________________
+______________________________________
+''',
+        'citizenship': applicant.citizenship or '___________________________',
+        'passport_series': applicant.passport_series or '______',
+        'passport_number': applicant.passport_number or '_____________',
+        'passport_issued_date': _date(applicant.passport_issued_date, 'd.m.Y') if applicant.passport_issued_date else '___________________________',
+        'passport_issued_by': applicant.passport_issued_by or '''_____________________________
+_______________________________________
+
+''',
+        'passport_division_code': applicant.passport_division_code or '__________',
+        'address': applicant.address or '_____________________________________________________________________________________',
         'address_actual': applicant.address_actual or applicant.address or 'тот же',
         'passport_registration_date': _date(applicant.passport_registration_date, 'd.m.Y') if applicant.passport_registration_date else '',
         'snils': clean_snils,
-        'inn': applicant.inn or '',
+        'inn': applicant.inn or '___________________',
         'medical_policy': applicant.medical_policy or '',
         'military_id': 'Да' if applicant.military_id else 'Нет',
-        'student_phone': applicant.student_phone or '',
-        'email': applicant.student_email or '',
+        'student_phone': applicant.student_phone or '____________________',
+        'email': applicant.student_email or '______________________________________',
         'specialty': specialty,
         'study_form_verbose': dict(Applicant.STUDY_FORM_CHOICES).get(applicant.study_form, ''),
         'documents_submitted': applicant.documents_submitted or '',
         'admission_type': dict(Applicant.ADMISSION_TYPE_CHOICES).get(applicant.admission_type, ''),
-        'graduation_year': str(applicant.graduation_year) if applicant.graduation_year else '',
-        'education_type': 'общеобразовательное учреждение (школа)',
-        'graduation_institution': applicant.graduation_institution or '',
-        'certificate_series': applicant.certificate_series or '',
-        'certificate_issued_date': _date(applicant.certificate_issued_date, 'd.m.Y') if applicant.certificate_issued_date else '',
-        'average_grade': str(average_grade) if average_grade else '',
-        'grade_russian': str(applicant.grade_russian) if applicant.grade_russian else '',
-        'grade_biology': str(applicant.grade_biology) if applicant.grade_biology else '',
-        'grade_chemistry': str(applicant.grade_chemistry) if applicant.grade_chemistry else '',
+        'graduation_year': str(applicant.graduation_year) if applicant.graduation_year else '__________',
+        'graduation_institution': applicant.graduation_institution or '''__________________________________________________________________________________________________________________________________________________________________________''',
+        'certificate_series': applicant.certificate_series or '___________________',
+        'certificate_issued_date': _date(applicant.certificate_issued_date, 'd.m.Y') if applicant.certificate_issued_date else '_________________________',
+        'average_grade': str(average_grade) if average_grade else '_________________________',
+        'grade_russian': str(applicant.grade_russian) if applicant.grade_russian else '___________________',
+        'grade_biology': str(applicant.grade_biology) if applicant.grade_biology else '_________________________',
+        'grade_chemistry': str(applicant.grade_chemistry) if applicant.grade_chemistry else '____________________________',
         'benefits_enrollment': benefits_enrollment,
         'needs_dormitory': 'нуждаюсь' if applicant.needs_dormitory else 'не нуждаюсь',
-        'representative1_fio': applicant.representative1_name or '',
-        'representative1_job': applicant.representative1_job or '',
-        'representative1_phone': applicant.representative1_phone or '',
+        'representative1_fio': applicant.representative1_name or '''________________________________________________________
+_________________________________________________________________________________________
+''',
+        'representative1_job': applicant.representative1_job or '___________________________________________________________________',
+        'representative1_phone': applicant.representative1_phone or '_______________________________________________________________________',
         'representative1_passport': representative1_passport,
-        'representative2_fio': applicant.representative2_name or '',
-        'representative2_job': applicant.representative2_job or '',
-        'representative2_phone': applicant.representative2_phone or '',
+        'representative2_fio': applicant.representative2_name or '___________________________________________________________',
+        'representative2_job': applicant.representative2_job or '___________________________________________________________________',
+        'representative2_phone': applicant.representative2_phone or '________________________________________________________________________',
         'representative2_passport': representative2_passport,
         'current_date': _date(datetime.now(), 'd F Y'),
         'applicant_signature': '',
@@ -235,6 +246,88 @@ def generate_application_docx(applicant: Applicant):
     # Render the template with the context
     doc.render(context)
 
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer
+
+
+def generate_application_titul(applicant: Applicant):
+    template_path = 'static/docx/applicant_titul.docx'
+    doc = DocxTemplate(template_path)
+
+    # Карта специальностей
+    specialty_map = {
+        'pharmacy': 'Фармация',
+        'nursing': f'Сестринское дело ({dict(Applicant.EDUCATION_BASE_CHOICES).get(applicant.education_base, "")})',
+        'midwifery': 'Акушерское дело',
+        'lab_diagnostics': 'Лабораторная диагностика',
+        'medical_treatment': 'Лечебное дело',
+    }
+
+    specialty = specialty_map.get(applicant.specialty, '')
+    clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
+
+    # Представители
+    mother_info = f"{applicant.representative1_name or ''}, {applicant.representative1_phone or ''}".strip(', ')
+    father_info = f"{applicant.representative2_name or ''}, {applicant.representative2_phone or ''}".strip(', ')
+
+    # Паспорт
+    passport_info = ''
+    if applicant.passport_series and applicant.passport_number:
+        passport_info += f"Серия: {applicant.passport_series} № {applicant.passport_number}, "
+    if applicant.passport_issued_by:
+        passport_info += f"{applicant.passport_issued_by}, "
+    if applicant.passport_issued_date:
+        passport_info += f"{_date(applicant.passport_issued_date, 'd.m.Y')}"
+
+    # Дата окончания + учреждение
+    graduation_info = ''
+    if applicant.graduation_year or applicant.graduation_institution:
+        graduation_info = f"{applicant.graduation_year or ''}, {applicant.graduation_institution or ''}".strip(', ')
+
+    # Средний балл
+    grades = [g for g in [applicant.grade_russian, applicant.grade_biology, applicant.grade_chemistry] if g is not None]
+    average_grade = f"{(sum(grades) / len(grades)):.2f}" if grades else ''
+
+    # Контекст
+    context = {
+        'registration_number': applicant.registration_number or '',
+        'specialty': specialty,
+        'full_name': applicant.full_name,
+        'citizenship': applicant.citizenship or '',
+        'nationality': applicant.nationality or '',
+        'birth_date': _date(applicant.birth_date, 'd.m.Y'),
+        'birth_place': applicant.birth_place or '',
+        'address_actual': applicant.address_actual,
+
+        'certificate_series': applicant.certificate_series or '',
+        'graduation_info': graduation_info,
+
+        'passport': passport_info or '',
+        'inn': applicant.inn or '',
+        'snils': clean_snils,
+        'medical_policy': applicant.medical_policy or '',
+        'military_id': 'Да' if applicant.military_id else 'Нет',
+        'student_phone': applicant.student_phone or '',
+
+        'mother': mother_info,
+        'mother_job': applicant.representative1_job or '',
+        'father': father_info,
+        'father_job': applicant.representative2_job or '',
+
+        'medical_agreement': 'Да' if applicant.medical_contract else 'Нет',  # оставить пустым
+        'grade_russian': str(applicant.grade_russian) if applicant.grade_russian else '',
+        'grade_biology': str(applicant.grade_biology) if applicant.grade_biology else '',
+        'grade_chemistry': str(applicant.grade_chemistry) if applicant.grade_chemistry else '',
+        'grade_math': '',
+        'grade_foreign': '',
+        'grade_physics': '',
+        'average_grade': average_grade,
+    }
+
+    # Рендер
+    doc.render(context)
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)

@@ -35,6 +35,7 @@ import { SelectField } from './applicantFormTags/applicantSelectField';
 import { FormCheckbox } from './applicantFormTags/applicantCheckbox';
 import { FormTextField } from './applicantFormTags/applicantTextField';
 import { FormTextFieldMask } from './applicantFormTags/applicantTextFieldMask';
+import { useUserStore } from '../../stores/userStore';
 
 export const ApplicantForm = ({ isEditMode = false }) => {
   const { id } = useParams();
@@ -48,6 +49,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   const theme = useTheme();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [openSuccessModal, setOpenSuccessModal] = React.useState(false);
+  const { currentUser } = useUserStore();
 
   const {
     control,
@@ -78,6 +80,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       snils: '',
       medical_policy: '',
       military_id: false,
+      medical_contract: false,
       student_phone: '',
       student_email: '',
       representative1_name: '',
@@ -243,10 +246,13 @@ export const ApplicantForm = ({ isEditMode = false }) => {
         navigate(`/applicant/${id}`);
       } else {
         await submitApplicant(formattedData);
-        toast.success('Анкета успешно отправлена!', { autoClose: 5000 });
-        setOpenSuccessModal(true);
         reset();
-        setTimeout(() => window.location.href = 'https://almetmed.ru/', 5000);
+        if (currentUser && currentUser.role === 'admin') {
+          navigate(`/applicant/all`);
+        } else {
+          setOpenSuccessModal(true);          
+          setTimeout(() => window.location.href = 'https://almetmed.ru/', 5000);
+        }
       }
     } catch (error) {
       const errorMessage =
@@ -390,7 +396,12 @@ export const ApplicantForm = ({ isEditMode = false }) => {
               gridSize={{ xs: 6}}
               control={control}
             />
-
+            <FormCheckbox 
+              name="medical_contract"
+              label="Наличие договора или ходатайства с медицинской организацией"
+              gridSize={{ xs: 6}}
+              control={control}
+            />
             {/* Personal Info */}
             <GroupTitle title='Личные данные абитуриента' />
             <FormTextField 

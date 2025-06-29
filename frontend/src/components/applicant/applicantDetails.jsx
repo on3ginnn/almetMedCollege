@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Accordion,
   AccordionDetails,
@@ -32,6 +32,7 @@ import {
   HomeWork as HomeWorkIcon,
   Download as DownloadIcon,
   Delete as DeleteIcon,
+  Check as CheckIcon,
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApplicantsStore } from '../../stores/applicantsStore';
@@ -121,7 +122,32 @@ export const ApplicantDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { selectedApplicant, getApplicantById, loading, error, downloadDocx, deleteApplicantById, updateDocumentsSubmitted, getApplicants, updateAdmissionType } = useApplicantsStore();
+  const { 
+    selectedApplicant,
+    getApplicantById,
+    loading,
+    error,
+    downloadDocx,
+    deleteApplicantById,
+    updateDocumentsSubmitted,
+    getApplicants,
+    updateAdmissionType,
+    updateNumber
+   } = useApplicantsStore();
+  const [editingNumber, setEditingNumber] = useState(false);
+  const [newNumber, setNewNumber] = useState('');
+
+  const handleUpdateNumber = async () => {
+    try {
+      if (selectedApplicant.registration_number !== newNumber) {
+        await updateNumber(id, newNumber);
+        await getApplicantById(id);
+      }
+      setEditingNumber(false);
+    } catch (e) {
+      alert('Ошибка при обновлении регистрационного номера');
+    }
+  };
 
   useEffect(() => {
     getApplicantById(id);
@@ -271,7 +297,47 @@ export const ApplicantDetails = () => {
 
       <Box mt={4}>
         <Section icon={<HomeWorkIcon color="primary" />} title="Детали поступления">
-          <InfoRow label="Регистрационный номер" value={selectedApplicant.registration_number} />
+          {/* <InfoRow label="Регистрационный номер" value={selectedApplicant.registration_number} /> */}
+          <InfoRow
+            label="Регистрационный номер"
+            value={
+              editingNumber ? (
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <input
+                    type="text"
+                    value={newNumber}
+                    onChange={(e) => setNewNumber(e.target.value)}
+                    style={{
+                      padding: '6px 8px',
+                      fontSize: '0.9rem',
+                      borderRadius: '4px',
+                      border: `1px solid ${theme.palette.grey[400]}`
+                    }}
+                  />
+                  <IconButton aria-label="Сохранить" size="small" onClick={handleUpdateNumber} variant="contained">
+                      <CheckIcon />
+                  </IconButton>
+                  {/* <Button size="small" variant="contained" onClick={handleUpdateNumber}>
+                    Сохранить
+                  </Button> */}
+                </Stack>
+              ) : (
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <Typography>{selectedApplicant.registration_number || '—'}</Typography>
+                  <IconButton
+                    aria-label="Редактировать"
+                    size="small"
+                    onClick={() => {
+                      setNewNumber(selectedApplicant.registration_number || '');
+                      setEditingNumber(true);
+                    }}
+                    variant="contained">
+                      <EditIcon />
+                  </IconButton>
+                </Stack>
+              )
+            }
+          />
           <InfoRow label="Специальность" value={categoryText(specialtyMap, selectedApplicant.specialty)} />
           <InfoRow label="База образования" value={selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'} />
           {/* <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} /> */}
@@ -334,6 +400,7 @@ export const ApplicantDetails = () => {
             <MenuItem value="копия">Копия</MenuItem>
           </Select>} />
           <InfoRow label="Приписное свидетельство" value={displayBoolean(selectedApplicant.military_id)} />
+          <InfoRow label="Наличие договора с мед.организацией" value={displayBoolean(selectedApplicant.medical_contract)} />
         </Section>
 
         <Section icon={<PersonIcon color="primary" />} title="Личные данные">

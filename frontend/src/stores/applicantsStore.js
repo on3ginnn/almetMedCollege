@@ -48,6 +48,24 @@ export const useApplicantsStore = create((set, get) => ({
       alert('Ошибка при скачивании документа');
     }
   },
+  downloadTitul: async (id, full_name) => {
+    try {
+      const response = await ApplicantAPI.downloadTitul(id);
+      const blob = response.data;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const safeName = full_name.replace(/[/\\?%*:|"<>]/g, '_');
+      a.href = url;
+      a.download = `Титульник_${safeName}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Ошибка при скачивании титульника:', e);
+      alert('Ошибка при скачивании титульника');
+    }
+  },
   submitApplicant: async (data) => {
     try {
       const response = await ApplicantAPI.create(data);
@@ -128,6 +146,15 @@ export const useApplicantsStore = create((set, get) => ({
   updateApplicant: async (id, data) => {
     try {
       const response = await ApplicantAPI.update(id, data);
+      return response;
+    } catch (e) {
+      console.error('Ошибка при обновлении анкеты:', e);
+      throw e;
+    }
+  },
+  updateNumber: async (id, number) => {
+    try {
+      const response = await ApplicantAPI.updateNumber(id, number);
       return response;
     } catch (e) {
       console.error('Ошибка при обновлении анкеты:', e);

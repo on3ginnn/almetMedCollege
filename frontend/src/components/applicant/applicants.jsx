@@ -25,6 +25,7 @@ export const Applicants = () => {
     getApplicants,
     enrollApplicant,
     downloadDocx,
+    downloadTitul,
     updateDocumentsStatus,
     updateDocumentsSubmitted,
     updateAdmissionType,
@@ -244,6 +245,32 @@ export const Applicants = () => {
         </Button>
       ),
     },
+    {
+      field: 'download_titul',
+      headerName: 'Титульник',
+      minWidth: isMobile ? 100 : 120,
+      flex: isMobile ? 1 : 0.8,
+      sortable: false,
+      renderCell: (params) => (
+        <Button
+          variant="outlined"
+          color="primary"
+          size="small"
+          onClick={() => downloadTitul(params.row.id, params.row.full_name)}
+          sx={{
+            ...commonButtonStyles,
+            borderColor: theme.palette.primary.main,
+            color: theme.palette.primary.main,
+            '&:hover': {
+              bgcolor: theme.palette.primary.light,
+              borderColor: theme.palette.primary.dark,
+            },
+          }}
+        >
+          Скачать
+        </Button>
+      ),
+    },
   ];
 
   const detailsColumn = {
@@ -349,8 +376,8 @@ export const Applicants = () => {
           getRowId={(row) => row.id}
           pageSizeOptions={[10, 20, 50]}
           initialState={{
-            pagination: { paginationModel: { pageSize: 10 } },
-            sorting: { sortModel: [{ field: 'average_grade', sort: 'desc' }] },
+            pagination: { paginationModel: { pageSize: 15 } },
+            sorting: { sortModel: [{ field: 'submitted_at', sort: 'desc' }] },
           }}
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
           disableColumnMenu

@@ -84,6 +84,7 @@ class Applicant(models.Model):
     snils = models.CharField("СНИЛС", max_length=11)
     medical_policy = models.CharField("Медицинский полис", max_length=100, blank=True)
     military_id = models.BooleanField("Приписное свидетельство (для юношей)", default=False)
+    medical_contract = models.BooleanField("Наличие договора или ходатайства с медицинской организацией", default=False)
     student_phone = models.CharField("Телефон абитуриента", max_length=20, blank=True)
     student_email = models.EmailField("Email абитуриента", max_length=254, blank=True)
 
