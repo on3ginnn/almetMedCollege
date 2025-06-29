@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import ApplicantAPI from '../api/applicantAPI';
 
-export const useApplicantsStore = create((set) => ({
+export const useApplicantsStore = create((set, get) => ({
   applicants: [],
   selectedApplicant: null,
+  rating: [],
   getApplicants: async () => {
     try {
       const response = await ApplicantAPI.getApplicantList();
@@ -75,7 +76,7 @@ export const useApplicantsStore = create((set) => ({
   updateDocumentsSubmitted: async (id, value) => {
     try {
       await ApplicantAPI.updateDocumentsSubmitted(id, value);
-      // await get().getApplicants(); // Refresh table
+      await get().getApplicants(); // Refresh table
     } catch (e) {
       console.error('Ошибка при обновлении типа документов:', e);
       throw e;
@@ -84,9 +85,18 @@ export const useApplicantsStore = create((set) => ({
   updateDocumentsStatus: async (id, delivered) => {
     try {
       await ApplicantAPI.updateDocumentsStatus(id, delivered);
-      // await get().getApplicants(); // Refresh table
+      await get().getApplicants(); // Refresh table
     } catch (e) {
       console.error('Ошибка при обновлении статуса документов:', e);
+      throw e;
+    }
+  },
+  updateAdmissionType: async (id, value) => {
+    try {
+      await ApplicantAPI.updateAdmissionType(id, value);
+      await get().getApplicants(); // Refresh table
+    } catch (e) {
+      console.error('Ошибка при обновлении типа поступления:', e);
       throw e;
     }
   },
@@ -107,12 +117,21 @@ export const useApplicantsStore = create((set) => ({
       throw e;
     }
   },
-  fetchRatings: async () => {
+  fetchRating: async (specialty, type) => {
     try {
-      const response = await ApplicantAPI.getRating();
-      set({ ratings: response.data });
+      const response = await ApplicantAPI.getRating(specialty, type);
+      set({ rating: response.data });
     } catch (e) {
-      console.error('Ошибка при получении рейтинга:', e);
+      console.error("Ошибка при загрузке рейтинга:", e);
+    }
+  },
+  updateApplicant: async (id, data) => {
+    try {
+      const response = await ApplicantAPI.update(id, data);
+      return response;
+    } catch (e) {
+      console.error('Ошибка при обновлении анкеты:', e);
+      throw e;
     }
   },
 }));

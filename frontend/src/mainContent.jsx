@@ -33,10 +33,10 @@ import { useUserStore } from './stores/userStore';
 import almetMedLogo from './assets/img/almetMedLogo.png';
 
 let NAVIGATION = [
-  // {
-  //   kind: 'header',
-  //   title: 'Разделы',
-  // },
+  {
+    kind: 'header',
+    title: 'Арбитуриенту',
+  },
   // {
   //   segment: '',
   //   title: 'Главная',
@@ -55,6 +55,11 @@ let NAVIGATION = [
   {
     segment: 'applicant',
     title: 'Анкета на поступление',
+    icon: <EventNoteIcon />,
+  },
+  {
+    segment: 'applicant/rating',
+    title: 'Рейтинг поступающих',
     icon: <EventNoteIcon />,
   },
 ];

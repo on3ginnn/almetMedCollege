@@ -16,6 +16,9 @@ export const SelectField = ({ name, label, options, gridSize, control, formContr
             label={label}
             size={inputSize.sm}
             sx={{ borderRadius: 2 }}
+            MenuProps={{
+              PaperProps: { style: { maxHeight: 300 } },
+            }}
           >
             {options.map((option) => (
               <MenuItem key={option.value} value={option.value}>

@@ -1,130 +1,248 @@
 import * as yup from 'yup';
 
-
-// Validation schema
 export const schema = yup.object().shape({
-  full_name: yup.string().required('ФИО обязательно').max(255),
-  citizenship: yup.string().required('Гражданство обязательно').max(100),
-  nationality: yup.string().required('Национальность обязательно').max(100),
+  registration_number: yup
+    .string()
+    .max(10, 'Максимум 10 символов')
+    .nullable(),
+  full_name: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .required('ФИО обязательно'),
+  citizenship: yup
+    .string()
+    .max(100, 'Максимум 100 символов')
+    .nullable(),
+  nationality: yup
+    .string()
+    .max(100, 'Максимум 100 символов')
+    .nullable(),
   birth_date: yup
     .date()
-    .required('Дата рождения обязательна')
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  birth_place: yup.string().max(255),
-  address: yup.string().required('Адрес по паспорту обязателен').max(255, 'Максимум 255 символов'),
-  address_actual: yup.string().required('Фактический адрес обязателен').max(255, 'Максимум 255 символов'),
+    .max(new Date(), 'Дата не может быть в будущем')
+    .required('Дата рождения обязательна'),
+    birth_place: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  address: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  address_actual: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .required("Фактический адресс обязателен"),
   passport_division_code: yup
     .string()
-    .matches(/^\d{3}-\d{3}$/, 'Код подразделения должен быть 6 цифр')
-    .required('Код подразделения обязателен'),
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-division-code', 'Код подразделения должен быть формата XXX-XXX', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{3}-\d{3}$/.test(value);
+    }),
   passport_registration_date: yup
     .date()
-    .required('Дата регистрации обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
+    .max(new Date(), 'Дата не может быть в будущем')
+    .nullable(),
   certificate_series: yup
     .string()
-    .required('Серия аттестата обязательна')
-    .max(14),
+    .max(14, 'Максимум 14 символов')
+    .nullable(),
   certificate_issued_date: yup
     .date()
-    .required('Дата выдачи аттестата обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
+    .max(new Date(), 'Дата не может быть в будущем')
+    .nullable(),
   graduation_year: yup
     .number()
-    .required('Год окончания обязателен')
-    .min(1900, 'Год не ранее 1900')
-    .max(new Date().getFullYear(), 'Год не может быть в будущем')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .nullable()
+    .min(1980, 'Год не ранее 1980')
+    .max(2025, 'Год не может быть в будущем')
     .typeError('Введите число'),
   graduation_institution: yup
     .string()
-    .required('Учебное заведение обязательно')
-    .max(255),
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
   passport_series: yup
     .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта обязательна'),
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-series', 'Серия паспорта — 4 цифры', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{4}$/.test(value);
+    }),
   passport_number: yup
     .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта обязателен'),
-  passport_issued_by: yup.string().required('Кем выдан паспорт обязателен').max(255),
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-number', 'Номер паспорта — 6 цифр', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{6}$/.test(value);
+    }),
+  passport_issued_by: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
   passport_issued_date: yup
     .date()
-    .required('Дата выдачи паспорта обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
+    .max(new Date(), 'Дата не может быть в будущем')
+    .nullable(),
   inn: yup
     .string()
-    .matches(/^\d{12}$/, 'ИНН — 12 цифр')
-    .required('ИНН обязателен'),
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-inn', 'ИНН — 12 цифр', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{12}$/.test(value);
+    }),
   snils: yup
     .string()
     .matches(/^\d{3}-\d{3}-\d{3}-\d{2}$/, 'СНИЛС формата XXX-XXX-XXX-XX')
     .required('СНИЛС обязателен'),
-    // .transform((value) => value.replace(/-/g, '')),
-  medical_policy: yup.string().required('Мед. полис обязателен').max(100),
-  military_id: yup.boolean(),
+  medical_policy: yup
+    .string()
+    .max(100, 'Максимум 100 символов')
+    .nullable(),
+  military_id: yup
+    .boolean()
+    .nullable(),
   student_phone: yup
     .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон обязателен'),
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-phone', 'Телефон формата +7 (XXX) XXX-XXXX', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\+7 \(\d{3}\) \d{3}-\d{4}$/.test(value);
+    }),
   student_email: yup
     .string()
-    .email('Введите корректный email')
-    .required('Email обязателен'),
-  mother_name: yup.string().required('ФИО матери обязательно').max(255),
-  mother_phone: yup
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-email', 'Введите корректный email', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); // Basic email regex
+    }),
+  representative1_name: yup
     .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон матери обязателен'),
-  mother_job: yup.string().required('Место работы матери обязательно').max(255),
-  mother_passport_series: yup
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative1_phone: yup
     .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта матери обязательна'),
-  mother_passport_number: yup
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-phone', 'Телефон формата +7 (XXX) XXX-XXXX', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\+7 \(\d{3}\) \d{3}-\d{4}$/.test(value);
+    }),
+  representative1_job: yup
     .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта матери обязателен'),
-  mother_passport_issued_by: yup
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative1_passport_series: yup
     .string()
-    .required('Кем выдан паспорт матери обязателен')
-    .max(255),
-  mother_passport_issued_date: yup
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-series', 'Серия паспорта — 4 цифры', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{4}$/.test(value);
+    }),
+  representative1_passport_number: yup
+    .string()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-number', 'Номер паспорта — 6 цифр', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{6}$/.test(value);
+    }),
+  representative1_passport_issued_by: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative1_passport_issued_date: yup
     .date()
-    .required('Дата выдачи паспорта матери обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  father_name: yup.string().required('ФИО отца обязательно').max(255),
-  father_phone: yup
+    .max(new Date(), 'Дата не может быть в будущем')
+    .nullable(),
+  representative2_name: yup
     .string()
-    .matches(/^\+7 \(\d{3}\) \d{3}-\d{4}$/, 'Телефон формата +7 (XXX) XXX-XXXX')
-    .required('Телефон отца обязателен'),
-  father_job: yup.string().required('Место работы отца обязательно').max(255),
-  father_passport_series: yup
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative2_phone: yup
     .string()
-    .matches(/^\d{4}$/, 'Серия паспорта — 4 цифры')
-    .required('Серия паспорта отца обязательна'),
-  father_passport_number: yup
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-phone', 'Телефон формата +7 (XXX) XXX-XXXX', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\+7 \(\d{3}\) \d{3}-\d{4}$/.test(value);
+    }),
+  representative2_job: yup
     .string()
-    .matches(/^\d{6}$/, 'Номер паспорта — 6 цифр')
-    .required('Номер паспорта отца обязателен'),
-  father_passport_issued_by: yup
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative2_passport_series: yup
     .string()
-    .required('Кем выдан паспорт отца обязателен')
-    .max(255),
-  father_passport_issued_date: yup
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-series', 'Серия паспорта — 4 цифры', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{4}$/.test(value);
+    }),
+  representative2_passport_number: yup
+    .string()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? '' : value;
+    })
+    .test('is-valid-passport-number', 'Номер паспорта — 6 цифр', function (value) {
+      if (!value) return true; // Allow empty string
+      return /^\d{6}$/.test(value);
+    }),
+  representative2_passport_issued_by: yup
+    .string()
+    .max(255, 'Максимум 255 символов')
+    .nullable(),
+  representative2_passport_issued_date: yup
     .date()
-    .required('Дата выдачи паспорта отца обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .typeError('Введите корректную дату')
-    .max(new Date(), 'Дата не может быть в будущем'),
-  documents_delivered: yup.boolean(),
+    .max(new Date(), 'Дата не может быть в будущем')
+    .nullable(),
+  documents_delivered: yup
+    .boolean()
+    .nullable(),
   specialty: yup
     .string()
-    .required('Специальность обязательна')
     .oneOf(
       [
         'pharmacy_9',
@@ -136,37 +254,32 @@ export const schema = yup.object().shape({
         'medical_treatment_11',
       ],
       'Выберите корректную специальность'
-    ),
+    )
+    .required('Специальность обязательна'),
+  education_base: yup
+    .string()
+    .nullable(),
   grade_russian: yup
     .number()
-    .required('Оценка по русскому обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
+    .nullable(),
   grade_biology: yup
     .number()
-    .required('Оценка по биологии обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
+    .nullable(),
   grade_chemistry: yup
     .number()
-    .required('Оценка по химии обязательна')
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
     .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_math: yup
-    .number()
-    .required('Оценка по математике обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_language: yup
-    .number()
-    .required('Оценка по языку обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
-  grade_physics: yup
-    .number()
-    .required('Оценка по физике обязательна')
-    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
-    .typeError('Выберите оценку'),
+    .nullable(),
   average_grade: yup
     .number()
     .required('Средний балл обязателен')
@@ -175,23 +288,32 @@ export const schema = yup.object().shape({
     .typeError('Введите средний бал в формате 4,85'),
   admission_type: yup
     .string()
-    .required('Тип поступления обязателен')
-    .oneOf(['бюджет', 'коммерция']),
-  needs_dormitory: yup.boolean(),
+    .oneOf(['бюджет', 'коммерция', 'none'], 'Выберите тип поступления')
+    .required('Тип поступления обязателен'),
+    // .nullable(),
+  needs_dormitory: yup
+    .boolean()
+    .nullable(),
   priority_enrollment: yup
     .string()
-    .required('Категория обязательна')
-    .oneOf(['heroes_rf', 'svo_participants', 'covid_med_workers', 'none']),
+    .oneOf(
+      ['heroes_rf', 'svo_participants', 'covid_med_workers', 'none'],
+      'Выберите корректный вариант'
+    )
+    .required('Выберите вариант первоочередного зачисления'),
   preferential_enrollment: yup
     .string()
-    .required('Категория обязательна')
-    .oneOf([
-      'orphans',
-      'disabled',
-      'veterans',
-      'low_income_disabled',
-      'chernobyl',
-      'military_personnel',
-      'none',
-    ]),
+    .oneOf(
+      [
+        'orphans',
+        'disabled',
+        'veterans',
+        'low_income_disabled',
+        'chernobyl',
+        'military_personnel',
+        'none',
+      ],
+      'Выберите корректный вариант'
+    )
+    .required('Выберите вариант преимущественного зачисления'),
 });
