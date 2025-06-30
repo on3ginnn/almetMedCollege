@@ -19,6 +19,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert,
+  AlertTitle,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useForm, Controller } from 'react-hook-form';
@@ -36,6 +38,7 @@ import { FormCheckbox } from './applicantFormTags/applicantCheckbox';
 import { FormTextField } from './applicantFormTags/applicantTextField';
 import { FormTextFieldMask } from './applicantFormTags/applicantTextFieldMask';
 import { useUserStore } from '../../stores/userStore';
+import { theme as customTheme } from '../../theme';
 
 export const ApplicantForm = ({ isEditMode = false }) => {
   const { id } = useParams();
@@ -306,7 +309,6 @@ export const ApplicantForm = ({ isEditMode = false }) => {
         <Typography
           variant="h4"
           fontWeight="bold"
-          gutterBottom
           sx={{
             fontSize: { xs: '1.5rem', sm: '2rem' },
             color: theme.palette.text.primary,
@@ -314,6 +316,29 @@ export const ApplicantForm = ({ isEditMode = false }) => {
         >
           {isEditMode ? 'Редактирование анкеты' : 'Анкета на поступление'}
         </Typography>
+
+<Alert
+      severity="info"
+      sx={{
+        mt: 1,
+        // backgroundColor: theme.palette.paper,
+        // color: theme.palette.primary.dark, // #2196f3
+        // border: `1px solid ${theme.palette.primary.main}`, // #2962ff
+        borderRadius: 1,
+        borderLeft: `4px solid ${theme.palette.primary.main}`,
+        bgcolor: customTheme.palette.primary.fill,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+        marginBottom: theme.spacing(2),
+        '& .MuiAlert-icon': {
+          color: theme.palette.primary.main, // #2962ff for the icon
+        },
+      }}
+    >
+      <Typography variant="body1">
+        Если данные для заполнения отсутствуют, оставьте поле пустым.
+      </Typography>
+    </Alert>
+
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
             {/* Admission Details */}

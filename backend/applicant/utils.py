@@ -155,7 +155,7 @@ def generate_application_docx(applicant: Applicant):
     #     'medical_treatment': 'Лечебное дело',
     # }
     # specialty = specialty_map.get(applicant.specialty, '')
-    specialty = Applicant.SPECIALTY_CHOICES.get(applicant.specialty, '')
+    specialty = dict(Applicant.SPECIALTY_CHOICES).get(applicant.specialty, '')
 
     # Clean SNILS
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
@@ -268,7 +268,7 @@ def generate_application_titul(applicant: Applicant):
     # }
 
     # specialty = specialty_map.get(applicant.specialty, '')
-    specialty = Applicant.SPECIALTY_CHOICES.get(applicant.specialty, '')
+    specialty = dict(Applicant.SPECIALTY_CHOICES).get(applicant.specialty, '')
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
 
     # Представители

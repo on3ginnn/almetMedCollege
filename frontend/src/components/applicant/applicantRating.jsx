@@ -162,12 +162,12 @@ export const Rating = () => {
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           <Typography fontWeight="medium">{a.documents_submitted}</Typography>
                         </TableCell>
-                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                        <TableCell textAlign="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.priority_enrollment !== 'none' && (
                             <Tooltip title="Первоочередное зачисление">
                               <StarIcon fontSize="small" color="primary" />
                             </Tooltip>
-                          )}
+                          ) || "-"}
                         </TableCell>
 
                         {/* Mobile */}
