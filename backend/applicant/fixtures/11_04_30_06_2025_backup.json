@@ -1178,7 +1178,6 @@
         "representative2_passport_issued_date": "1901-01-01",
         "documents_delivered": true,
         "specialty": "nursing",
-        "education_base": "11",
         "admission_type": "коммерция",
         "needs_dormitory": false,
         "documents_submitted": "оригинал",

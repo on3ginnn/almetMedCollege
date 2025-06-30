@@ -147,14 +147,15 @@ def generate_application_docx(applicant: Applicant):
     father_name = name_parts[2] if len(name_parts) > 2 else ''
 
     # Map specialty to human-readable form
-    specialty_map = {
-        'pharmacy': 'Фармация',
-        'nursing': f'Сестринское дело ({dict(Applicant.EDUCATION_BASE_CHOICES).get(applicant.education_base, "")})',
-        'midwifery': 'Акушерское дело',
-        'lab_diagnostics': 'Лабораторная диагностика',
-        'medical_treatment': 'Лечебное дело',
-    }
-    specialty = specialty_map.get(applicant.specialty, '')
+    # specialty_map = {
+    #     'pharmacy': 'Фармация',
+    #     'nursing': f'Сестринское дело ({dict(Applicant.EDUCATION_BASE_CHOICES).get(applicant.education_base, "")})',
+    #     'midwifery': 'Акушерское дело',
+    #     'lab_diagnostics': 'Лабораторная диагностика',
+    #     'medical_treatment': 'Лечебное дело',
+    # }
+    # specialty = specialty_map.get(applicant.specialty, '')
+    specialty = Applicant.SPECIALTY_CHOICES.get(applicant.specialty, '')
 
     # Clean SNILS
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
@@ -258,15 +259,16 @@ def generate_application_titul(applicant: Applicant):
     doc = DocxTemplate(template_path)
 
     # Карта специальностей
-    specialty_map = {
-        'pharmacy': 'Фармация',
-        'nursing': f'Сестринское дело ({dict(Applicant.EDUCATION_BASE_CHOICES).get(applicant.education_base, "")})',
-        'midwifery': 'Акушерское дело',
-        'lab_diagnostics': 'Лабораторная диагностика',
-        'medical_treatment': 'Лечебное дело',
-    }
+    # specialty_map = {
+    #     'pharmacy': 'Фармация',
+    #     'nursing': f'Сестринское дело ({dict(Applicant.EDUCATION_BASE_CHOICES).get(applicant.education_base, "")})',
+    #     'midwifery': 'Акушерское дело',
+    #     'lab_diagnostics': 'Лабораторная диагностика',
+    #     'medical_treatment': 'Лечебное дело',
+    # }
 
-    specialty = specialty_map.get(applicant.specialty, '')
+    # specialty = specialty_map.get(applicant.specialty, '')
+    specialty = Applicant.SPECIALTY_CHOICES.get(applicant.specialty, '')
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
 
     # Представители

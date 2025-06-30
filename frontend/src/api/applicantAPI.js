@@ -113,9 +113,9 @@ export default class ApplicantAPI {
             throw error;
         }
     }
-    static async getRating(specialty, type, education_base = '9', study_form = 'очная') {
+    static async getRating(specialty, type) {
         const response = await apiClient.get(`/applicants/rating/`, {
-            params: { specialty, admission_type: type, education_base, study_form },
+            params: { specialty, admission_type: type },
         });
         return response;
     }

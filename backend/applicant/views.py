@@ -44,32 +44,27 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         """
 
         LIMITS = {
-            ("medical_treatment", "9", "бюджет"): 25,
-            ("medical_treatment", "9", "коммерция"): 10,
-            ("medical_treatment", "11", "бюджет"): 15,
-            ("medical_treatment", "11", "коммерция"): 10,
-            ("midwifery", "9", "бюджет"): 25,
-            ("midwifery", "9", "коммерция"): 10,
-            ("nursing", "9", "бюджет"): 50,
-            ("nursing", "9", "коммерция"): 50,
-            ("nursing", "11", "коммерция"): 30,
-            ("lab_diagnostics", "9", "бюджет"): 15,
-            ("lab_diagnostics", "9", "коммерция"): 20,
-            ("pharmacy", "9", "коммерция"): 35,
+            ("medical_treatment", "бюджет"): 25,
+            ("medical_treatment", "коммерция"): 10,
+            ("medical_treatment_11", "бюджет"): 15,
+            ("medical_treatment_11", "коммерция"): 10,
+            ("midwifery", "бюджет"): 25,
+            ("midwifery", "коммерция"): 10,
+            ("nursing", "бюджет"): 50,
+            ("nursing", "коммерция"): 50,
+            ("nursing_zaochno", "коммерция"): 30,
+            ("lab_diagnostics", "бюджет"): 15,
+            ("lab_diagnostics", "коммерция"): 20,
+            ("pharmacy", "коммерция"): 35,
         }
 
         specialty = request.query_params.get("specialty")
         admission_type = request.query_params.get("admission_type")
-        education_base = request.query_params.get("education_base", "9")
-        study_form = request.query_params.get("study_form", "очная")
 
         if not specialty or not admission_type:
             return Response({"error": "specialty and admission_type are required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        key = (specialty, education_base, admission_type)
-        if specialty == "nursing" and education_base == "11":
-            key = (specialty, education_base, admission_type, study_form)
-
+        key = (specialty, admission_type)
         limit = LIMITS.get(key)
 
         if not limit:
@@ -78,8 +73,6 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         queryset = Applicant.objects.filter(
             specialty=specialty,
             admission_type=admission_type,
-            education_base=education_base,
-            study_form=study_form,
             documents_delivered=True,
         )
 
@@ -95,7 +88,6 @@ class ApplicantViewSet(viewsets.ModelViewSet):
 
         serializer = ApplicantSerializer(result, many=True)
         return Response(serializer.data)
-
 
     @action(detail=True, methods=['patch'])
     def document(self, request, pk):
@@ -135,7 +127,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         """
         applicant = get_object_or_404(Applicant, pk=pk)
         admission_type = request.data.get('admission_type')
-        if admission_type not in ['none', 'бюджет', 'коммерция']:
+        if admission_type not in ['бюджет', 'коммерция']:
             return Response({'error': 'Invalid admission_type value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.admission_type = admission_type
         applicant.save()

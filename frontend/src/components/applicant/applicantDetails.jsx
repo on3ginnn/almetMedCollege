@@ -195,11 +195,13 @@ export const ApplicantDetails = () => {
   const categoryText = (map, key) => map[key] || '-';
 
   const specialtyMap = {
-    pharmacy: 'Фармация',
-    nursing: `Сестринское дело (${selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'})`,
-    midwifery: 'Акушерское дело',
-    lab_diagnostics: 'Лабораторная диагностика',
-    medical_treatment: 'Лечебное дело',
+    pharmacy: 'Фармация - на базе 9 класса',
+    nursing: `Сестринское дело - на базе 9 класса`,
+    nursing_zaochno: `Сестринское дело - очно-заочная`,
+    midwifery: 'Акушерское дело - на базе 9 класса',
+    lab_diagnostics: 'Лабораторная диагностика - на базе 9 класса',
+    medical_treatment: 'Лечебное дело - на базе 9 класса',
+    medical_treatment_11: 'Лечебное дело - на базе 11 класса',
   };
 
   const admissionTypeMap = {
@@ -348,8 +350,6 @@ export const ApplicantDetails = () => {
             }
           />
           <InfoRow label="Специальность" value={categoryText(specialtyMap, selectedApplicant.specialty)} />
-          <InfoRow label="База образования" value={selectedApplicant.education_base === '9' ? '9 классов' : '11 классов'} />
-          {/* <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} /> */}
           <InfoRow label="Тип поступления" value={
             <Select
               value={selectedApplicant.admission_type || ''}
@@ -371,13 +371,14 @@ export const ApplicantDetails = () => {
                 },
               }}
             >
-              <MenuItem value="none">Не указано</MenuItem>
-              <MenuItem value="бюджет">Бюджет</MenuItem>
+              { (selectedApplicant.specialty === 'nursing_zaochno' || selectedApplicant.specialty === 'pharmacy') ? null : <MenuItem value="бюджет">Бюджет</MenuItem> }
               <MenuItem value="коммерция">Коммерция</MenuItem>
             </Select>
           } />
-          {/* <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} /> */}
-          <InfoRow label="Форма обучения" value={<Select
+          {/* <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} /> */}
+          {/* { selectedApplicant.specialty === "nursing_9" ? 
+          <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
+          : <InfoRow label="Форма обучения" value={<Select
             value={selectedApplicant.study_form || ''}
             onChange={(e) => handleStudyFormChange(selectedApplicant.id, e.target.value)}
             disabled={!selectedApplicant.study_form}
@@ -403,7 +404,37 @@ export const ApplicantDetails = () => {
           >
             <MenuItem value="очная">очная</MenuItem>
             <MenuItem value="очно-заочная">очно-заочная</MenuItem>
-          </Select>} />
+          </Select>}
+          /> } */}
+
+          <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
+          {/* <InfoRow label="Форма обучения" value={<Select
+            value={selectedApplicant.study_form || ''}
+            onChange={(e) => handleStudyFormChange(selectedApplicant.id, e.target.value)}
+            disabled={!selectedApplicant.study_form}
+            sx={{
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              minHeight: { xs: 36, sm: 'auto' },
+              maxWidth: 120,
+              borderRadius: 2,
+              '& .MuiSelect-select': {
+                py: { xs: 1, sm: 0.5 },
+                px: { xs: 1, sm: 0.5 },
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[400],
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.main,
+              },
+              '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[300],
+              },
+            }}
+          >
+            <MenuItem value="очная">очная</MenuItem>
+            <MenuItem value="очно-заочная">очно-заочная</MenuItem>
+          </Select>} /> */}
           <InfoRow label="Нуждается в общежитии" value={displayBoolean(selectedApplicant.needs_dormitory)} />
           <InfoRow label="Документы сданы" value={displayBoolean(selectedApplicant.documents_delivered)} />
           {/* <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} /> */}

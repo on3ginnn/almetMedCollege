@@ -13,44 +13,43 @@ export const Rating = () => {
   const theme = useTheme();
 
   const specialtyOptions = [
-    {
-      label: 'Лечебное дело (9 классов)',
-      value: { specialty: 'medical_treatment', education_base: '9' }
-    },
-    {
-      label: 'Лечебное дело (11 классов)',
-      value: { specialty: 'medical_treatment', education_base: '11' }
-    },
-    {
-      label: 'Акушерское дело (9 классов)',
-      value: { specialty: 'midwifery', education_base: '9' }
-    },
-    {
-      label: 'Сестринское дело (9 классов)',
-      value: { specialty: 'nursing', education_base: '9' }
-    },
-    {
-      label: 'Сестринское дело (11 классов) очно-заочно',
-      value: { specialty: 'nursing', education_base: '11', study_form: "очно-заочная"} // очно-заочная по умолчанию на бэке
-    },
-    {
-      label: 'Лабораторная диагностика (9 классов)',
-      value: { specialty: 'lab_diagnostics', education_base: '9' }
-    },
-    {
-      label: 'Фармация (9 классов)',
-      value: { specialty: 'pharmacy', education_base: '9' }
-    }
+    { label: 'Лечебное дело (9 классов)', specialty: 'medical_treatment' },
+    { label: 'Лечебное дело (11 классов)', specialty: 'medical_treatment_11' },
+    { label: 'Акушерское дело (9 классов)', specialty: 'midwifery' },
+    { label: 'Сестринское дело (9 классов)', specialty: 'nursing' },
+    { label: 'Сестринское дело очно-заочно', specialty: 'nursing_zaochno' },
+    { label: 'Лабораторная диагностика (9 классов)', specialty: 'lab_diagnostics' },
+    { label: 'Фармация (9 классов)', specialty: 'pharmacy' },
   ];
 
   const types = ['бюджет', 'коммерция'];
   const [selectedOption, setSelectedOption] = useState(specialtyOptions[0]);
   const [selectedType, setSelectedType] = useState('бюджет');
 
+  const getAvailableTypes = (specialty) => {
+    if (['nursing_zaochno', 'pharmacy'].includes(specialty)) {
+      return ['коммерция'];
+    }
+    return ['бюджет', 'коммерция'];
+  };
+
+  const [availableTypes, setAvailableTypes] = useState(getAvailableTypes(selectedOption.specialty));
+
   useEffect(() => {
-    const { specialty, education_base } = selectedOption.value;
-    fetchRating(specialty, selectedType, education_base);
-  }, [selectedOption, selectedType]);
+    const types = getAvailableTypes(selectedOption.specialty);
+    setAvailableTypes(types);
+
+    // Если текущий тип поступления больше не доступен — сбрасываем на доступный
+    if (!types.includes(selectedType)) {
+      setSelectedType(types[0]);
+    }
+
+    fetchRating(selectedOption.specialty, types.includes(selectedType) ? selectedType : types[0]);
+  }, [selectedOption]);
+  
+  useEffect(() => {
+    fetchRating(selectedOption.specialty, selectedType);
+  }, [selectedType]);
 
   return (
     <Box sx={{ p: { xs: 0, sm: 3 }, minHeight: '100vh' }}>
@@ -113,7 +112,7 @@ export const Rating = () => {
                   label="Тип поступления"
                   onChange={(e) => setSelectedType(e.target.value)}
                 >
-                  {types.map((type) => (
+                  {availableTypes.map((type) => (
                     <MenuItem key={type} value={type}>
                       {type.charAt(0).toUpperCase() + type.slice(1)}
                     </MenuItem>

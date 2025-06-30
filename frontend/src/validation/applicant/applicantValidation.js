@@ -248,12 +248,12 @@ export const schema = yup.object().shape({
     .string()
     .oneOf(
       [
-        'pharmacy_9',
-        'nursing_9',
-        'nursing_11_part_time',
-        'midwifery_9',
-        'lab_diagnostics_9',
-        'medical_treatment_9',
+        'pharmacy',
+        'nursing',
+        'nursing_zaochno',
+        'midwifery',
+        'lab_diagnostics',
+        'medical_treatment',
         'medical_treatment_11',
       ],
       'Выберите корректную специальность'

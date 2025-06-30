@@ -56,6 +56,8 @@ export const ApplicantForm = ({ isEditMode = false }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -100,19 +102,26 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       documents_delivered: false,
       documents_submitted: 'none',
       specialty: '',
-      education_base: '',
+      study_form: '',
       grade_russian: null,
       grade_biology: null,
       grade_chemistry: null,
       grade_math: null,
       grade_language: null,
       grade_physics: null,
-      admission_type: 'none',
+      admission_type: '',
       needs_dormitory: false,
       priority_enrollment: 'none',
       preferential_enrollment: 'none',
     },
   });
+  const selectedSpecialty = watch('specialty');
+
+  useEffect(() => {
+    if (selectedSpecialty === 'nursing_zaochno' || selectedSpecialty === 'pharmacy') {
+      setValue('admission_type', 'коммерция');
+    }
+  }, [selectedSpecialty]);
 
   useEffect(() => {
     if (isEditMode && id) {
@@ -127,13 +136,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   }, [id, isEditMode, selectedApplicant, reset]);
 
   function applicantToFormData(applicant) {
-    const detectSpecialtyKey = () => {
-      const { specialty, study_form, education_base } = applicant;
-      if (specialty === 'nursing' && study_form === 'очно-заочная' && education_base === '11') return 'nursing_11_part_time';
-      if (specialty === 'medical_treatment' && study_form === 'очно-заочная' && education_base === '11') return 'medical_treatment_11';
-      return `${specialty}_${education_base}`;
-    };
-
+    console.log(applicant.specialty);
     return {
       ...applicant,
       snils: applicant.snils ? `${applicant.snils.slice(0, 3)}-${applicant.snils.slice(3, 6)}-${applicant.snils.slice(6, 9)}-${applicant.snils.slice(9)}` : '',
@@ -144,7 +147,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       passport_issued_date: applicant.passport_issued_date ? format(new Date(applicant.passport_issued_date), 'yyyy-MM-dd') : '',
       representative1_passport_issued_date: applicant.representative1_passport_issued_date ? format(new Date(applicant.representative1_passport_issued_date), 'yyyy-MM-dd') : '',
       representative2_passport_issued_date: applicant.representative2_passport_issued_date ? format(new Date(applicant.representative2_passport_issued_date), 'yyyy-MM-dd') : '',
-      specialty: detectSpecialtyKey(),
+      specialty: applicant.specialty,
       // grade_russian: applicant.grade_russian ?? null,
       // grade_biology: applicant.grade_biology ?? null,
       // grade_chemistry: applicant.grade_chemistry ?? null,
@@ -164,54 +167,14 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      let backendSpecialty = '';
-      let studyForm = '';
-      let educationBase = '';
-      switch (data.specialty) {
-        case 'pharmacy_9':
-          backendSpecialty = 'pharmacy';
-          studyForm = 'очная';
-          educationBase = '9';
-          break;
-        case 'nursing_9':
-          backendSpecialty = 'nursing';
-          studyForm = 'очная';
-          educationBase = '9';
-          break;
-        case 'nursing_11_part_time':
-          backendSpecialty = 'nursing';
-          studyForm = 'очно-заочная';
-          educationBase = '11';
-          break;
-        case 'midwifery_9':
-          backendSpecialty = 'midwifery';
-          studyForm = 'очная';
-          educationBase = '9';
-          break;
-        case 'lab_diagnostics_9':
-          backendSpecialty = 'lab_diagnostics';
-          studyForm = 'очная';
-          educationBase = '9';
-          break;
-        case 'medical_treatment_9':
-          backendSpecialty = 'medical_treatment';
-          studyForm = 'очная';
-          educationBase = '9';
-          break;
-        case 'medical_treatment_11':
-          backendSpecialty = 'medical_treatment';
-          studyForm = 'очная';
-          educationBase = '11';
-          break;
-        default:
-          throw new Error('Invalid specialty selected');
-      }
-
+      let studyForm = data.specialty === 'nursing_zaochno' ? 'очно-заочная' : 'очная';
+      let admission_type = data.specialty === 'nursing_zaochno' || data.specialty === 'pharmacy' ? 'коммерция' : data.admission_type;
+      console.log(data.specialty);
       const formattedData = {
         ...data,
-        specialty: backendSpecialty,
+        specialty: data.specialty,
         study_form: studyForm,
-        education_base: educationBase,
+        admission_type: admission_type,
         snils: data.snils ? data.snils.replace(/-/g, '') : '',
         passport_division_code: data.passport_division_code ? data.passport_division_code.replace(/-/g, '') : '',
         passport_series: data.passport_series || '',
@@ -270,20 +233,28 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   const inputSize = { xs: 'small', sm: 'medium' };
 
   const specialtyOptions = [
-    { value: 'pharmacy_9', label: 'Фармация - на базе 9 класса' },
-    { value: 'nursing_9', label: 'Сестринское дело - на базе 9 класса' },
-    { value: 'nursing_11_part_time', label: 'Сестринское дело - очно-заочная, на базе 11 класса' },
-    { value: 'midwifery_9', label: 'Акушерское дело - на базе 9 класса' },
-    { value: 'lab_diagnostics_9', label: 'Лабораторная диагностика - на базе 9 класса' },
-    { value: 'medical_treatment_9', label: 'Лечебное дело - на базе 9 класса' },
+    { value: 'pharmacy', label: 'Фармация - на базе 9 класса' },
+    { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
+    { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },
+    { value: 'midwifery', label: 'Акушерское дело - на базе 9 класса' },
+    { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
+    { value: 'medical_treatment', label: 'Лечебное дело - на базе 9 класса' },
     { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
   ];
 
-  const admissionTypeOptions = [
+  const fullAdmissionTypeOptions = [
     { value: 'бюджет', label: 'Бюджет' },
     { value: 'коммерция', label: 'Коммерция' },
-    { value: 'none', label: 'Не указывать' },
   ];
+
+  const limitedAdmissionTypeOptions = [
+    { value: 'коммерция', label: 'Коммерция' },
+  ];
+
+  const admissionTypeOptions =
+    selectedSpecialty === 'nursing_zaochno' || selectedSpecialty === 'pharmacy'
+      ? limitedAdmissionTypeOptions
+      : fullAdmissionTypeOptions;
 
   const priorityEnrollmentOptions = [
     { value: 'heroes_rf', label: 'Герои РФ, награжденные тремя орденами Мужества' },

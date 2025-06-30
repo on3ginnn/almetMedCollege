@@ -225,8 +225,7 @@ export const Applicants = () => {
             },
           }}
         >
-          <MenuItem value="none">Не указано</MenuItem>
-          <MenuItem value="бюджет">Бюджет</MenuItem>
+          { (params.row.specialty === 'nursing_zaochno' || params.row.specialty === 'pharmacy') ? null : <MenuItem value="бюджет">Бюджет</MenuItem> }
           <MenuItem value="коммерция">Коммерция</MenuItem>
         </Select>
       ),

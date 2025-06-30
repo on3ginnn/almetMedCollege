@@ -7,15 +7,17 @@ class Applicant(models.Model):
     SPECIALTY_CHOICES = [
         ('pharmacy', 'Фармация'),
         ('nursing', 'Сестринское дело'),
+        ('nursing_zaochno', 'Сестринское дело очно-заочно'),
         ('midwifery', 'Акушерское дело'),
         ('lab_diagnostics', 'Лабораторная диагностика'),
         ('medical_treatment', 'Лечебное дело'),
+        ('medical_treatment_11', 'Лечебное дело на базе 11 класса'),
     ]
     
-    EDUCATION_BASE_CHOICES = [
-        ('9', 'На базе 9 классов'),
-        ('11', 'На базе 11 классов'),
-    ]
+    # EDUCATION_BASE_CHOICES = [
+    #     ('9', 'На базе 9 классов'),
+    #     ('11', 'На базе 11 классов'),
+    # ]
 
     PRIORITY_ENROLLMENT_CHOICES = [
         ('heroes_rf', 'Герои Российской Федерации, лица, награжденные тремя орденами Мужества'),
@@ -48,7 +50,7 @@ class Applicant(models.Model):
     ADMISSION_TYPE_CHOICES = [
         ("бюджет", "Финансируемые из средств бюджета Республики Татарстан"),
         ("коммерция", "На места с полным возмещением затрат"),
-        ('none', 'Не выбранно'),
+        # ('none', 'Не выбранно'),
     ]
 
     registration_number = models.CharField("Регистрационный номер", max_length=10, blank=True, default="")
@@ -106,8 +108,8 @@ class Applicant(models.Model):
 
     documents_delivered = models.BooleanField("Статус сдал документы", default=False)
     specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES)
-    education_base = models.CharField("База образования", max_length=2, choices=EDUCATION_BASE_CHOICES)
-    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES, default="none")
+    # education_base = models.CharField("База образования", max_length=2, choices=EDUCATION_BASE_CHOICES)
+    admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES)
     needs_dormitory = models.BooleanField("Нуждается в общежитии", default=False)
     documents_submitted = models.CharField(
         "Тип поданных документов",
@@ -119,7 +121,6 @@ class Applicant(models.Model):
         "Форма обучения",
         max_length=20,
         choices=STUDY_FORM_CHOICES,
-        blank=True,
     )
     priority_enrollment = models.CharField(
         "Первоочередное зачисление",

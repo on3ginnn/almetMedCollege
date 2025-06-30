@@ -144,9 +144,9 @@ export const useApplicantsStore = create((set, get) => ({
       throw e;
     }
   },
-  fetchRating: async (specialty, type, education_base = '9', study_form = 'очная') => {
+  fetchRating: async (specialty, type) => {
     try {
-      const response = await ApplicantAPI.getRating(specialty, type, education_base, study_form);
+      const response = await ApplicantAPI.getRating(specialty, type);
       set({ rating: response.data });
     } catch (e) {
       console.error("Ошибка при загрузке рейтинга:", e);
