@@ -222,7 +222,8 @@ _______________________________________
         'graduation_institution': applicant.graduation_institution or '''__________________________________________________________________________________________________________________________________________________________________________''',
         'certificate_series': applicant.certificate_series or '___________________',
         'certificate_issued_date': _date(applicant.certificate_issued_date, 'd.m.Y') if applicant.certificate_issued_date else '_________________________',
-        'average_grade': str(average_grade) if average_grade else '_________________________',
+        # 'average_grade': str(average_grade) if average_grade else '_________________________',
+        'average_grade': str(applicant.average_grade),
         'grade_russian': str(applicant.grade_russian) if applicant.grade_russian else '___________________',
         'grade_biology': str(applicant.grade_biology) if applicant.grade_biology else '_________________________',
         'grade_chemistry': str(applicant.grade_chemistry) if applicant.grade_chemistry else '____________________________',
@@ -323,7 +324,8 @@ def generate_application_titul(applicant: Applicant):
         'grade_math': str(applicant.grade_math) if applicant.grade_math else '',
         'grade_foreign': str(applicant.grade_language) if applicant.grade_language else '',
         'grade_physics': str(applicant.grade_physics) if applicant.grade_physics else '',
-        'average_grade': average_grade,
+        # 'average_grade': average_grade,
+        'average_grade': str(applicant.average_grade),
     }
 
     # Рендер

@@ -488,6 +488,7 @@ export const ApplicantDetails = () => {
           <InfoRow label="Математика" value={selectedApplicant.grade_math} />
           <InfoRow label="Иностранный язык" value={selectedApplicant.grade_language} />
           <InfoRow label="Физика" value={selectedApplicant.grade_physics} />
+          <InfoRow label="Средний балл" value={selectedApplicant.average_grade} />
         </Section>
 
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 1 (мама/жена)">
