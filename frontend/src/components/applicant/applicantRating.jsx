@@ -142,9 +142,9 @@ export const Rating = () => {
                     <TableRow>
                       <TableCell sx={{ fontWeight: 'bold' }}>№</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>ФИО</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Ср. балл</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Ср.балл</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>Документы</TableCell>
                       <TableCell sx={{ fontWeight: 'bold' }}>Приоритет</TableCell>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Преимущество</TableCell>
                     </TableRow>
                   </TableHead>
 
@@ -160,16 +160,12 @@ export const Rating = () => {
                           {a.average_grade?.toFixed(2) || '—'}
                         </TableCell>
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                          <Typography fontWeight="medium">{a.documents_submitted}</Typography>
+                        </TableCell>
+                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.priority_enrollment !== 'none' && (
                             <Tooltip title="Первоочередное зачисление">
                               <StarIcon fontSize="small" color="primary" />
-                            </Tooltip>
-                          )}
-                        </TableCell>
-                        <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                          {a.preferential_enrollment !== 'none' && (
-                            <Tooltip title="Преимущественное право">
-                              <VerifiedIcon fontSize="small" color="success" />
                             </Tooltip>
                           )}
                         </TableCell>
@@ -184,14 +180,12 @@ export const Rating = () => {
                               <Typography variant="caption" color="text.secondary">
                                 Ср. балл: {a.average_grade?.toFixed(2) || '—'}
                               </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                Документы: {a.documents_submitted === "none" ? 'не указано' : a.documents_submitted}
+                              </Typography>
                               {a.priority_enrollment !== 'none' && (
                                 <Tooltip title="Первоочередное зачисление">
                                   <StarIcon fontSize="small" color="primary" />
-                                </Tooltip>
-                              )}
-                              {a.preferential_enrollment !== 'none' && (
-                                <Tooltip title="Преимущественное право">
-                                  <VerifiedIcon fontSize="small" color="success" />
                                 </Tooltip>
                               )}
                             </Stack>

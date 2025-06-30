@@ -75,16 +75,15 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             admission_type=admission_type,
             documents_delivered=True,
         )
+        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")[:limit]
+        remaining_limit = limit - primary.count()
 
-        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
         others = queryset.filter(priority_enrollment="none").order_by(
             "-average_grade",
-            "-preferential_enrollment",
             "submitted_at"
-        )
+        )[:remaining_limit]
 
-        combined = list(primary) + list(others)
-        result = combined[:limit]
+        result = list(primary) + list(others)
 
         serializer = ApplicantSerializer(result, many=True)
         return Response(serializer.data)
