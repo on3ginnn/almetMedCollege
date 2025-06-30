@@ -312,9 +312,8 @@ export const schema = yup.object().shape({
     .typeError('Введите средний бал в формате 4,85'),
   admission_type: yup
     .string()
-    .oneOf(['бюджет', 'коммерция', 'none'], 'Выберите тип поступления')
+    .oneOf(['бюджет', 'коммерция'], 'Выберите тип поступления')
     .required('Тип поступления обязателен'),
-    // .nullable(),
   needs_dormitory: yup
     .boolean()
     .nullable(),

@@ -317,27 +317,27 @@ export const ApplicantForm = ({ isEditMode = false }) => {
           {isEditMode ? 'Редактирование анкеты' : 'Анкета на поступление'}
         </Typography>
 
-<Alert
-      severity="info"
-      sx={{
-        mt: 1,
-        // backgroundColor: theme.palette.paper,
-        // color: theme.palette.primary.dark, // #2196f3
-        // border: `1px solid ${theme.palette.primary.main}`, // #2962ff
-        borderRadius: 1,
-        borderLeft: `4px solid ${theme.palette.primary.main}`,
-        bgcolor: customTheme.palette.primary.fill,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-        marginBottom: theme.spacing(2),
-        '& .MuiAlert-icon': {
-          color: theme.palette.primary.main, // #2962ff for the icon
-        },
-      }}
-    >
-      <Typography variant="body1">
-        Если данные для заполнения отсутствуют, оставьте поле пустым.
-      </Typography>
-    </Alert>
+        <Alert
+          severity="info"
+          sx={{
+            mt: 1,
+            // backgroundColor: theme.palette.paper,
+            // color: theme.palette.primary.dark, // #2196f3
+            // border: `1px solid ${theme.palette.primary.main}`, // #2962ff
+            borderRadius: 1,
+            borderLeft: `4px solid ${theme.palette.primary.main}`,
+            bgcolor: customTheme.palette.primary.fill,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            marginBottom: theme.spacing(2),
+            '& .MuiAlert-icon': {
+              color: theme.palette.primary.main, // #2962ff for the icon
+            },
+          }}
+        >
+          <Typography variant="body1">
+            Если данные для заполнения отсутствуют, оставьте поле пустым.
+          </Typography>
+        </Alert>
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
@@ -355,7 +355,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
             />
             <SelectField
               name="admission_type"
-              label="Бюджет/коммерция"
+              label="Бюджет/коммерция*"
               options={admissionTypeOptions}
               gridSize={{ xs: 6, md: 3 }}
               control={control}
