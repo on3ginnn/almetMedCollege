@@ -35,6 +35,15 @@ export const Applicants = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const [pagination, setPagination] = useState({
+    page: 0,
+    pageSize: 15,
+  });
+
+  const handlePaginationChange = (newModel) => {
+    setPagination(newModel);
+  };
+
   useEffect(() => {
     getApplicants();
   }, [getApplicants]);
@@ -123,7 +132,10 @@ export const Applicants = () => {
       minWidth: 50,
       flex: 0.3,
       sortable: false,
-      renderCell: (params) => params.api.getRowIndexRelativeToVisibleRows(params.id) + 1,
+      renderCell: (params) => {
+        const indexInPage = params.api.getRowIndexRelativeToVisibleRows(params.id);
+        return indexInPage !== -1 ? pagination.page * pagination.pageSize + indexInPage + 1 : '-';
+      },
     },
     {
       field: 'full_name',
@@ -373,6 +385,9 @@ export const Applicants = () => {
         <DataGrid
           rows={filtered}
           columns={columns}
+          paginationModel={pagination}
+          onPaginationModelChange={handlePaginationChange}
+          // rowCount={totalCount}
           getRowId={(row) => row.id}
           pageSizeOptions={[10, 20, 50]}
           initialState={{

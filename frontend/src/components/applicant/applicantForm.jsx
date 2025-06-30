@@ -104,6 +104,9 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       grade_russian: null,
       grade_biology: null,
       grade_chemistry: null,
+      grade_math: null,
+      grade_language: null,
+      grade_physics: null,
       admission_type: 'none',
       needs_dormitory: false,
       priority_enrollment: 'none',
@@ -197,7 +200,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
           break;
         case 'medical_treatment_11':
           backendSpecialty = 'medical_treatment';
-          studyForm = 'очно-заочная';
+          studyForm = 'очная';
           educationBase = '11';
           break;
         default:
@@ -827,6 +830,9 @@ export const ApplicantForm = ({ isEditMode = false }) => {
               { name: 'grade_russian', label: 'Русский язык' },
               { name: 'grade_biology', label: 'Биология' },
               { name: 'grade_chemistry', label: 'Химия' },
+              { name: 'grade_math', label: 'Математика' },
+              { name: 'grade_language', label: 'Иностранный язык' },
+              { name: 'grade_physics', label: 'Физика' },
             ].map((grade) => (
               <Grid size={{ xs: 3, sm: 1 }} key={grade.name}>
                 <Controller
@@ -856,7 +862,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
               </Grid>
             ))}
 
-            <Grid size={{ xs: 3 }}>
+            <Grid size={{ xs: 6 }}>
               <Controller
                 name="average_grade"
                 control={control}

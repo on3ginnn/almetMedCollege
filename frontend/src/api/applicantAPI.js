@@ -72,6 +72,17 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async updateStudyForm(pk, value) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/study_form/`, {
+                study_form: value,
+            });
+            console.log(response.status)
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async updateDocumentsStatus(pk, delivered) {
         try {
             const response = await apiClient.patch(`/applicants/${pk}/update_documents_delivered/`, {
@@ -102,17 +113,12 @@ export default class ApplicantAPI {
             throw error;
         }
     }
-    static async getRating(specialty, type) {
-    try {
+    static async getRating(specialty, type, education_base = '9', study_form = 'очная') {
         const response = await apiClient.get(`/applicants/rating/`, {
-        params: { specialty, admission_type: type },
+            params: { specialty, admission_type: type, education_base, study_form },
         });
         return response;
-    } catch (error) {
-        throw error;
     }
-    }
-
     static async update(pk, data) {
         try {
             console.log(data);

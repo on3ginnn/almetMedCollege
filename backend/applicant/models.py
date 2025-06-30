@@ -160,6 +160,33 @@ class Applicant(models.Model):
         blank=True,
         null=True,
     )
+    grade_math = models.IntegerField(
+        "Оценка по математике",
+        validators=[
+            MinValueValidator(3, "Оценка должна быть не менее 3"),
+            MaxValueValidator(5, "Оценка должна быть не более 5")
+        ],
+        blank=True,
+        null=True,
+    )
+    grade_language = models.IntegerField(
+        "Оценка по иностранному языку",
+        validators=[
+            MinValueValidator(3, "Оценка должна быть не менее 3"),
+            MaxValueValidator(5, "Оценка должна быть не более 5")
+        ],
+        blank=True,
+        null=True,
+    )
+    grade_physics = models.IntegerField(
+        "Оценка по физике",
+        validators=[
+            MinValueValidator(3, "Оценка должна быть не менее 3"),
+            MaxValueValidator(5, "Оценка должна быть не более 5")
+        ],
+        blank=True,
+        null=True,
+    )
     average_grade = models.FloatField(
         "Заявленный средний балл",
             validators=[

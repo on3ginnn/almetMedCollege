@@ -100,6 +100,15 @@ export const useApplicantsStore = create((set, get) => ({
       throw e;
     }
   },
+  updateStudyForm: async (id, value) => {
+    try {
+      await ApplicantAPI.updateStudyForm(id, value);
+      await get().getApplicants(); // Refresh table
+    } catch (e) {
+      console.error('Ошибка при обновлении формы обучения:', e);
+      throw e;
+    }
+  },
   updateDocumentsStatus: async (id, delivered) => {
     try {
       await ApplicantAPI.updateDocumentsStatus(id, delivered);
@@ -135,9 +144,9 @@ export const useApplicantsStore = create((set, get) => ({
       throw e;
     }
   },
-  fetchRating: async (specialty, type) => {
+  fetchRating: async (specialty, type, education_base = '9', study_form = 'очная') => {
     try {
-      const response = await ApplicantAPI.getRating(specialty, type);
+      const response = await ApplicantAPI.getRating(specialty, type, education_base, study_form);
       set({ rating: response.data });
     } catch (e) {
       console.error("Ошибка при загрузке рейтинга:", e);

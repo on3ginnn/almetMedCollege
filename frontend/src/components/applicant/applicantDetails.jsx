@@ -132,7 +132,8 @@ export const ApplicantDetails = () => {
     updateDocumentsSubmitted,
     getApplicants,
     updateAdmissionType,
-    updateNumber
+    updateNumber,
+    updateStudyForm,
    } = useApplicantsStore();
   const [editingNumber, setEditingNumber] = useState(false);
   const [newNumber, setNewNumber] = useState('');
@@ -242,6 +243,14 @@ export const ApplicantDetails = () => {
       alert('Ошибка при обновлении типа документов');
     }
   };
+  const handleStudyFormChange = async (id, value) => {
+    try {
+      await updateStudyForm(id, value);
+      getApplicantById(id);
+    } catch (e) {
+      alert('Ошибка при обновлении формы обучения');
+    }
+  };
   const handleAdmissionTypeChange = async (id, value) => {
     try {
       await updateAdmissionType(id, value || null);
@@ -343,34 +352,62 @@ export const ApplicantDetails = () => {
           {/* <InfoRow label="Тип поступления" value={categoryText(admissionTypeMap, selectedApplicant.admission_type)} /> */}
           <InfoRow label="Тип поступления" value={
             <Select
-          value={selectedApplicant.admission_type || ''}
-          onChange={(e) => handleAdmissionTypeChange(selectedApplicant.id, e.target.value)}
-          sx={{
-            fontSize: { xs: '0.75rem', sm: '0.875rem' },
-            minHeight: { xs: 36, sm: 'auto' },
-            maxWidth: 120,
-            borderRadius: 2,
-            '& .MuiSelect-select': {
-              py: { xs: 1, sm: 0.5 },
-              px: { xs: 1, sm: 0.5 },
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.palette.grey[400],
-            },
-            '&:hover .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.palette.primary.main,
-            },
-          }}
-        >
-          <MenuItem value="none">Не указано</MenuItem>
-          <MenuItem value="бюджет">Бюджет</MenuItem>
-          <MenuItem value="коммерция">Коммерция</MenuItem>
-        </Select>
-            } />
-          <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} />
+              value={selectedApplicant.admission_type || ''}
+              onChange={(e) => handleAdmissionTypeChange(selectedApplicant.id, e.target.value)}
+              sx={{
+                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                minHeight: { xs: 36, sm: 'auto' },
+                maxWidth: 120,
+                borderRadius: 2,
+                '& .MuiSelect-select': {
+                  py: { xs: 1, sm: 0.5 },
+                  px: { xs: 1, sm: 0.5 },
+                },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.grey[400],
+                },
+                '&:hover .MuiOutlinedInput-notchedOutline': {
+                  borderColor: theme.palette.primary.main,
+                },
+              }}
+            >
+              <MenuItem value="none">Не указано</MenuItem>
+              <MenuItem value="бюджет">Бюджет</MenuItem>
+              <MenuItem value="коммерция">Коммерция</MenuItem>
+            </Select>
+          } />
+          {/* <InfoRow label="Форма обучения" value={categoryText(studyFormMap, selectedApplicant.study_form)} /> */}
+          <InfoRow label="Форма обучения" value={<Select
+            value={selectedApplicant.study_form || ''}
+            onChange={(e) => handleStudyFormChange(selectedApplicant.id, e.target.value)}
+            disabled={!selectedApplicant.study_form}
+            sx={{
+              fontSize: { xs: '0.75rem', sm: '0.875rem' },
+              minHeight: { xs: 36, sm: 'auto' },
+              maxWidth: 120,
+              borderRadius: 2,
+              '& .MuiSelect-select': {
+                py: { xs: 1, sm: 0.5 },
+                px: { xs: 1, sm: 0.5 },
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[400],
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.primary.main,
+              },
+              '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+                borderColor: theme.palette.grey[300],
+              },
+            }}
+          >
+            <MenuItem value="очная">очная</MenuItem>
+            <MenuItem value="очно-заочная">очно-заочная</MenuItem>
+          </Select>} />
           <InfoRow label="Нуждается в общежитии" value={displayBoolean(selectedApplicant.needs_dormitory)} />
           <InfoRow label="Документы сданы" value={displayBoolean(selectedApplicant.documents_delivered)} />
           {/* <InfoRow label="Тип поданных документов" value={categoryText(documentsSubmittedMap, selectedApplicant.documents_submitted)} /> */}
+          
           <InfoRow label="Тип поданных документов" value={<Select
             value={selectedApplicant.documents_submitted || ''}
             onChange={(e) => handleDocumentsSubmittedChange(selectedApplicant.id, e.target.value)}
@@ -448,6 +485,9 @@ export const ApplicantDetails = () => {
           <InfoRow label="Русский язык" value={selectedApplicant.grade_russian} />
           <InfoRow label="Биология" value={selectedApplicant.grade_biology} />
           <InfoRow label="Химия" value={selectedApplicant.grade_chemistry} />
+          <InfoRow label="Математика" value={selectedApplicant.grade_math} />
+          <InfoRow label="Иностранный язык" value={selectedApplicant.grade_language} />
+          <InfoRow label="Физика" value={selectedApplicant.grade_physics} />
         </Section>
 
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 1 (мама/жена)">

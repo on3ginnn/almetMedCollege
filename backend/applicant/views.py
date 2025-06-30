@@ -42,16 +42,45 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         - Сначала первоочередные (по среднему баллу)
         - Потом остальные (по среднему, наличию преимущественного права, дате подачи)
         """
+
+        LIMITS = {
+            ("medical_treatment", "9", "бюджет"): 25,
+            ("medical_treatment", "9", "коммерция"): 10,
+            ("medical_treatment", "11", "бюджет"): 15,
+            ("medical_treatment", "11", "коммерция"): 10,
+            ("midwifery", "9", "бюджет"): 25,
+            ("midwifery", "9", "коммерция"): 10,
+            ("nursing", "9", "бюджет"): 50,
+            ("nursing", "9", "коммерция"): 50,
+            ("nursing", "11", "коммерция"): 30,
+            ("lab_diagnostics", "9", "бюджет"): 15,
+            ("lab_diagnostics", "9", "коммерция"): 20,
+            ("pharmacy", "9", "коммерция"): 35,
+        }
+
         specialty = request.query_params.get("specialty")
         admission_type = request.query_params.get("admission_type")
+        education_base = request.query_params.get("education_base", "9")
+        study_form = request.query_params.get("study_form", "очная")
 
         if not specialty or not admission_type:
             return Response({"error": "specialty and admission_type are required."}, status=status.HTTP_400_BAD_REQUEST)
 
+        key = (specialty, education_base, admission_type)
+        if specialty == "nursing" and education_base == "11":
+            key = (specialty, education_base, admission_type, study_form)
+
+        limit = LIMITS.get(key)
+
+        if not limit:
+            return Response([], status=status.HTTP_200_OK)
+
         queryset = Applicant.objects.filter(
             specialty=specialty,
             admission_type=admission_type,
-            documents_delivered=True
+            education_base=education_base,
+            study_form=study_form,
+            documents_delivered=True,
         )
 
         primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
@@ -61,7 +90,9 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             "submitted_at"
         )
 
-        result = list(primary) + list(others)
+        combined = list(primary) + list(others)
+        result = combined[:limit]
+
         serializer = ApplicantSerializer(result, many=True)
         return Response(serializer.data)
 
@@ -77,6 +108,21 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         if documents_submitted not in ['none', 'оригинал', 'копия']:
             return Response({'error': 'Invalid documents_submitted value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.documents_submitted = documents_submitted
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'])
+    def study_form(self, request, pk):
+        """
+        PATCH /api/applicants/{id}/study_form/
+        Обновить форму обучения (очная, очно-заочная).
+        """
+        applicant = get_object_or_404(Applicant, pk=pk)
+        study_form = request.data.get('study_form')
+        if study_form not in ['очная', 'очно-заочная']:
+            return Response({'error': 'Invalid study_form value'}, status=status.HTTP_400_BAD_REQUEST)
+        applicant.study_form = study_form
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)

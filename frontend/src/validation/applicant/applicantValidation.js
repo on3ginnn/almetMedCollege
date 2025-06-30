@@ -283,6 +283,27 @@ export const schema = yup.object().shape({
     })
     .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
     .nullable(),
+  grade_math: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
+    .nullable(),
+  grade_language: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
+    .nullable(),
+  grade_physics: yup
+    .number()
+    .transform((value, originalValue) => {
+      return originalValue === '' ? null : value;
+    })
+    .oneOf([3, 4, 5], 'Оценка должна быть 3, 4 или 5')
+    .nullable(),
   average_grade: yup
     .number()
     .required('Средний балл обязателен')

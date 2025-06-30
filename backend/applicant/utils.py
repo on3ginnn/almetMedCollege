@@ -320,9 +320,9 @@ def generate_application_titul(applicant: Applicant):
         'grade_russian': str(applicant.grade_russian) if applicant.grade_russian else '',
         'grade_biology': str(applicant.grade_biology) if applicant.grade_biology else '',
         'grade_chemistry': str(applicant.grade_chemistry) if applicant.grade_chemistry else '',
-        'grade_math': '',
-        'grade_foreign': '',
-        'grade_physics': '',
+        'grade_math': str(applicant.grade_math) if applicant.grade_math else '',
+        'grade_foreign': str(applicant.grade_language) if applicant.grade_language else '',
+        'grade_physics': str(applicant.grade_physics) if applicant.grade_physics else '',
         'average_grade': average_grade,
     }
 
