@@ -10,9 +10,6 @@ from openpyxl import Workbook
 from django.db import models
 
 
-def _date(date_obj, format_str='d.m.Y'):
-    """Helper function to format dates."""
-    return date_obj.strftime(format_str) if date_obj else ''
 
 def generate_applicants_excel():
     try:
@@ -194,24 +191,35 @@ def generate_application_docx(applicant: Applicant):
     clean_snils = applicant.snils.replace('-', '').replace(' ', '') if applicant.snils else ''
 
     # Format representative passport details
-    representative1_passport = (
-        f'Серия: {applicant.representative1_passport_series} № {applicant.representative1_passport_number}, '
-        f'выдан: {applicant.representative1_passport_issued_by}, {_date(applicant.representative1_passport_issued_date, "d.m.Y")}'
-        if all([applicant.representative1_passport_series, applicant.representative1_passport_number, 
-                applicant.representative1_passport_issued_by, applicant.representative1_passport_issued_date])
-        else '''______________________________________________
-_________________________________________________________________________________________
-'''
-    )
-    representative2_passport = (
-        f'Серия: {applicant.representative2_passport_series} № {applicant.representative2_passport_number}, '
-        f'выдан: {applicant.representative2_passport_issued_by}, {_date(applicant.representative2_passport_issued_date, "d.m.Y")}'
-        if all([applicant.representative2_passport_series, applicant.representative2_passport_number, 
-                applicant.representative2_passport_issued_by, applicant.representative2_passport_issued_date])
-        else '''______________________________________________
-_________________________________________________________________________________________
-'''
-    )
+    representative1_passport = []
+    if applicant.representative1_passport_series:
+        representative1_passport.append(f"Серия: {applicant.representative1_passport_series}")
+    if applicant.representative1_passport_number:
+        representative1_passport.append(f"№ {applicant.representative1_passport_number}")
+    if applicant.representative1_passport_issued_by:
+        representative1_passport.append(f"выдан: {applicant.representative1_passport_issued_by}")
+    if applicant.representative1_passport_issued_date:
+        representative1_passport.append(_date(applicant.representative1_passport_issued_date, "d.m.Y"))
+
+    representative1_passport = ', '.join(representative1_passport) if representative1_passport else '''______________________________________________
+    _________________________________________________________________________________________
+    '''
+
+    representative2_passport = []
+    if applicant.representative2_passport_series:
+        representative2_passport.append(f"Серия: {applicant.representative2_passport_series}")
+    if applicant.representative2_passport_number:
+        representative2_passport.append(f"№ {applicant.representative2_passport_number}")
+    if applicant.representative2_passport_issued_by:
+        representative2_passport.append(f"выдан: {applicant.representative2_passport_issued_by}")
+    if applicant.representative2_passport_issued_date:
+        representative2_passport.append(_date(applicant.representative2_passport_issued_date, "d.m.Y"))
+
+    representative2_passport = ', '.join(representative2_passport) if representative2_passport else '''______________________________________________
+    _________________________________________________________________________________________
+    '''
+
+    print(representative2_passport)
 
     # Determine social benefits
     benefits_enrollment = 'Нет' if applicant.priority_enrollment == 'none' and applicant.preferential_enrollment == 'none' else 'Да'
