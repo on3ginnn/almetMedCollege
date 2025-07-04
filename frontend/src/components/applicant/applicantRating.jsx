@@ -156,13 +156,13 @@ export const Rating = () => {
                           '&:hover': { backgroundColor: theme.palette.action.hover },
                           backgroundColor: a.in_limit ? 'rgb(249, 250, 252)' : 'inherit',  // мягкий жёлтый фон для вошедших в лимит
                           // borderBottom: i + 1 === rating.filter(r => r.in_limit).length
-                          //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                          //   ? `4px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
                           //   : undefined,
                           // borderTop: i === 0
                           //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
                           //   : undefined,
                           borderLeft: i >= 0 && i + 1 <= rating.filter(r => r.in_limit).length
-                            ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                            ? `4px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
                             : undefined,
                           // borderRight: i >= 0 && i + 1 <= rating.filter(r => r.in_limit).length
                           //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
