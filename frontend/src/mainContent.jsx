@@ -208,8 +208,8 @@ function MainContent(props) {
     >
       <DashboardLayout
         sx={{
-          py: '30px',
-          px: '15px',
+          pb: '30px',
+          // px: '15px',
         }}
       >
         <Outlet />

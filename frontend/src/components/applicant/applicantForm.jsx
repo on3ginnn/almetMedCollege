@@ -293,6 +293,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
     <Box
       sx={{
         p: { xs: 1, sm: 3 },
+        pt: { xs: 3, sm: 5 },
         minHeight: '100vh',
       }}
     >

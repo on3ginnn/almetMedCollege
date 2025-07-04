@@ -52,7 +52,7 @@ export const Rating = () => {
   }, [selectedType]);
 
   return (
-    <Box sx={{ p: { xs: 0, sm: 3 }, minHeight: '100vh' }}>
+    <Box sx={{ p: { xs: 2, sm: 3 }, pt: { xs: 3, sm: 5 }, minHeight: '100vh' }}>
       <AppBar position="sticky" color="default" elevation={0}
         sx={{
           mb: 3, borderRadius: 2,
@@ -86,7 +86,7 @@ export const Rating = () => {
       <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-start' }}>
         {/* Filter */}
         <Box sx={{ width: { xs: '100%', md: 300 }, order: { xs: 0, md: 1 }, ml: { md: 3 }, mb: { xs: 3, md: 0 } }}>
-          <Paper sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2 }}>
+          <Paper sx={{ p: { xs: 0, sm: 3 }, borderRadius: 2 }} elevation={0}>
             <Typography variant="h6" fontWeight="bold" mb={2}>Параметры фильтра</Typography>
             <Stack spacing={3}>
               <FormControl fullWidth>
@@ -124,7 +124,7 @@ export const Rating = () => {
         </Box>
 
         {/* Table */}
-        <Box sx={{ flex: 1, order: { xs: 1, md: 0 } }}>
+        <Box sx={{ flex: 1, order: { xs: 1, md: 0 }, mx: -2, mt: 1, pl: { xs: 0, sm: 3 } }}>
           <Paper sx={{ width: '100%', borderRadius: 2 }}>
             {isLoading ? (
               <Box sx={{ textAlign: 'center', py: 6 }}>
@@ -150,7 +150,27 @@ export const Rating = () => {
 
                   <TableBody>
                     {rating.map((a, i) => (
-                      <TableRow key={a.id} sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}>
+                      <TableRow
+                        sx={{
+                          px: 2,
+                          '&:hover': { backgroundColor: theme.palette.action.hover },
+                          backgroundColor: a.in_limit ? 'rgb(249, 250, 252)' : 'inherit',  // мягкий жёлтый фон для вошедших в лимит
+                          // borderBottom: i + 1 === rating.filter(r => r.in_limit).length
+                          //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                          //   : undefined,
+                          // borderTop: i === 0
+                          //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                          //   : undefined,
+                          borderLeft: i >= 0 && i + 1 <= rating.filter(r => r.in_limit).length
+                            ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                            : undefined,
+                          // borderRight: i >= 0 && i + 1 <= rating.filter(r => r.in_limit).length
+                          //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
+                          //   : undefined
+                        }}
+                        key={a.id}
+                        // sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}
+                      >
                         {/* Desktop */}
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{i + 1}</TableCell>
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
@@ -160,7 +180,7 @@ export const Rating = () => {
                           {a.average_grade?.toFixed(2) || '—'}
                         </TableCell>
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                          <Typography fontWeight="medium">{a.documents_submitted}</Typography>
+                          <Typography fontWeight="medium">{a.documents_submitted !== 'none' ? a.documents_submitted : "не указано"}</Typography>
                         </TableCell>
                         <TableCell textAlign="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.priority_enrollment !== 'none' && (

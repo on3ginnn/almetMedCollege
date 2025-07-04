@@ -269,8 +269,8 @@ export const ApplicantDetails = () => {
   return (
     <Box 
       sx={{
-        px: { xs: 1, sm: 2, md: 3 },
-        py: 3,
+        px: { xs: 0, sm: 2, md: 3 },
+        py: { xs: 0, sm: 2, md: 3 },
         width: '100%',
         maxWidth: 1200,
         mx: 'auto',

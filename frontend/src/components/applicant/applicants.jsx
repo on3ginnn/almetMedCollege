@@ -310,7 +310,8 @@ export const Applicants = () => {
   return (
     <Box
       sx={{
-        p: { xs: 2, sm: 3 },
+        p: { xs: 1, sm: 3 },
+        pt: { xs: 3, sm: 3 },
         width: '100%',
         minHeight: '100vh',
         bgcolor: 'background.default',
@@ -323,7 +324,7 @@ export const Applicants = () => {
         gutterBottom
         sx={{
           fontSize: { xs: '1.5rem', sm: '2rem' },
-          textAlign: { xs: 'center', sm: 'left' },
+          textAlign: 'left',
           mb: { xs: 2, sm: 3 },
           color: theme.palette.text.primary,
         }}
@@ -379,6 +380,7 @@ export const Applicants = () => {
           boxShadow: { xs: 1, sm: 2 },
           overflow: 'hidden',
           bgcolor: 'background.paper',
+          // m: { xs: -1, sm: 0 }
         }}
       >
         <DataGrid
@@ -396,6 +398,7 @@ export const Applicants = () => {
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
           disableColumnMenu
           sx={{
+            width: "100%",
             '& .MuiDataGrid-cell': {
               fontSize: { xs: '0.75rem', sm: '0.875rem' },
               px: { xs: 1, sm: 2 },
