@@ -75,18 +75,26 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             admission_type=admission_type,
             documents_delivered=True,
         )
-        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")[:limit]
-        remaining_limit = limit - primary.count()
+        # primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")[:limit]
+        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
+        # remaining_limit = limit - primary.count()
 
         others = queryset.filter(priority_enrollment="none").order_by(
             "-average_grade",
             "submitted_at"
-        )[:remaining_limit]
+        # )[:remaining_limit]
+        )
 
         result = list(primary) + list(others)
 
-        serializer = ApplicantSerializer(result, many=True)
-        return Response(serializer.data)
+        result_data = []
+        for idx, applicant in enumerate(result):
+            data = ApplicantSerializer(applicant).data
+            data["in_limit"] = idx < limit
+            result_data.append(data)
+
+        # serializer = ApplicantSerializer(result, many=True)
+        return Response(result_data)
 
     @action(detail=True, methods=['patch'])
     def document(self, request, pk):
