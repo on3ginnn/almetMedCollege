@@ -129,6 +129,9 @@ export const schema = yup.object().shape({
   medical_contract: yup
     .boolean()
     .nullable(),
+  gosuslugi: yup
+    .boolean()
+    .nullable(),
   student_phone: yup
     .string()
     .transform((value, originalValue) => {

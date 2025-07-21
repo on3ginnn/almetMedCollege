@@ -30,6 +30,8 @@ export const Applicants = () => {
     updateDocumentsSubmitted,
     updateAdmissionType,
     downloadExcel,
+    updateDocumentsCanceled,
+    updateGosuslugi,
   } = useApplicantsStore();
   const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
@@ -75,6 +77,24 @@ export const Applicants = () => {
       getApplicants();
     } catch (e) {
       alert('Ошибка при обновлении типа документов');
+    }
+  };
+
+  const handleDocumentsCanceledChange = async (id, checked) => {
+    try {
+      await updateDocumentsCanceled(id, checked);
+      getApplicants();
+    } catch (e) {
+      alert('Ошибка при обновлении статуса забранных документов');
+    }
+  };
+
+  const handleGosuslugiChange = async (id, checked) => {
+    try {
+      await updateGosuslugi(id, checked);
+      getApplicants();
+    } catch (e) {
+      alert('Ошибка при обновлении статуса через госуслуги');
     }
   };
 
@@ -141,13 +161,13 @@ export const Applicants = () => {
       field: 'full_name',
       headerName: 'ФИО',
       minWidth: isMobile ? 120 : 150,
-      flex: isMobile ? 1.5 : 1,
+      flex: isMobile ? 1.5 : 1.3,
     },
     {
       field: 'documents_delivered',
-      headerName: 'Сдал документы',
+      headerName: 'Сдал док.',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
+      flex: isMobile ? 1 : 0.6,
       sortable: false,
       renderCell: (params) => (
         <Checkbox
@@ -161,10 +181,46 @@ export const Applicants = () => {
       ),
     },
     {
+      field: 'documents_canceled',
+      headerName: 'Забрал док.',
+      minWidth: isMobile ? 100 : 80,
+      flex: isMobile ? 1 : 0.6,
+      sortable: false,
+      renderCell: (params) => (
+        params.row.documents_delivered ? (
+        <Checkbox
+          checked={params.row.documents_canceled}
+          onChange={(e) => handleDocumentsCanceledChange(params.row.id, e.target.checked)}
+          sx={{
+            transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
+            p: { xs: 1, sm: 0.5 },
+          }}
+        />
+        ) : null
+      ),
+    },
+    {
+      field: 'gosuslugi',
+      headerName: 'Через госуслуги',
+      minWidth: isMobile ? 100 : 80,
+      flex: isMobile ? 1 : 0.6,
+      sortable: false,
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.row.gosuslugi}
+          onChange={(e) => handleGosuslugiChange(params.row.id, e.target.checked)}
+          sx={{
+            transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
+            p: { xs: 1, sm: 0.5 },
+          }}
+        />
+      ),
+    },
+    {
       field: 'documents_submitted',
-      headerName: 'Тип документа',
+      headerName: 'Тип док.',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
+      flex: isMobile ? 1 : 0.6,
       sortable: false,
       renderCell: (params) =>
         params.row.documents_delivered ? (
@@ -202,7 +258,7 @@ export const Applicants = () => {
       field: 'admission_type',
       headerName: 'Бюджет/Коммерция',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
+      flex: isMobile ? 1 : 0.7,
       sortable: false,
       renderCell: (params) => (
         <Select
@@ -234,7 +290,7 @@ export const Applicants = () => {
       field: 'download',
       headerName: 'Заявление',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
+      flex: isMobile ? 1 : 0.4,
       sortable: false,
       renderCell: (params) => (
         <Button
@@ -247,7 +303,7 @@ export const Applicants = () => {
             borderColor: theme.palette.primary.main,
             color: theme.palette.primary.main,
             '&:hover': {
-              bgcolor: theme.palette.primary.light,
+              bgcolor: theme.palette.primary.fill,
               borderColor: theme.palette.primary.dark,
             },
           }}
@@ -260,7 +316,7 @@ export const Applicants = () => {
       field: 'download_titul',
       headerName: 'Титульник',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.8,
+      flex: isMobile ? 1 : 0.3,
       sortable: false,
       renderCell: (params) => (
         <Button
@@ -273,13 +329,41 @@ export const Applicants = () => {
             borderColor: theme.palette.primary.main,
             color: theme.palette.primary.main,
             '&:hover': {
-              bgcolor: theme.palette.primary.light,
+              bgcolor: theme.palette.primary.fill,
               borderColor: theme.palette.primary.dark,
             },
           }}
         >
           Скачать
         </Button>
+      ),
+    },
+    {
+      field: 'view_rating',
+      headerName: 'В рейтинге',
+      minWidth: 120,
+      flex: 0.5,
+      sortable: false,
+      renderCell: (params) => (
+        <IconButton
+          component={Link}
+          to={`/applicant/rating?specialty=${params.row.specialty}&admission_type=${params.row.admission_type}&highlight=${params.row.id}`}
+          // variant="contained"
+          // color="secondary"
+          // size="small"
+          // sx={commonIconButtonStyles}
+          sx={{
+            ...commonButtonStyles,
+            borderColor: theme.palette.primary.main,
+            color: theme.palette.primary.main,
+            '&:hover': {
+              bgcolor: theme.palette.primary.fill,
+              borderColor: theme.palette.primary.dark,
+            },
+          }}
+        >
+          <ArrowForwardIcon />
+        </IconButton>
       ),
     },
   ];
@@ -290,7 +374,7 @@ export const Applicants = () => {
     minWidth: isMobile ? 40 : 50,
     flex: isMobile ? 1 : 0.3,
     sortable: false,
-    align: 'right',
+    align: 'center',
     renderCell: (params) => (
       <IconButton
         size="small"

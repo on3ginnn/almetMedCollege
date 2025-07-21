@@ -94,7 +94,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             result_data.append(data)
 
         # serializer = ApplicantSerializer(result, many=True)
-        return Response(result_data)
+        return Response([result_data, limit])
 
     @action(detail=True, methods=['patch'])
     def document(self, request, pk):
@@ -137,6 +137,34 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         if admission_type not in ['бюджет', 'коммерция']:
             return Response({'error': 'Invalid admission_type value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.admission_type = admission_type
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['patch'])
+    def document_canceled(self, request, pk):
+        """
+        PATCH /api/applicants/{id}/document_canceled/
+        """
+        applicant = get_object_or_404(Applicant, pk=pk)
+        document_canceled = request.data.get('document_canceled')
+        if document_canceled is None:
+            return Response({'error': 'Invalid document_canceled value'}, status=status.HTTP_400_BAD_REQUEST)
+        applicant.documents_canceled = document_canceled
+        applicant.save()
+        serializer = ApplicantSerializer(applicant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['patch'])
+    def gosuslugi(self, request, pk):
+        """
+        PATCH /api/applicants/{id}/gosuslugi/
+        """
+        applicant = get_object_or_404(Applicant, pk=pk)
+        gosuslugi = request.data.get('gosuslugi')
+        if gosuslugi is None:
+            return Response({'error': 'Invalid gosuslugi value'}, status=status.HTTP_400_BAD_REQUEST)
+        applicant.gosuslugi = gosuslugi
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)

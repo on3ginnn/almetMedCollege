@@ -5,6 +5,7 @@ export const useApplicantsStore = create((set, get) => ({
   applicants: [],
   selectedApplicant: null,
   rating: [],
+  rating_limit: 0,
   getApplicants: async () => {
     try {
       const response = await ApplicantAPI.getApplicantList();
@@ -147,7 +148,7 @@ export const useApplicantsStore = create((set, get) => ({
   fetchRating: async (specialty, type) => {
     try {
       const response = await ApplicantAPI.getRating(specialty, type);
-      set({ rating: response.data });
+      set({ rating: response.data[0], rating_limit: response.data[1] });
     } catch (e) {
       console.error("Ошибка при загрузке рейтинга:", e);
     }
@@ -167,6 +168,24 @@ export const useApplicantsStore = create((set, get) => ({
       return response;
     } catch (e) {
       console.error('Ошибка при обновлении анкеты:', e);
+      throw e;
+    }
+  },
+  updateDocumentsCanceled: async (id, canceled) => {
+    try {
+      await ApplicantAPI.updateDocumentsCanceled(id, canceled);
+      await get().getApplicants();
+    } catch (e) {
+      console.error('Ошибка при обновлении статуса забранных документов:', e);
+      throw e;
+    }
+  },
+  updateGosuslugi: async (id, value) => {
+    try {
+      await ApplicantAPI.updateGosuslugi(id, value);
+      await get().getApplicants();
+    } catch (e) {
+      console.error('Ошибка при обновлении статуса через госуслуги:', e);
       throw e;
     }
   },

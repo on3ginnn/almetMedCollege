@@ -86,6 +86,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
       medical_policy: '',
       military_id: false,
       medical_contract: false,
+      gosuslugi: false,
       student_phone: '',
       student_email: '',
       representative1_name: '',
@@ -399,6 +400,12 @@ export const ApplicantForm = ({ isEditMode = false }) => {
             <FormCheckbox 
               name="medical_contract"
               label="Наличие договора или ходатайства с медицинской организацией"
+              gridSize={{ xs: 6}}
+              control={control}
+            />
+            <FormCheckbox 
+              name="gosuslugi"
+              label="Подали через госуслуги РФ"
               gridSize={{ xs: 6}}
               control={control}
             />

@@ -93,6 +93,26 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async updateDocumentsCanceled(pk, canceled) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/document_canceled/`, {
+                document_canceled: canceled,
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async updateGosuslugi(pk, value) {
+        try {
+            const response = await apiClient.patch(`/applicants/${pk}/gosuslugi/`, {
+                gosuslugi: value,
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async updateAdmissionType(pk, value) {
         try {
             const response = await apiClient.patch(`/applicants/${pk}/admission_type/`, {

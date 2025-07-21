@@ -7,11 +7,21 @@ import {
 import StarIcon from '@mui/icons-material/Star';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { useApplicantsStore } from '../../stores/applicantsStore';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
 
 export const Rating = () => {
-  const { fetchRating, rating = [], isLoading } = useApplicantsStore();
+  const { fetchRating, rating = [], isLoading, rating_limit } = useApplicantsStore();
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const highlightId = params.get('highlight'); // ID абитуриента, на которого скроллить
+  const specialtyParam = params.get('specialty');
+  const admissionParam = params.get('admission_type');
+  const rowRefs = useRef({}); // объект, где ключ — id абитуриента, значение — ref строки
 
+  
   const specialtyOptions = [
     { label: 'Лечебное дело (9 классов)', specialty: 'medical_treatment' },
     { label: 'Лечебное дело (11 классов)', specialty: 'medical_treatment_11' },
@@ -23,8 +33,19 @@ export const Rating = () => {
   ];
 
   const types = ['бюджет', 'коммерция'];
-  const [selectedOption, setSelectedOption] = useState(specialtyOptions[0]);
-  const [selectedType, setSelectedType] = useState('бюджет');
+  const [selectedOption, setSelectedOption] = useState(
+    specialtyOptions.find(opt => opt.specialty === specialtyParam) || specialtyOptions[0]
+  );
+  const [selectedType, setSelectedType] = useState(admissionParam || 'бюджет');
+
+  useEffect(() => {
+    if (highlightId && rating.length > 0) {
+      const row = rowRefs.current[highlightId];
+      if (row) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [highlightId, rating]);
 
   const getAvailableTypes = (specialty) => {
     if (['nursing_zaochno', 'pharmacy'].includes(specialty)) {
@@ -39,18 +60,30 @@ export const Rating = () => {
     const types = getAvailableTypes(selectedOption.specialty);
     setAvailableTypes(types);
 
-    // Если текущий тип поступления больше не доступен — сбрасываем на доступный
+    // Сбрасываем selectedType, если он недоступен
     if (!types.includes(selectedType)) {
       setSelectedType(types[0]);
     }
 
+    // // При смене фильтров вручную убираем highlight из URL
+    // if (highlightId) {
+    //   params.delete('highlight');
+    //   navigate(`${location.pathname}?specialty=${selectedOption.specialty}&admission_type=${types.includes(selectedType) ? selectedType : types[0]}`, { replace: true });
+    // }
+
     fetchRating(selectedOption.specialty, types.includes(selectedType) ? selectedType : types[0]);
   }, [selectedOption]);
-  
+
   useEffect(() => {
+    // // Сбрасываем highlight, если вручную меняют тип поступления
+    // if (highlightId) {
+    //   params.delete('highlight');
+    //   navigate(`${location.pathname}?specialty=${selectedOption.specialty}&admission_type=${selectedType}`, { replace: true });
+    // }
+
     fetchRating(selectedOption.specialty, selectedType);
   }, [selectedType]);
-
+  
   return (
     <Box sx={{ p: { xs: 2, sm: 3 }, pt: { xs: 3, sm: 5 }, minHeight: '100vh' }}>
       <AppBar position="sticky" color="default" elevation={0}
@@ -78,7 +111,7 @@ export const Rating = () => {
               color: theme.palette.primary.main,
             }}
           >
-            {selectedOption.label} — {selectedType === 'бюджет' ? 'Бюджет' : 'Коммерция'}
+            {selectedOption.label} — {selectedType === 'бюджет' ? 'Бюджет' : 'Коммерция'} ({rating_limit} мест)
           </Typography>
         </Toolbar>
       </AppBar>
@@ -151,10 +184,15 @@ export const Rating = () => {
                   <TableBody>
                     {rating.map((a, i) => (
                       <TableRow
+                        ref={el => rowRefs.current[a.id] = el}
+                        key={a.id}
                         sx={{
                           px: 2,
+                          // backgroundColor: a.in_limit ? 'rgb(243, 246, 252)' : 'inherit',  // мягкий жёлтый фон для вошедших в лимит
+                          backgroundColor: a.id == highlightId
+                            ? 'rgba(255, 230, 150, 0.5)'  // яркий фон для выделенного
+                            : a.in_limit ? 'rgb(243, 246, 252)' : 'inherit',
                           '&:hover': { backgroundColor: theme.palette.action.hover },
-                          backgroundColor: a.in_limit ? 'rgb(243, 246, 252)' : 'inherit',  // мягкий жёлтый фон для вошедших в лимит
                           // borderBottom: i + 1 === rating.filter(r => r.in_limit).length
                           //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
                           //   : undefined,
@@ -168,7 +206,6 @@ export const Rating = () => {
                           //   ? `2px solid ${theme.palette.primary.main}` // жирная линия после последнего "вошедшего"
                           //   : undefined
                         }}
-                        key={a.id}
                         // sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}
                       >
                         {/* Desktop */}

@@ -18,6 +18,7 @@ import {
   Typography,
   useTheme,
   MenuItem,
+  Checkbox,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -134,9 +135,20 @@ export const ApplicantDetails = () => {
     updateAdmissionType,
     updateNumber,
     updateStudyForm,
+    updateDocumentsCanceled,
+    updateGosuslugi,
    } = useApplicantsStore();
   const [editingNumber, setEditingNumber] = useState(false);
   const [newNumber, setNewNumber] = useState('');
+
+  const handleDocumentsCanceledChange = async (id, checked) => {
+    try {
+      await updateDocumentsCanceled(id, checked);
+      await getApplicantById(id);
+    } catch (e) {
+      alert('Ошибка при обновлении статуса забранных документов');
+    }
+  };
 
   const handleUpdateNumber = async () => {
     try {
@@ -251,6 +263,14 @@ export const ApplicantDetails = () => {
       getApplicantById(id);
     } catch (e) {
       alert('Ошибка при обновлении формы обучения');
+    }
+  };
+  const handleGosuslugiChange = async (id, checked) => {
+    try {
+      await updateGosuslugi(id, checked);
+      getApplicantById(id);
+    } catch (e) {
+      alert('Ошибка при обновлении статуса через госуслуги');
     }
   };
   const handleAdmissionTypeChange = async (id, value) => {
@@ -469,6 +489,28 @@ export const ApplicantDetails = () => {
           </Select>} />
           <InfoRow label="Приписное свидетельство" value={displayBoolean(selectedApplicant.military_id)} />
           <InfoRow label="Наличие договора с мед.организацией" value={displayBoolean(selectedApplicant.medical_contract)} />
+          <InfoRow label="Подали через госуслуги РФ" value={
+            <Checkbox
+              checked={selectedApplicant.gosuslugi}
+              onChange={(e) => handleGosuslugiChange(selectedApplicant.id, e.target.checked)}
+              sx={{
+                transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
+                p: 0,
+              }}
+            />
+            // displayBoolean(selectedApplicant.gosuslugi)
+            } />
+          <InfoRow label="Забрали документы" value={
+            <Checkbox
+              checked={selectedApplicant.documents_canceled}
+              onChange={(e) => handleDocumentsCanceledChange(selectedApplicant.id, e.target.checked)}
+              sx={{
+                transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
+                p: 0,
+              }}
+            />
+            // displayBoolean(selectedApplicant.document_canceled)
+            } />
         </Section>
 
         <Section icon={<PersonIcon color="primary" />} title="Личные данные">

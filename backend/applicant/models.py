@@ -107,6 +107,8 @@ class Applicant(models.Model):
     representative2_passport_issued_date = models.DateField("Дата выдачи паспорта представителя 2", null=True, blank=True)
 
     documents_delivered = models.BooleanField("Статус сдал документы", default=False)
+    gosuslugi = models.BooleanField("Подал через госуслуги РФ", default=False, blank=True)
+    documents_canceled = models.BooleanField("Забрал документы", default=False, blank=True)
     specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES)
     # education_base = models.CharField("База образования", max_length=2, choices=EDUCATION_BASE_CHOICES)
     admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES)
