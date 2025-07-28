@@ -567,7 +567,7 @@ export const ApplicantDetails = () => {
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 1 (мама/жена)">
           <InfoRow label="ФИО" value={selectedApplicant.representative1_name} />
           <InfoRow label="Телефон" value={selectedApplicant.representative1_phone} />
-          <InfoRow label="Место работы" value={selectedApplicant.representative1_job} />
+          <InfoRow label="Место работы, должность" value={selectedApplicant.representative1_job} />
           <InfoRow label="Серия паспорта" value={selectedApplicant.representative1_passport_series} />
           <InfoRow label="Номер паспорта" value={selectedApplicant.representative1_passport_number} />
           <InfoRow label="Кем выдан" value={selectedApplicant.representative1_passport_issued_by} />
@@ -577,7 +577,7 @@ export const ApplicantDetails = () => {
         <Section icon={<FamilyRestroomIcon color="primary" />} title="Данные представителя 2 (папа/муж)">
           <InfoRow label="ФИО" value={selectedApplicant.representative2_name} />
           <InfoRow label="Телефон" value={selectedApplicant.representative2_phone} />
-          <InfoRow label="Место работы" value={selectedApplicant.representative2_job} />
+          <InfoRow label="Место работы, должность" value={selectedApplicant.representative2_job} />
           <InfoRow label="Серия паспорта" value={selectedApplicant.representative2_passport_series} />
           <InfoRow label="Номер паспорта" value={selectedApplicant.representative2_passport_number} />
           <InfoRow label="Кем выдан" value={selectedApplicant.representative2_passport_issued_by} />

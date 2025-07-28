@@ -74,6 +74,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
             specialty=specialty,
             admission_type=admission_type,
             documents_delivered=True,
+            documents_canceled=False,
         )
         # primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")[:limit]
         primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
@@ -151,6 +152,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         if document_canceled is None:
             return Response({'error': 'Invalid document_canceled value'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.documents_canceled = document_canceled
+        applicant.documents_delivered = False
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -191,6 +193,7 @@ class UpdateDocumentsDeliveredView(APIView):
         if documents_delivered is None:
             return Response({'error': 'documents_delivered field is required'}, status=status.HTTP_400_BAD_REQUEST)
         applicant.documents_delivered = documents_delivered
+        applicant.documents_canceled = False
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)

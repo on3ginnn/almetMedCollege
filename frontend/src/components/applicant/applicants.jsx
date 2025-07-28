@@ -187,16 +187,17 @@ export const Applicants = () => {
       flex: isMobile ? 1 : 0.6,
       sortable: false,
       renderCell: (params) => (
-        params.row.documents_delivered ? (
+        // params.row.documents_delivered ? (
         <Checkbox
           checked={params.row.documents_canceled}
           onChange={(e) => handleDocumentsCanceledChange(params.row.id, e.target.checked)}
+          // disabled={!params.row.documents_delivered}
           sx={{
             transform: { xs: 'scale(1.2)', sm: 'scale(1)' },
             p: { xs: 1, sm: 0.5 },
           }}
         />
-        ) : null
+        // ) : null
       ),
     },
     {
@@ -220,14 +221,14 @@ export const Applicants = () => {
       field: 'documents_submitted',
       headerName: 'Тип док.',
       minWidth: isMobile ? 100 : 120,
-      flex: isMobile ? 1 : 0.6,
+      flex: isMobile ? 1 : 0.7,
       sortable: false,
       renderCell: (params) =>
-        params.row.documents_delivered ? (
+        // params.row.documents_delivered ? (
           <Select
             value={params.row.documents_submitted || ''}
             onChange={(e) => handleDocumentsSubmittedChange(params.row.id, e.target.value)}
-            disabled={!params.row.documents_delivered}
+            // disabled={!params.row.documents_delivered}
             sx={{
               fontSize: { xs: '0.75rem', sm: '0.875rem' },
               minHeight: { xs: 36, sm: 'auto' },
@@ -252,7 +253,7 @@ export const Applicants = () => {
             <MenuItem value="оригинал">Оригинал</MenuItem>
             <MenuItem value="копия">Копия</MenuItem>
           </Select>
-        ) : null,
+        // ) : null,
     },
     {
       field: 'admission_type',
@@ -480,7 +481,7 @@ export const Applicants = () => {
             sorting: { sortModel: [{ field: 'submitted_at', sort: 'desc' }] },
           }}
           localeText={ruRU.components.MuiDataGrid.defaultProps.localeText}
-          disableColumnMenu
+          // disableColumnMenu
           sx={{
             width: "100%",
             '& .MuiDataGrid-cell': {
