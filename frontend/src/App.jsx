@@ -14,6 +14,7 @@ import { ApplicantForm } from './components/applicant/applicantForm';
 import { Applicants } from './components/applicant/applicants';
 import { ApplicantDetails } from './components/applicant/applicantDetails';
 import { Rating } from './components/applicant/applicantRating';
+import RedirectToPrivacy from './components/redirectToPrivacy';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path='/applicant/:id' element={<ApplicantDetails />} />
             <Route path="/applicant/edit/:id" element={<ApplicantForm isEditMode />} />
           </Route>
+          <Route path="/privacy-redirect" element={<RedirectToPrivacy />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -13,12 +13,11 @@ import Divider from '@mui/material/Divider';
 import { createTheme, useMediaQuery } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import NewspaperIcon from '@mui/icons-material/Newspaper';
-import EventNoteIcon from '@mui/icons-material/EventNote';
+import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import GroupIcon from '@mui/icons-material/Group';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import EditCalendarIcon from '@mui/icons-material/EditCalendar';
-import LoginIcon from '@mui/icons-material/Login';
+import EditCalendarRoundedIcon from '@mui/icons-material/EditCalendarRounded';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import {
@@ -31,6 +30,12 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { customRouter } from './config/customRouter';
 import { useUserStore } from './stores/userStore';
 import almetMedLogo from './assets/img/almetMedLogo.png';
+import CircularProgress from '@mui/material/CircularProgress';
+import { CookieBanner } from './components/banners/CookieBanner';
+import { Link as MuiLink } from '@mui/material';
+import StarRoundedIcon from '@mui/icons-material/StarRounded';
+import PrivacyTipRoundedIcon from '@mui/icons-material/PrivacyTipRounded';
+
 
 let NAVIGATION = [
   {
@@ -55,12 +60,17 @@ let NAVIGATION = [
   {
     segment: 'applicant',
     title: 'Анкета на поступление',
-    icon: <EventNoteIcon />,
+    icon: <EventNoteRoundedIcon />,
   },
   {
     segment: 'applicant/rating',
     title: 'Рейтинг поступающих',
-    icon: <EventNoteIcon />,
+    icon: <StarRoundedIcon />,
+  },
+  {
+    segment: 'privacy-redirect',
+    title: 'Политика конфиденциальности',
+    icon: <PrivacyTipRoundedIcon />,
   },
 ];
 
@@ -92,7 +102,7 @@ const adminNavigation = [
   {
     segment: 'applicant/all',
     title: 'Анкеты на поступление',
-    icon: <EditCalendarIcon />,
+    icon: <EditCalendarRoundedIcon />,
   },
 ];
 
@@ -141,7 +151,7 @@ function MainContent(props) {
   const demoWindow = window !== undefined ? window() : undefined;
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
-  const { currentUser, getProfile, logoutUser } = useUserStore();
+  const { currentUser, getProfile, logoutUser, isLoading } = useUserStore();
 
   const protectedNavigation = () => {
     if (currentUser && currentUser.role === 'admin') {
@@ -151,20 +161,12 @@ function MainContent(props) {
   };
 
   useEffect(() => {
-    async function fetchProfile() {
-      console.log('Call fetchProfile in MainContent.jsx');
-      try {
-        await getProfile();
-      } catch (err) {
-        setError(err.message);
-      }
-    }
-
-    fetchProfile();
-  }, [location.pathname, getProfile]);
+    localStorage.removeItem('cookiesAccepted')
+    getProfile(); // загружаем при монтировании
+  }, []);
 
   useEffect(() => {
-    async function getSession() {
+    if (currentUser) {
       setSession({
         user: {
           name: `${currentUser.last_name} ${currentUser.first_name}`,
@@ -172,10 +174,6 @@ function MainContent(props) {
           image: 'https://cdn-icons-png.freepik.com/512/16737/16737347.png?ga=GA1.1.965542116.1750058216',
         },
       });
-    }
-
-    if (currentUser) {
-      getSession();
     }
   }, [currentUser]);
 
@@ -191,31 +189,52 @@ function MainContent(props) {
     signOutButtonContent: 'Выйти',
   }), [navigate, logoutUser]);
 
-  return (
-    <AppProvider
-      navigation={protectedNavigation()}
-      branding={{
-        logo: <img src={almetMedLogo} alt="AMK Logo" />,
-        title: isMobile ? 'AMK' : 'Альметьевский медицинский колледж',
-        homeUrl: '/',
-      }}
-      router={router}
-      theme={demoTheme}
-      window={demoWindow}
-      authentication={authentication}
-      session={session}
-      localeText={{ accountSignInLabel: 'Войти', accountSignOutLabel: 'Выйти' }}
-    >
-      <DashboardLayout
-        sx={{
-          pb: '30px',
-          // px: '15px',
+  if (isLoading) {
+    return (
+      <Box sx={{ p: 5, textAlign: 'center' }}>
+        <CircularProgress />
+      </Box>
+    );
+  } else {
+    return (
+      <AppProvider
+        navigation={protectedNavigation()}
+        branding={{
+          logo: <img src={almetMedLogo} alt="AMK Logo" />,
+          title: isMobile ? 'AMK' : 'Альметьевский медицинский колледж',
+          homeUrl: '/',
         }}
+        router={router}
+        theme={demoTheme}
+        window={demoWindow}
+        authentication={authentication}
+        session={session}
+        localeText={{ accountSignInLabel: 'Войти', accountSignOutLabel: 'Выйти' }}
       >
-        <Outlet />
-      </DashboardLayout>
-    </AppProvider>
-  );
+        <DashboardLayout
+          navigation={protectedNavigation()}
+          router={router}
+          sx={{
+            // pb: '30px',
+            // px: '15px',
+          }}
+        >
+          <Outlet />
+          <CookieBanner />
+          {/* <MuiLink
+            href="https://almetmed.ru/privacy/"
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="none"
+            textAlign='center'
+            sx={{ color: 'gray', fontWeight: 400}}
+          >
+            Политика конфиденциальности
+          </MuiLink> */}
+        </DashboardLayout>
+      </AppProvider>
+    );
+  }
 }
 
 MainContent.propTypes = {

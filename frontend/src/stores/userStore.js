@@ -5,6 +5,47 @@ export const useUserStore = create((set) => ({
     userList: [],
     currentUser: null,
     userRole: null, // Первоначально роль не установлена
+    isLoading: true,
+    // getProfile: async () => {
+    //     try {
+    //         const response = await UserAPI.getProfile();
+    //         console.warn(`get profile user with code ${response.status}`);
+    //         // if (res_data) { // Проверка статуса ответа
+    //         if (response.status === 200) { // Проверка статуса ответа
+    //             useUserStore.setState({ currentUser: response.data });
+    //         } else {
+    //             throw new Error(`нету юзера`);
+    //         }
+    //     } catch (error) {
+    //         console.error('Ошибка при получении профиля:', error);
+    //         throw error; // Перебрасываем ошибку для обработки выше
+    //     }
+    // },
+    getProfile: async () => {
+        set({ isLoading: true });
+        try {
+            const response = await UserAPI.getProfile();
+            console.warn(`get profile user with code ${response.status}`);
+            if (response.status === 200) { // Проверка статуса ответа
+                set({ currentUser: response.data, isLoading: false });
+            } else {
+                set({ isLoading: false });
+                throw new Error(`нету юзера`);
+            }
+        } catch (error) {
+            set({ currentUser: null, isLoading: false });
+        }
+    },
+    logoutUser: async () => {
+        try {
+            const response = await UserAPI.logout();
+            console.log(`logout user with code ${response.status}`);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            set({ currentUser: null });
+        }
+    },
     setUserRole: (role) => set({ userRole: role }),
     getUserList: async ()=>{
         try {
@@ -61,33 +102,13 @@ export const useUserStore = create((set) => ({
         try {
             const response = await UserAPI.login(data);
             console.log(`login with code ${response.status}`);
-            // if (response.status == 200) {
-            //     return true;
-            // }
-        } catch (error) {
-            console.log(error);
-        }
-    },
-    getProfile: async () => {
-        try {
-            const response = await UserAPI.getProfile();
-            console.warn(`get profile user with code ${response.status}`);
-            // if (res_data) { // Проверка статуса ответа
-            if (response.status === 200) { // Проверка статуса ответа
-                useUserStore.setState({ currentUser: response.data });
+            
+            if (response.status === 200) {
+                // сразу получаем профиль пользователя после успешного входа
+                await useUserStore.getState().getProfile();
             } else {
-                throw new Error(`нету юзера`);
+                throw new Error("Неверный статус логина");
             }
-        } catch (error) {
-            console.error('Ошибка при получении профиля:', error);
-            throw error; // Перебрасываем ошибку для обработки выше
-        }
-    },
-    logoutUser: async () => {
-        try {
-            const response = await UserAPI.logout();
-            set({ currentUser: null} );
-            console.log(`logout user with code ${response.status}`);
         } catch (error) {
             console.log(error);
         }
