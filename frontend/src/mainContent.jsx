@@ -31,7 +31,7 @@ import { customRouter } from './config/customRouter';
 import { useUserStore } from './stores/userStore';
 import almetMedLogo from './assets/img/almetMedLogo.png';
 import CircularProgress from '@mui/material/CircularProgress';
-import { CookieBanner } from './components/banners/CookieBanner';
+import { CookieBanner } from './components/banners/cookieBanner';
 import { Link as MuiLink } from '@mui/material';
 import StarRoundedIcon from '@mui/icons-material/StarRounded';
 import PrivacyTipRoundedIcon from '@mui/icons-material/PrivacyTipRounded';
