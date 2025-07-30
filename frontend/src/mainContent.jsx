@@ -161,7 +161,7 @@ function MainContent(props) {
   };
 
   useEffect(() => {
-    localStorage.removeItem('cookiesAccepted')
+    // localStorage.removeItem('cookiesAccepted')
     getProfile(); // загружаем при монтировании
   }, []);
 
