@@ -231,5 +231,5 @@ class DownloadExcelView(APIView):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             content=buffer.getvalue()
         )
-        response['Content-Disposition'] = 'attachment; filename="applicants_delivered.xlsx"'
+        response['Content-Disposition'] = 'attachment; filename="Сдали_документы.xlsx"'
         return response

@@ -135,7 +135,7 @@ export const useApplicantsStore = create((set, get) => ({
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'applicants_delivered.xlsx';
+      a.download = 'Сдали_Документы.xlsx';
       document.body.appendChild(a);
       a.click();
       a.remove();

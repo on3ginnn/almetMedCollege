@@ -14,11 +14,6 @@ class Applicant(models.Model):
         ('medical_treatment_11', 'Лечебное дело на базе 11 класса'),
     ]
     
-    # EDUCATION_BASE_CHOICES = [
-    #     ('9', 'На базе 9 классов'),
-    #     ('11', 'На базе 11 классов'),
-    # ]
-
     PRIORITY_ENROLLMENT_CHOICES = [
         ('heroes_rf', 'Герои Российской Федерации, лица, награжденные тремя орденами Мужества'),
         ('svo_participants', 'Участники боевых действий и служащие на территориях СВО и граничащих с ними, а также их дети'),
@@ -50,7 +45,6 @@ class Applicant(models.Model):
     ADMISSION_TYPE_CHOICES = [
         ("бюджет", "Финансируемые из средств бюджета Республики Татарстан"),
         ("коммерция", "На места с полным возмещением затрат"),
-        # ('none', 'Не выбранно'),
     ]
 
     registration_number = models.CharField("Регистрационный номер", max_length=10, blank=True, default="")
@@ -110,7 +104,6 @@ class Applicant(models.Model):
     gosuslugi = models.BooleanField("Подал через госуслуги РФ", default=False, blank=True)
     documents_canceled = models.BooleanField("Забрал документы", default=False, blank=True)
     specialty = models.CharField("Специальность", max_length=50, choices=SPECIALTY_CHOICES)
-    # education_base = models.CharField("База образования", max_length=2, choices=EDUCATION_BASE_CHOICES)
     admission_type = models.CharField("Бюджет/коммерция", max_length=50, choices=ADMISSION_TYPE_CHOICES)
     needs_dormitory = models.BooleanField("Нуждается в общежитии", default=False)
     documents_submitted = models.CharField(

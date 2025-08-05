@@ -6,164 +6,80 @@ from datetime import datetime
 from .models import Applicant
 from io import BytesIO
 from collections import defaultdict
-from openpyxl import Workbook
+import openpyxl
 from django.db import models
+from openpyxl.styles import Alignment
+from openpyxl.utils import get_column_letter
+from django.utils.timezone import localtime
 
-
+MIN_COLUMNS_WIDTH_EXCEL_SHEET = 20
 
 def generate_applicants_excel():
     try:
-        # Fetch applicants with documents delivered, ordered by specialty
-        applicants = Applicant.objects.filter(documents_delivered=True).order_by('specialty')
-        
-        # Group applicants by specialty
-        specialty_groups = defaultdict(list)
-        for applicant in applicants:
-            specialty_key = applicant.specialty
-            specialty_groups[specialty_key].append(applicant)
-        
-        # Initialize workbook and remove default sheet
-        wb = Workbook()
-        wb.remove(wb.active)
+        applicants = Applicant.objects.filter(documents_delivered=True)
 
-        # Define headers based on Applicant model
-        headers = [
-            'Рег.номер', 'Специальность', 'ФИО', 'Гражданство', 'Национальность',
-            'Дата рождения', 'Место рождения', 'Адрес местожительства', 'Фактический адрес',
-            'Серия, № аттестата', 'Дата выдачи аттестата', 'Год окончания, наименование учебного заведения',
-            'Паспортные данные (серия, номер, кем и когда выдан)', 'Код подразделения', 'Дата регистрации прописки',
-            'ИНН', 'СНИЛС', 'Медицинский полис', 'Приписное свидетельство', 'Договор с мед.организацией',
-            'Телефон абитуриента', 'Email',
-            'ФИО, № телефона представителя 1', 'Место работы, должность представителя 1', 'Паспортные данные представителя 1',
-            'ФИО, № телефона представителя 2', 'Место работы, должность представителя 2', 'Паспортные данные представителя 2',
-            'Русский язык', 'Биология', 'Химия', 'Математика', 'Иностранный язык', 'Физика', 'Средний балл',
-            'Бюджет/коммерция', 'Нуждается в общежитии', 'Тип поданных документов', 'Форма обучения',
-            'Первоочередное зачисление', 'Преимущественное право на зачисление'
-        ]
+        # Создаём книгу
+        wb = openpyxl.Workbook()
+        wb.remove(wb.active)  # Удаляем пустой лист
 
-        # Map choices for display
-        specialty_map = dict(Applicant.SPECIALTY_CHOICES)
-        priority_enrollment_map = dict(Applicant.PRIORITY_ENROLLMENT_CHOICES)
-        preferential_enrollment_map = dict(Applicant.PREFERENTIAL_ENROLLMENT_CHOICES)
-        study_form_map = dict(Applicant.STUDY_FORM_CHOICES)
-        admission_type_map = dict(Applicant.ADMISSION_TYPE_CHOICES)
-        documents_type_map = dict(Applicant.DOCUMENTS_TYPE_CHOICES)
+        # Список всех полей модели (кроме служебных и ненужных)
+        exclude_fields = ["id", 'specialty', 'enrolled']
+        fields = [f.name for f in Applicant._meta.fields if f.name not in exclude_fields]
 
-        for specialty_key, applicants in specialty_groups.items():
-            # Get display name for specialty
-            specialty_name = specialty_map.get(specialty_key, specialty_key)
+        # Заголовки для Excel (читаемые названия)
+        headers = [Applicant._meta.get_field(f).verbose_name for f in fields]
 
-            # Sanitize sheet name for Excel (max 31 chars, no invalid chars)
-            sheet_name = specialty_name[:31].replace('/', '_').replace('\\', '_').replace('?', '').replace('*', '').replace('[', '').replace(']', '').strip()
+        # Проходим по специальностям и создаём отдельные листы
+        for spec_key, spec_name in Applicant.SPECIALTY_CHOICES:
+            # Фильтруем абитуриентов по специальности
+            spec_applicants = applicants.filter(specialty=spec_key)
 
-            # Create worksheet
-            ws = wb.create_sheet(title=sheet_name)
+            # Создаём лист с названием специальности
+            ws = wb.create_sheet(title=spec_name[:30])  # Excel ограничивает имя до 31 символа
+
+            # Добавляем заголовки
             ws.append(headers)
 
-            for applicant in applicants:
-                # Combine graduation info
-                graduation_info = (
-                    f"{applicant.graduation_year}, {applicant.graduation_institution}"
-                    if applicant.graduation_year and applicant.graduation_institution else ''
-                )
+            # Добавляем данные
+            for applicant in spec_applicants:
+                row_data = []
+                for field in fields:
+                    # Если у поля есть display-метод (для choices), используем его
+                    display_method = f"get_{field}_display"
+                    if hasattr(applicant, display_method):
+                        value = getattr(applicant, display_method)()
+                    else:
+                        value = getattr(applicant, field)
 
-                # Combine passport data
-                passport_data = (
-                    f"{applicant.passport_series} {applicant.passport_number}, "
-                    f"{applicant.passport_issued_by}, {_date(applicant.passport_issued_date, 'd.m.Y')}"
-                    if all([applicant.passport_series, applicant.passport_number, applicant.passport_issued_by, applicant.passport_issued_date])
-                    else ''
-                )
+                    # Обрабатываем типы данных
+                    if value is None:
+                        value = ""
+                    elif isinstance(value, bool):
+                        value = "Да" if value else "Нет"
+                    elif hasattr(value, 'strftime'):  # Date, DateTime
+                        value = value.strftime('%d.%m.%Y') if 'at' not in field else value.strftime('%d.%m.%Y')
+                    row_data.append(value)
+                ws.append(row_data)
 
-                # Combine representative info
-                representative1_info = (
-                    f"{applicant.representative1_name}, {applicant.representative1_phone}"
-                    if applicant.representative1_name and applicant.representative1_phone else ''
-                )
-                representative2_info = (
-                    f"{applicant.representative2_name}, {applicant.representative2_phone}"
-                    if applicant.representative2_name and applicant.representative2_phone else ''
-                )
+            # Выравниваем текст по верхнему краю
+            for row in ws.iter_rows():
+                for cell in row:
+                    cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
 
-                # Combine representative passport data
-                representative1_passport = (
-                    f"Серия: {applicant.representative1_passport_series} № {applicant.representative1_passport_number}, "
-                    f"выдан: {applicant.representative1_passport_issued_by}, {_date(applicant.representative1_passport_issued_date, 'd.m.Y')}"
-                    if all([applicant.representative1_passport_series, applicant.representative1_passport_number,
-                            applicant.representative1_passport_issued_by, applicant.representative1_passport_issued_date])
-                    else ''
-                )
-                representative2_passport = (
-                    f"Серия: {applicant.representative2_passport_series} № {applicant.representative2_passport_number}, "
-                    f"выдан: {applicant.representative2_passport_issued_by}, {_date(applicant.representative2_passport_issued_date, 'd.m.Y')}"
-                    if all([applicant.representative2_passport_series, applicant.representative2_passport_number,
-                            applicant.representative2_passport_issued_by, applicant.representative2_passport_issued_date])
-                    else ''
-                )
+            # Устанавливаем ширину колонок
+            for col_idx, col_cells in enumerate(ws.columns, start=1):
+                max_length = max(len(str(cell.value)) if cell.value else 0 for cell in list(col_cells)[1:])
+                adjusted_width = MIN_COLUMNS_WIDTH_EXCEL_SHEET if max_length + 2 < MIN_COLUMNS_WIDTH_EXCEL_SHEET else max_length + 2  # Ограничим ширину до 60 символов
+                ws.column_dimensions[get_column_letter(col_idx)].width = adjusted_width
 
-                # Construct row
-                row = [
-                    applicant.registration_number or '',
-                    specialty_name,
-                    applicant.full_name or '',
-                    applicant.citizenship or '',
-                    applicant.nationality or '',
-                    _date(applicant.birth_date, 'd.m.Y') if applicant.birth_date else '',
-                    applicant.birth_place or '',
-                    applicant.address or '',
-                    applicant.address_actual or '',
-                    applicant.certificate_series or '',
-                    _date(applicant.certificate_issued_date, 'd.m.Y') if applicant.certificate_issued_date else '',
-                    graduation_info,
-                    passport_data,
-                    applicant.passport_division_code or '',
-                    _date(applicant.passport_registration_date, 'd.m.Y') if applicant.passport_registration_date else '',
-                    applicant.inn or '',
-                    applicant.snils or '',
-                    applicant.medical_policy or '',
-                    'Да' if applicant.military_id else 'Нет',
-                    'Да' if applicant.medical_contract else 'Нет',
-                    applicant.student_phone or '',
-                    applicant.student_email or '',
-                    representative1_info,
-                    applicant.representative1_job or '',
-                    representative1_passport,
-                    representative2_info,
-                    applicant.representative2_job or '',
-                    representative2_passport,
-                    str(applicant.grade_russian) if applicant.grade_russian else '',
-                    str(applicant.grade_biology) if applicant.grade_biology else '',
-                    str(applicant.grade_chemistry) if applicant.grade_chemistry else '',
-                    str(applicant.grade_math) if applicant.grade_math else '',
-                    str(applicant.grade_language) if applicant.grade_language else '',
-                    str(applicant.grade_physics) if applicant.grade_physics else '',
-                    str(applicant.average_grade) if applicant.average_grade else '',
-                    admission_type_map.get(applicant.admission_type, '') if applicant.admission_type else '',
-                    'Да' if applicant.needs_dormitory else 'Нет',
-                    documents_type_map.get(applicant.documents_submitted, '') if applicant.documents_submitted else '',
-                    study_form_map.get(applicant.study_form, '') if applicant.study_form else '',
-                    priority_enrollment_map.get(applicant.priority_enrollment, '') if applicant.priority_enrollment else '',
-                    preferential_enrollment_map.get(applicant.preferential_enrollment, '') if applicant.preferential_enrollment else ''
-                ]
-
-                ws.append(row)
-
-        # Handle case with no applicants
-        if not specialty_groups:
-            ws = wb.create_sheet(title="No Applicants")
-            ws.append(headers)
-            ws.append(['Нет абитуриентов с сданными документами'])
-
-        # Save to BytesIO buffer for download
-        buffer = BytesIO()
+        # Сохраняем книгу в поток
+        buffer = io.BytesIO()
         wb.save(buffer)
         buffer.seek(0)
-        return buffer
 
+        return buffer
     except Exception as e:
-        # Log the error for debugging (you can replace with your logging mechanism)
-        print(f"Error generating Excel: {str(e)}")
-        raise
+        print(e)
 
 
 def generate_application_docx(applicant: Applicant):
