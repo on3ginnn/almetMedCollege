@@ -14,10 +14,124 @@ from django.utils.timezone import localtime
 
 MIN_COLUMNS_WIDTH_EXCEL_SHEET = 20
 
-def generate_applicants_excel():
-    try:
-        applicants = Applicant.objects.filter(documents_delivered=True)
 
+def generate_applicants_rating(applicants):
+    try:
+        # Фильтруем только тех, кто забрал документы (canceled=True)
+
+        # Создаём книгу
+        wb = openpyxl.Workbook()
+        ws = wb.active
+
+        # Список всех полей модели (кроме служебных и ненужных)
+        exclude_fields = ["id", 'enrolled', 'documents_delivered', 'documents_canceled']
+        fields = [f.name for f in Applicant._meta.fields if f.name not in exclude_fields]
+
+        # Заголовки для Excel (читаемые названия)
+        headers = [Applicant._meta.get_field(f).verbose_name for f in fields]
+        ws.append(headers)
+
+        # Добавляем данные
+        for applicant in applicants:
+            row_data = []
+            for field in fields:
+                # Если у поля есть display-метод (для choices), используем его
+                display_method = f"get_{field}_display"
+                if hasattr(applicant, display_method):
+                    value = getattr(applicant, display_method)()
+                else:
+                    value = getattr(applicant, field)
+
+                # Обрабатываем типы данных
+                if value is None:
+                    value = ""
+                elif isinstance(value, bool):
+                    value = "Да" if value else "Нет"
+                elif hasattr(value, 'strftime'):  # Date, DateTime
+                    value = value.strftime('%d.%m.%Y')
+                row_data.append(value)
+            ws.append(row_data)
+
+        # Выравниваем текст по верхнему краю
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+
+        # Устанавливаем ширину колонок
+        for col_idx, col_cells in enumerate(ws.columns, start=1):
+            max_length = max(len(str(cell.value)) if cell.value else 0 for cell in list(col_cells)[1:])
+            adjusted_width = min(max(max_length + 2, MIN_COLUMNS_WIDTH_EXCEL_SHEET), 60)
+            ws.column_dimensions[get_column_letter(col_idx)].width = adjusted_width
+
+        # Сохраняем книгу в поток
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        return buffer
+    except Exception as e:
+        print(e)
+
+
+def generate_applicants_canceled_excel(applicants):
+    try:
+        # Фильтруем только тех, кто забрал документы (canceled=True)
+
+        # Создаём книгу
+        wb = openpyxl.Workbook()
+        ws = wb.active
+
+        # Список всех полей модели (кроме служебных и ненужных)
+        exclude_fields = ["id", 'enrolled', 'documents_delivered', 'documents_canceled']
+        fields = [f.name for f in Applicant._meta.fields if f.name not in exclude_fields]
+
+        # Заголовки для Excel (читаемые названия)
+        headers = [Applicant._meta.get_field(f).verbose_name for f in fields]
+        ws.append(headers)
+
+        # Добавляем данные
+        for applicant in applicants:
+            row_data = []
+            for field in fields:
+                # Если у поля есть display-метод (для choices), используем его
+                display_method = f"get_{field}_display"
+                if hasattr(applicant, display_method):
+                    value = getattr(applicant, display_method)()
+                else:
+                    value = getattr(applicant, field)
+
+                # Обрабатываем типы данных
+                if value is None:
+                    value = ""
+                elif isinstance(value, bool):
+                    value = "Да" if value else "Нет"
+                elif hasattr(value, 'strftime'):  # Date, DateTime
+                    value = value.strftime('%d.%m.%Y')
+                row_data.append(value)
+            ws.append(row_data)
+
+        # Выравниваем текст по верхнему краю
+        for row in ws.iter_rows():
+            for cell in row:
+                cell.alignment = Alignment(horizontal="left", vertical="top", wrap_text=True)
+
+        # Устанавливаем ширину колонок
+        for col_idx, col_cells in enumerate(ws.columns, start=1):
+            max_length = max(len(str(cell.value)) if cell.value else 0 for cell in list(col_cells)[1:])
+            adjusted_width = min(max(max_length + 2, MIN_COLUMNS_WIDTH_EXCEL_SHEET), 60)
+            ws.column_dimensions[get_column_letter(col_idx)].width = adjusted_width
+
+        # Сохраняем книгу в поток
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        return buffer
+    except Exception as e:
+        print(e)
+
+def generate_applicants_excel(applicants):
+    try:
         # Создаём книгу
         wb = openpyxl.Workbook()
         wb.remove(wb.active)  # Удаляем пустой лист
@@ -57,7 +171,7 @@ def generate_applicants_excel():
                     elif isinstance(value, bool):
                         value = "Да" if value else "Нет"
                     elif hasattr(value, 'strftime'):  # Date, DateTime
-                        value = value.strftime('%d.%m.%Y') if 'at' not in field else value.strftime('%d.%m.%Y')
+                        value = value.strftime('%d.%m.%Y')
                     row_data.append(value)
                 ws.append(row_data)
 
@@ -69,7 +183,7 @@ def generate_applicants_excel():
             # Устанавливаем ширину колонок
             for col_idx, col_cells in enumerate(ws.columns, start=1):
                 max_length = max(len(str(cell.value)) if cell.value else 0 for cell in list(col_cells)[1:])
-                adjusted_width = MIN_COLUMNS_WIDTH_EXCEL_SHEET if max_length + 2 < MIN_COLUMNS_WIDTH_EXCEL_SHEET else max_length + 2  # Ограничим ширину до 60 символов
+                adjusted_width = min(max(max_length + 2, MIN_COLUMNS_WIDTH_EXCEL_SHEET), 60)
                 ws.column_dimensions[get_column_letter(col_idx)].width = adjusted_width
 
         # Сохраняем книгу в поток

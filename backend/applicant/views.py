@@ -6,7 +6,7 @@ from .models import Applicant
 from .serializer import ApplicantSerializer
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
-from .utils import generate_application_docx, generate_applicants_excel, generate_application_titul
+from .utils import generate_application_docx, generate_applicants_excel, generate_applicants_canceled_excel, generate_applicants_rating, generate_application_titul
 from rest_framework import status
 
 
@@ -45,7 +45,7 @@ class ApplicantViewSet(viewsets.ModelViewSet):
 
         LIMITS = {
             ("medical_treatment", "бюджет"): 25,
-            ("medical_treatment", "коммерция"): 10,
+            ("medical_treatment", "коммерция"): 40,
             ("medical_treatment_11", "бюджет"): 15,
             ("medical_treatment_11", "коммерция"): 10,
             ("midwifery", "бюджет"): 25,
@@ -182,6 +182,82 @@ class ApplicantViewSet(viewsets.ModelViewSet):
         applicant.save()
         serializer = ApplicantSerializer(applicant)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @action(detail=False, methods=["get"], url_path="document_canceled")
+    def document_canceled_excel(self, request):
+        applicants = Applicant.objects.filter(documents_delivered=False, documents_canceled=True)
+        print(list(applicants))
+        buffer = generate_applicants_canceled_excel(applicants)
+        response = HttpResponse(
+            buffer.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename="Сдали_документы.xlsx"'
+        return response
+
+    @action(detail=False, methods=["get"], url_path="rating_download")
+    def rating_download_excel(self, request):
+
+        LIMITS = {
+            ("medical_treatment", "бюджет"): 25,
+            ("medical_treatment", "коммерция"): 40,
+            ("medical_treatment_11", "бюджет"): 15,
+            ("medical_treatment_11", "коммерция"): 10,
+            ("midwifery", "бюджет"): 25,
+            ("midwifery", "коммерция"): 10,
+            ("nursing", "бюджет"): 50,
+            ("nursing", "коммерция"): 50,
+            ("nursing_zaochno", "коммерция"): 30,
+            ("lab_diagnostics", "бюджет"): 15,
+            ("lab_diagnostics", "коммерция"): 20,
+            ("pharmacy", "коммерция"): 35,
+        }
+
+        specialty = request.query_params.get("specialty")
+        admission_type = request.query_params.get("admission_type")
+
+        if not specialty or not admission_type:
+            return Response({"error": "specialty and admission_type are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        key = (specialty, admission_type)
+        limit = LIMITS.get(key)
+
+        if not limit:
+            return Response([], status=status.HTTP_200_OK)
+
+        queryset = Applicant.objects.filter(
+            specialty=specialty,
+            admission_type=admission_type,
+            documents_delivered=True,
+            documents_canceled=False,
+        )
+        # primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")[:limit]
+        primary = queryset.exclude(priority_enrollment="none").order_by("-average_grade")
+        # remaining_limit = limit - primary.count()
+
+        others = queryset.filter(priority_enrollment="none").order_by(
+            "-average_grade",
+            "submitted_at"
+        # )[:remaining_limit]
+        )
+
+        result = list(primary) + list(others)
+
+        # result_data = []
+        # for idx, applicant in enumerate(result):
+        #     data = ApplicantSerializer(applicant).data
+        #     data["in_limit"] = idx < limit
+        #     result_data.append(data)
+
+        # print(list(result_data))
+        buffer = generate_applicants_rating(result)
+        response = HttpResponse(
+            buffer.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = 'attachment; filename="Сдали_документы.xlsx"'
+        return response
+
 
 class UpdateDocumentsDeliveredView(APIView):
     def patch(self, request, pk):
@@ -226,7 +302,9 @@ def download_applicant_titul(request, pk):
 
 class DownloadExcelView(APIView):
     def get(self, request):
-        buffer = generate_applicants_excel()
+        applicants = Applicant.objects.filter(documents_delivered=True, documents_canceled=False)
+
+        buffer = generate_applicants_excel(applicants)
         response = HttpResponse(
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             content=buffer.getvalue()

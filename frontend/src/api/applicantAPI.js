@@ -133,12 +133,33 @@ export default class ApplicantAPI {
             throw error;
         }
     }
+    static async downloadExcelDocumentCanceled(){
+        try{
+            const response = await apiClient.get('/applicants/document_canceled/', {
+                responseType: 'blob',
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async downloadRating(specialty, type) {
+        try{
+            const response = await apiClient.get(`/applicants/rating_download/`, {
+                params: { specialty, admission_type: type }, responseType: 'blob',
+            });
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
     static async getRating(specialty, type) {
         const response = await apiClient.get(`/applicants/rating/`, {
             params: { specialty, admission_type: type },
         });
         return response;
     }
+
     static async update(pk, data) {
         try {
             console.log(data);

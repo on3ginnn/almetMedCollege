@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Box, Typography, FormControl, InputLabel, MenuItem, Select,
   Paper, Table, TableHead, TableRow, TableCell, TableBody,
-  AppBar, Toolbar, Stack, CircularProgress, useTheme, Tooltip
+  AppBar, Toolbar, Stack, CircularProgress, useTheme, Tooltip, Button
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { useApplicantsStore } from '../../stores/applicantsStore';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRef } from 'react';
+import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
 
 export const Rating = () => {
   const { fetchRating, rating = [], isLoading, rating_limit } = useApplicantsStore();
@@ -88,14 +89,18 @@ export const Rating = () => {
     <Box sx={{ p: { xs: 2, sm: 3 }, pt: { xs: 3, sm: 5 }, minHeight: '100vh' }}>
       <AppBar position="sticky" color="default" elevation={0}
         sx={{
+          p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection:"row",
+          alignItems: "end",
           mb: 3, borderRadius: 2,
           boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
           border: `1px solid ${theme.palette.divider}`,
           bgcolor: theme.palette.background.paper,
         }}>
         <Toolbar sx={{
-          px: { xs: 2, sm: 3 },
-          py: 2,
+          px: { xs: 0, sm: 1 },
           flexDirection: 'column',
           alignItems: 'flex-start',
           gap: 0.5,
@@ -114,6 +119,17 @@ export const Rating = () => {
             {selectedOption.label} — {selectedType === 'бюджет' ? 'Бюджет' : 'Коммерция'} ({rating_limit} мест)
           </Typography>
         </Toolbar>
+        {/* <Button
+          startIcon={<DownloadRoundedIcon />}
+          variant="contained"
+          onClick={() => handleDownloadExcelRating("medical_treatment_11", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 260 },
+            height: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Скачать рейтинг
+        </Button> */}
       </AppBar>
 
       <Stack direction={{ xs: 'column', md: 'row' }} alignItems={{ xs: 'stretch', md: 'flex-start' }}>
@@ -219,7 +235,7 @@ export const Rating = () => {
                         <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                           <Typography fontWeight="medium">{a.documents_submitted !== 'none' ? a.documents_submitted : "не указано"}</Typography>
                         </TableCell>
-                        <TableCell textAlign="center" sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                        <TableCell sx={{ textAlign: "center", display: { xs: 'none', sm: 'table-cell' } }}>
                           {a.priority_enrollment !== 'none' && (
                             <Tooltip title="Первоочередное зачисление">
                               <StarIcon fontSize="small" color="primary" />

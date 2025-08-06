@@ -32,6 +32,8 @@ export const Applicants = () => {
     downloadExcel,
     updateDocumentsCanceled,
     updateGosuslugi,
+    downloadExcelDocumentCanceled,
+    downloadRating,
   } = useApplicantsStore();
   const [searchQuery, setSearchQuery] = useState('');
   const theme = useTheme();
@@ -112,6 +114,20 @@ export const Applicants = () => {
       await downloadExcel();
     } catch (e) {
       alert('Ошибка при скачивании таблицы');
+    }
+  };
+  const handleDownloadExcelDocumentCanceled = async () => {
+    try {
+      await downloadExcelDocumentCanceled();
+    } catch (e) {
+      alert('Ошибка при скачивании таблицы "Забрали документы"');
+    }
+  };
+  const handleDownloadExcelRating = async (specialty, selectedType) => {
+    try {
+      downloadRating(specialty, selectedType);
+    } catch (e) {
+      alert('Ошибка при скачивании таблицы рейтинга');
     }
   };
 
@@ -420,7 +436,7 @@ export const Applicants = () => {
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={{ xs: 1.5, sm: 2 }}
-        mb={{ xs: 2, sm: 3 }}
+        mb={{ xs: 1, sm: 1 }}
         alignItems={{ xs: 'stretch', sm: 'center' }}
       >
         <TextField
@@ -445,7 +461,7 @@ export const Applicants = () => {
           color="success"
           onClick={handleDownloadExcel}
           sx={{
-            ...commonButtonStyles,
+            // ...commonButtonStyles,
             minWidth: { xs: 'auto', sm: 200 },
             bgcolor: theme.palette.success.main,
             '&:hover': {
@@ -453,12 +469,138 @@ export const Applicants = () => {
             },
           }}
         >
-          Скачать таблицу
+          Сдали документы
         </Button>
       </Stack>
-
+      <Stack gap={1} flexWrap="wrap" direction="row" justifyContent="flex-start">
+        <Button
+          variant="contained"
+          onClick={handleDownloadExcelDocumentCanceled}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+            bgcolor: theme.palette.primary.main,
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+          }}
+        >
+          Забрали документы
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("pharmacy", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Фармация
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("nursing", "бюджет")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Сестринское дело (9 класс - бюджет)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("nursing", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Сестринское дело (9 класс - коммерция)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("nursing_zaochno", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Сестринское дело очно-заочно
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("midwifery", "бюджет")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Акушерское дело (9 класс - бюджет)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("midwifery", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Акушерское дело (9 класс - коммерция)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("lab_diagnostics", "бюджет")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лабораторная диагностика (9 класс - бюджет)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("medical_treatment", "бюджет")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лечебное дело (9 класс - бюджет)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("medical_treatment", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лечебное дело (9 класс - коммерция)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("medical_treatment_11", "бюджет")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лечебное дело на базе 11 класса (бюджет)
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => handleDownloadExcelRating("medical_treatment_11", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лечебное дело на базе 11 класса (коммерция)
+        </Button>
+      </Stack>
       <Paper
         sx={{
+          mt: { xs: 2, sm: 3 },
           height: { xs: 450, sm: 600, md: 700 },
           width: '100%',
           borderRadius: 2,

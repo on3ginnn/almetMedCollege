@@ -145,6 +145,49 @@ export const useApplicantsStore = create((set, get) => ({
       throw e;
     }
   },
+  downloadExcelDocumentCanceled: async () => {
+    try {
+      const response = await ApplicantAPI.downloadExcelDocumentCanceled();
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Забрали_Документы.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Ошибка при скачивании Excel:', e);
+      throw e;
+    }
+  },
+  downloadRating: async (specialty, type) => {
+    try {
+      const specialtyMap = {
+        pharmacy: 'Фармация_на_базе_9_класса',
+        nursing: `Сестринское_дело_на_базе_9_класса`,
+        nursing_zaochno: `Сестринское_дело_очно-заочная`,
+        midwifery: 'Акушерское_дело_на_базе_9_класса',
+        lab_diagnostics: 'Лабораторная_диагностика_на_базе_9_класса',
+        medical_treatment: 'Лечебное_дело_на_базе_9_класса',
+        medical_treatment_11: 'Лечебное_дело_на_базе_11_класса',
+      };
+      const response = await ApplicantAPI.downloadRating(specialty, type);
+      const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Рейтинг_${specialtyMap[specialty]}_${type}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Ошибка при скачивании Excel:', e);
+      throw e;
+    }
+  },
   fetchRating: async (specialty, type) => {
     try {
       const response = await ApplicantAPI.getRating(specialty, type);
@@ -153,6 +196,7 @@ export const useApplicantsStore = create((set, get) => ({
       console.error("Ошибка при загрузке рейтинга:", e);
     }
   },
+
   updateApplicant: async (id, data) => {
     try {
       const response = await ApplicantAPI.update(id, data);
