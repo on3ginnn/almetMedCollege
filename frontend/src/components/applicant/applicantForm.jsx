@@ -210,6 +210,10 @@ export const ApplicantForm = ({ isEditMode = false }) => {
           : null,
       };
 
+        console.log(isEditMode)
+        console.log(id)
+
+
       if (isEditMode && id) {
         await updateApplicant(id, formattedData);
         toast.success('Анкета успешно обновлена!', { autoClose: 5000 });
@@ -238,12 +242,12 @@ export const ApplicantForm = ({ isEditMode = false }) => {
 
   const specialtyOptions = [
     { value: 'pharmacy', label: 'Фармация - на базе 9 класса' },
-    { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
-    { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },
-    { value: 'midwifery', label: 'Акушерское дело - на базе 9 класса' },
+    // { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
+    // { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },
+    // { value: 'midwifery', label: 'Акушерское дело - на базе 9 класса' },
     { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
-    { value: 'medical_treatment', label: 'Лечебное дело - на базе 9 класса' },
-    { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
+    // { value: 'medical_treatment', label: 'Лечебное дело - на базе 9 класса' },
+    // { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
   ];
 
   const fullAdmissionTypeOptions = [
