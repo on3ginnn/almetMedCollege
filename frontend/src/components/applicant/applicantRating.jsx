@@ -24,11 +24,11 @@ export const Rating = () => {
 
   
   const specialtyOptions = [
-    { label: 'Лечебное дело (9 классов)', specialty: 'medical_treatment' },
-    { label: 'Лечебное дело (11 классов)', specialty: 'medical_treatment_11' },
-    { label: 'Акушерское дело (9 классов)', specialty: 'midwifery' },
-    { label: 'Сестринское дело (9 классов)', specialty: 'nursing' },
-    { label: 'Сестринское дело очно-заочно', specialty: 'nursing_zaochno' },
+    // { label: 'Лечебное дело (9 классов)', specialty: 'medical_treatment' },
+    // { label: 'Лечебное дело (11 классов)', specialty: 'medical_treatment_11' },
+    // { label: 'Акушерское дело (9 классов)', specialty: 'midwifery' },
+    // { label: 'Сестринское дело (9 классов)', specialty: 'nursing' },
+    // { label: 'Сестринское дело очно-заочно', specialty: 'nursing_zaochno' },
     { label: 'Лабораторная диагностика (9 классов)', specialty: 'lab_diagnostics' },
     { label: 'Фармация (9 классов)', specialty: 'pharmacy' },
   ];
