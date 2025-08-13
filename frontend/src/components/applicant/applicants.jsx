@@ -559,6 +559,16 @@ export const Applicants = () => {
         </Button>
         <Button
           variant="outlined"
+          onClick={() => handleDownloadExcelRating("lab_diagnostics", "коммерция")}
+          sx={{
+            minWidth: { xs: 'auto', sm: 200 },
+            minHeight: {xs: 'auto', sm: 35 },
+          }}
+        >
+          Рейтинг: Лабораторная диагностика (9 класс - коммерция)
+        </Button>
+        <Button
+          variant="outlined"
           onClick={() => handleDownloadExcelRating("medical_treatment", "бюджет")}
           sx={{
             minWidth: { xs: 'auto', sm: 200 },

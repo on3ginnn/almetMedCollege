@@ -3,7 +3,7 @@ import * as yup from 'yup';
 export const schema = yup.object().shape({
   registration_number: yup
     .string()
-    .max(10, 'Максимум 10 символов')
+    .max(20, 'Максимум 20 символов')
     .nullable(),
   full_name: yup
     .string()

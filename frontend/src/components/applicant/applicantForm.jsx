@@ -167,8 +167,13 @@ export const ApplicantForm = ({ isEditMode = false }) => {
     if (!code) return '';
     return `${code.slice(0, 3)}-${code.slice(3)}`;
   }
+  
+  const onError = (errors) => {
+    console.error('Ошибки валидации', errors);
+  };
 
   const onSubmit = async (data) => {
+    console.log("submiting...")
     setIsSubmitting(true);
     try {
       let studyForm = data.specialty === 'nursing_zaochno' ? 'очно-заочная' : 'очная';
@@ -240,15 +245,26 @@ export const ApplicantForm = ({ isEditMode = false }) => {
 
   const inputSize = { xs: 'small', sm: 'medium' };
 
-  const specialtyOptions = [
+  var specialtyOptions = [
     { value: 'pharmacy', label: 'Фармация - на базе 9 класса' },
+    { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
+
     // { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
     // { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },
     // { value: 'midwifery', label: 'Акушерское дело - на базе 9 класса' },
-    { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
     // { value: 'medical_treatment', label: 'Лечебное дело - на базе 9 класса' },
     // { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
   ];
+
+  if (isEditMode) {
+    specialtyOptions = [...specialtyOptions,
+      { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
+      { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },
+      { value: 'midwifery', label: 'Акушерское дело - на базе 9 класса' },
+      { value: 'medical_treatment', label: 'Лечебное дело - на базе 9 класса' },
+      { value: 'medical_treatment_11', label: 'Лечебное дело - на базе 11 класса' },
+    ]
+  }
 
   const fullAdmissionTypeOptions = [
     { value: 'бюджет', label: 'Бюджет' },
@@ -345,7 +361,7 @@ export const ApplicantForm = ({ isEditMode = false }) => {
           </Typography>
         </Alert>
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+        <Box component="form" onSubmit={handleSubmit(onSubmit, onError)}>
           <Grid columns={{ xs: 6, sm: 6 }} container spacing={{ xs: 2, md: 2 }}>
             {/* Admission Details */}
             <GroupTitle title='Детали поступления' />

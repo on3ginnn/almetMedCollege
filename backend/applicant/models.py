@@ -47,7 +47,7 @@ class Applicant(models.Model):
         ("коммерция", "На места с полным возмещением затрат"),
     ]
 
-    registration_number = models.CharField("Регистрационный номер", max_length=10, blank=True, default="")
+    registration_number = models.CharField("Регистрационный номер", max_length=20, blank=True, default="")
     full_name = models.CharField("ФИО", max_length=255)
     citizenship = models.CharField("Гражданство", max_length=100, blank=True)
     nationality = models.CharField("Национальность", max_length=100, blank=True)
