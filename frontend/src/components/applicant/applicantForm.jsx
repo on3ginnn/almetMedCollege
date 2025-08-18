@@ -246,8 +246,8 @@ export const ApplicantForm = ({ isEditMode = false }) => {
   const inputSize = { xs: 'small', sm: 'medium' };
 
   var specialtyOptions = [
-    { value: 'pharmacy', label: 'Фармация - на базе 9 класса' },
-    { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
+    // { value: 'pharmacy', label: 'Фармация - на базе 9 класса' },
+    // { value: 'lab_diagnostics', label: 'Лабораторная диагностика - на базе 9 класса' },
 
     // { value: 'nursing', label: 'Сестринское дело - на базе 9 класса' },
     // { value: 'nursing_zaochno', label: 'Сестринское дело - очно-заочная' },

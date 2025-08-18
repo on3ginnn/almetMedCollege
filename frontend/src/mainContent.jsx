@@ -58,6 +58,14 @@ let NAVIGATION = [
   //   icon: <EventNoteIcon />,
   // },
   {
+    segment: 'privacy-redirect',
+    title: 'Политика конфиденциальности',
+    icon: <PrivacyTipRoundedIcon />,
+  },
+];
+
+const adminNavigation = [
+  {
     segment: 'applicant',
     title: 'Анкета на поступление',
     icon: <EventNoteRoundedIcon />,
@@ -67,14 +75,6 @@ let NAVIGATION = [
     title: 'Рейтинг поступающих',
     icon: <StarRoundedIcon />,
   },
-  {
-    segment: 'privacy-redirect',
-    title: 'Политика конфиденциальности',
-    icon: <PrivacyTipRoundedIcon />,
-  },
-];
-
-const adminNavigation = [
   {
     kind: 'header',
     title: 'Админка',
