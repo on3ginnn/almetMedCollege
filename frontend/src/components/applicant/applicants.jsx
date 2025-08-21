@@ -355,34 +355,34 @@ export const Applicants = () => {
         </Button>
       ),
     },
-    {
-      field: 'view_rating',
-      headerName: 'В рейтинге',
-      minWidth: 120,
-      flex: 0.5,
-      sortable: false,
-      renderCell: (params) => (
-        <IconButton
-          component={Link}
-          to={`/applicant/rating?specialty=${params.row.specialty}&admission_type=${params.row.admission_type}&highlight=${params.row.id}`}
-          // variant="contained"
-          // color="secondary"
-          // size="small"
-          // sx={commonIconButtonStyles}
-          sx={{
-            ...commonButtonStyles,
-            borderColor: theme.palette.primary.main,
-            color: theme.palette.primary.main,
-            '&:hover': {
-              bgcolor: theme.palette.primary.fill,
-              borderColor: theme.palette.primary.dark,
-            },
-          }}
-        >
-          <ArrowForwardIcon />
-        </IconButton>
-      ),
-    },
+    // {
+    //   field: 'view_rating',
+    //   headerName: 'В рейтинге',
+    //   minWidth: 120,
+    //   flex: 0.5,
+    //   sortable: false,
+    //   renderCell: (params) => (
+    //     <IconButton
+    //       component={Link}
+    //       to={`/applicant/rating?specialty=${params.row.specialty}&admission_type=${params.row.admission_type}&highlight=${params.row.id}`}
+    //       // variant="contained"
+    //       // color="secondary"
+    //       // size="small"
+    //       // sx={commonIconButtonStyles}
+    //       sx={{
+    //         ...commonButtonStyles,
+    //         borderColor: theme.palette.primary.main,
+    //         color: theme.palette.primary.main,
+    //         '&:hover': {
+    //           bgcolor: theme.palette.primary.fill,
+    //           borderColor: theme.palette.primary.dark,
+    //         },
+    //       }}
+    //     >
+    //       <ArrowForwardIcon />
+    //     </IconButton>
+    //   ),
+    // },
   ];
 
   const detailsColumn = {

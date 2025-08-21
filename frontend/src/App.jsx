@@ -37,8 +37,8 @@ function App() {
           <Route path="/schedule" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/schedule/create" element={<ScheduleForm />} />
           </Route>
-          <Route path='/applicant' element={<ApplicantForm />} />
-          <Route path="/applicant/rating" element={<Rating />} />
+          {/* <Route path='/applicant' element={<ApplicantForm />} /> */}
+          {/* <Route path="/applicant/rating" element={<Rating />} /> */}
           <Route path="/applicant" element={<ProtectedRoute allowedRoles={['admin']} />}>
             <Route path="/applicant/all" element={<Applicants />} />
             <Route path='/applicant/:id' element={<ApplicantDetails />} />

@@ -65,16 +65,16 @@ let NAVIGATION = [
 ];
 
 const adminNavigation = [
-  {
-    segment: 'applicant',
-    title: 'Анкета на поступление',
-    icon: <EventNoteRoundedIcon />,
-  },
-  {
-    segment: 'applicant/rating',
-    title: 'Рейтинг поступающих',
-    icon: <StarRoundedIcon />,
-  },
+  // {
+  //   segment: 'applicant',
+  //   title: 'Анкета на поступление',
+  //   icon: <EventNoteRoundedIcon />,
+  // },
+  // {
+  //   segment: 'applicant/rating',
+  //   title: 'Рейтинг поступающих',
+  //   icon: <StarRoundedIcon />,
+  // },
   {
     kind: 'header',
     title: 'Админка',
